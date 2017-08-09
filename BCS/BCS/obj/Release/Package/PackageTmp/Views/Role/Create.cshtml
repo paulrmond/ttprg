@@ -1,0 +1,46 @@
+﻿@model Microsoft.AspNet.Identity.EntityFramework.IdentityRole
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@*@using (Html.BeginForm())
+{
+    <table id="tbrole">
+        <tr>
+            <td class="c">Enter Role Name To be Created:</td>
+            <td class="c">
+                @Html.EditorFor(m => m.Name)
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Create Role" />
+}*@
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-dialog w700px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span class="glyphicon glyphicon-list"></span> Add Role</h4>
+                <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container pad0">
+                    <div class="col-sm-6 fontBld txtCenter">Enter Role Name To be Created:</div>
+                    @*<div class="col-sm-6 pad0">@Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control w100per h25px br1Grey", @id = "name" } })</div>*@   
+                    <div class="col-sm-6 pad0"><input type="text" name="Name" class="form-control w100per h25px br1Grey" /></div> 
+                    @*@if(ViewBag.CreateStatus == "Failed")
+                    {
+                        <div class="col-sm-6 pad0">Role name required</div>
+                    }*@
+                </div>
+            </div>
+            <div class="modal-footer">                
+                <input type="submit" value="Create Role" class = "btn btn-primary" />
+                @Html.ActionLink("Back","Index","Role", new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+}

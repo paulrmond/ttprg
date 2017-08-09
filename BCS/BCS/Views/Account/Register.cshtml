@@ -1,0 +1,140 @@
+﻿@model BCS.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Administration - User";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    function abc() {
+        //alert($('#ZoneGroupCode').val())
+        var zonecode = $('#ZoneGroupCode').val();
+        $.ajax({
+            type: 'POST',
+            url: '/Account/SelectZone',
+            data: { zonecode: zonecode },
+            success: function (data) {
+                //alert(JSON.stringify(data));
+                var a = JSON.stringify(data);
+                var b = JSON.parse(a);
+                $('#SelectZone').empty();
+                $('#SelectZone').append("<option value=''>Select Zone</option>");
+                $.each(b, function (key, val) {
+                    $('#SelectZone').append("<option value=" + val.ZoneId + ">"+ val.ZoneName +"</option>")                    
+                })
+            }
+        })
+    }
+</script>
+<div class="modal-backdrop bgColor-db fade70 show"></div>
+<div class="modal show ovrFlwHide" id="modalAddUser" role="dialog">
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        <div class="modal-dialog w900px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> @ViewBag.Title - Create a new account.</h4>
+                </div>
+                <div class="modal-body bgColor-lv h350px ovrFlw-YAuto">
+                    <div class="container br2 w100per pad5">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary("", new { @class = "text-danger" })
+                        <input type="text" value="Active" name="Status" hidden="hidden" />
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.GivenName, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(m => m.GivenName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.MiddleName, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.LastName, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Email, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.UserName, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Password, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                            </div>
+                        </div>                       
+
+                        <!--Select the Role Type for the User-->
+                        <div class="form-group">
+                            @Html.Label("Select User Type", new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @*@Html.DropDownList("Name", (IEnumerable<SelectListItem>)ViewBag.PriorityID, new { @class = "form-control" })*@
+                                @Html.DropDownList("Name","Select Role")
+                            </div>
+                        </div>
+                        <!--Ends Here-->
+
+                        <!--Select the Role Type for the User-->
+                        <div class="form-group">
+                            @Html.Label("Division", new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.DropDownList("Division","Select Division")
+                            </div>
+                        </div>
+                        <!--Ends Here-->
+
+                        <!--Select the Role Type for the User-->
+                        <div class="form-group">
+                            @Html.Label("Select Zone Group", new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @*@Html.DropDownList("ZoneGroupCode", (IEnumerable<SelectListItem>)ViewBag.PriorityID, new { @class = "form-control" })*@
+                                @*@Html.DropDownList("ZoneGroupCode","Select Zone Group")*@
+                                @{ 
+                                    SelectList list = ViewBag.ZoneGroupCode;
+                                }
+                                @Html.DropDownList("ZoneGroupCode",list,"Select Zone Group", new { @onchange = "abc()" })
+                            </div>
+                        </div>
+                        <!--Ends Here-->
+
+                        <!--Select the Role Type for the User-->
+                        <div class="form-group">
+                            @Html.Label("Select Zone", new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @*@Html.DropDownList("ZoneGroupCode", (IEnumerable<SelectListItem>)ViewBag.PriorityID, new { @class = "form-control" })*@
+                                <select id="SelectZone" name="Zone" class="w300px">
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <!--Ends Here-->
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="Create User" />@Html.ActionLink("Cancel", "ViewUser", "Amount", new { @class = "btn btn-primary w100px" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }

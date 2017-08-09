@@ -1,0 +1,486 @@
+﻿@model BCS.Models.SearchReportsBillingStatementModels
+@using Microsoft.AspNet.Identity;
+@using BCS.Models;
+
+@{
+    ViewBag.Title = "ViewBillingStatement";
+}
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+       
+   
+        $('#entrpType').on('change', function () {
+            //alert($('#entrpType').val);
+            var samp = $('#entrpType').val();
+            //var adm = $('#AdminFee').val();
+
+          
+            
+            if (samp == 'All') {
+                $('#AllCompany').attr('checked', true);          
+                $('#txtCompany').attr('disabled', true);
+            } else {
+                $('#AllCompany').attr('checked', false);
+                $('#txtCompany').attr('disabled', false);
+            }
+         
+        })
+
+
+
+        $("#show1").hide();
+        $("#show2").hide();
+
+
+        $("input[name='generatedType']").click(function () {
+
+            if (this.value == 'AdminFee')
+            {
+                document.getElementById('AllCompanyText').innerHTML = '<div class="form-control bgColor-lb fontBld">' + 'All Developers' + '</div>';
+                document.getElementById('CompanyText').innerHTML = '<div class="form-control bgColor-lb fontBld">' + 'Developer' + '</div>';
+                
+                $('#entrpType').empty();
+                $('#entrpType').append('<option> Developer Enterprise</option>');
+            }
+            else
+            {
+                document.getElementById('AllCompanyText').innerHTML = '<div class="form-control bgColor-lb fontBld">' + 'All Companies' + '</div>';
+                document.getElementById('CompanyText').innerHTML = '<div class="form-control bgColor-lb fontBld">' + 'Company' + '</div>';
+                //$('#entrpType').load();
+                getDevelopers();
+
+            }
+
+
+        })
+
+    });
+
+    function getDevelopers() {
+        $.ajax({
+            url: '/ReportsBillingStatement/GetDevelopers',
+            type: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (a) {
+                $('#entrpType').empty();
+                $('#entrpType').append("<option>Select Enterprise</option>");
+                $('#entrpType').append("<option>All</option>");
+
+                for (i = 0; i < a.length; i++) {
+                    $('#entrpType').append('<option>' + a[i].EnterpriseType + '</option>');
+                }
+            }            
+        })
+    }
+    
+
+    
+    
+        //function adfee() {
+        //    //var radval = $('#AdminFee').val();
+        //    //var selectval = $('#entrpType').val();
+
+        //    //if (radval == 'AdminFee' && selectval == 'All') {
+        //    //    alert();
+        //    //    $('#AllCompany').attr('checked', false);
+        //    //    $('#txtCompany').attr('disabled', false);
+        //    //}
+        //}
+
+
+
+        function changeinputs(x){
+            if (x.value != 'All') {
+                $("#show2").hide();
+                $("#show1").show();
+            } else {
+       
+                $("#show2").show();
+                $("#show1").hide();
+            }
+        }
+
+        function ToJavaScriptDate(value) {
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            return (dt.getMonth() + 1) + "/" + dt.getDate() + "/" + dt.getFullYear();
+        }
+        //-------------START Function for Billing Statement
+        function updateZone(v) {
+            var a = $('#zoneGroupCode').val();
+            $.ajax({
+                url: '/ReportsBillingStatement/returnZone',
+                type: 'POST',
+                data: { 'a': a },
+                dataType: 'json',
+                success: function (billingStatementViewModel) {
+
+                    var abc = billingStatementViewModel['zone'];
+                
+                    $('#zoneName').empty();
+                    $('#zoneName').append("<option value=''>Select Zone</option>");
+                    $('#zoneName').append("<option value='All'>All</option>");
+                    $.each(abc, function (a, b) {
+                        $('#zoneName').append($("<option></option>").val(b.ZoneCode).html(b.ZoneName));
+                    })
+
+                    var abcd = billingStatementViewModel['billingPeriod'];
+                    $('#billingPeriod').empty();
+                    $('#billingPeriod').append("<option value=''>Select BillingPeriod</option>");
+                    $.each(abcd, function (a, b) {
+                        $('#billingPeriod').append($("<option></option>").val(b.BillingPeriodId).html(ToJavaScriptDate(b.DateFrom) + "-" + ToJavaScriptDate(b.DateTo)));
+                    })
+                },
+                error: function () {
+                    //alert("ERROR");
+                }
+            });
+        }
+
+
+        function updateCompany(v) {
+            var zonename = $('#zoneName').val();
+            var zonegroupcode = $('#zoneGroupCode').val();
+            var enttype = $('#entrpType').val();
+            var comp = $('#txtCompany').val();
+        
+            $('#txtlist').empty();
+            $.ajax({
+                url: '/ReportsBillingStatement/returnCompany',
+                type: 'POST',
+                data: { 'zonename': zonename, 'zonegroupcode': zonegroupcode, 'enttype': enttype, 'comp': comp },
+                dataType: 'json',
+                success: function (companysearch) {
+
+                    var abc = companysearch['CompanyList'];
+                    $('#txtlist').empty();
+                    $('#txtlist').append("<option value=''>Select Company</option>");
+
+                    //$.each(abc, function (a, b) {
+                    //    $('#txtlist').append($("<option></option>").val(b.CompanyCode).html(b.CompanyName));
+
+                    //})
+                    for (i = 0; i < abc.length; i++) {
+                        $('#txtlist').append('<option value="' + abc[i].CompanyCode + ' | ' + abc[i].CompanyName + '"></option>');
+
+                    }
+
+
+                },
+                error: function () {
+                    //alert("ERROR");
+                }
+            });
+        
+        }
+        //------------END Function for Billing Statement
+
+        /*Company List JSON*/
+        function getcompany() {
+
+            var comp = $('#txtCompany2').val();
+            var type = $('input[name="generatedType"]:checked').val();
+      
+            $('#txtlist').empty();
+            $.ajax({
+                url: '/ReportsBillingStatement/getcompany',
+                type: 'POST',
+                data: { 'comp': comp, 'type': type },
+                dataType: 'json',
+                success: function (a) {
+                    if (type == "AdminFee")
+                    {
+                        for (i = 0; i < a.length; i++) {
+                            $('#txtlist').append('<option value="' + a[i].Dev_Comp_Code + ' | ' + a[i].Developer + '"> ' + a[i].Ecozone + ' </option>');
+                            
+                        }
+                    }
+                    else
+                    {
+                        for (i = 0; i < a.length; i++) {
+                            $('#txtlist').append('<option value="' + a[i].CompanyID + ' | ' + a[i].CompanyName + ' ~ ' + a[i].ZoneName + '"></option>');
+
+                        }
+                    }
+                },
+                error: function (err) {
+                    // alert(err.responseText);
+                }
+            });
+        
+       
+        }
+</script>
+@using (@Html.BeginForm("ViewBillingStatement", "ReportsBillingStatement", FormMethod.Post, new { @id = "form1", @enctype = "multipart/form-data" }))
+{
+    <center>
+        <div class="modal-content w900px">
+            <div class="modal-header text-left">
+                @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+                <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span> Billing Statement</h4>
+            </div>
+
+            <div class="modal-body bgColor-lv pad10">
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    ApplicationDbContext context = new ApplicationDbContext();
+                    BCS_Context db = new BCS_Context();
+
+                    var currentUserId = User.Identity.GetUserId();
+                    var currentUserZoneGroup = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+                    var zoneGroupCode = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+                    var zonegroupid = db.ZoneGroup.Single(m => m.ZoneGroupCode == zoneGroupCode).ZoneGroupId;
+                    var ZoneName = db.ZoneGroup.Single(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupName;
+                    ViewBag.IsGenerated = "YES";
+
+                    if (ZoneName == "Head Office")
+                    {
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Zone Group</div></div>
+                            <div class="col-sm-9 pad5">
+                                <select id="zoneGroupCode" name="zoneGroupCode" class="form-control  w100per" title="Select Zone" onchange="updateZone(this)" required>
+                                    <option value="">-- Select ZoneGroup --</option>
+
+                                    @foreach (var item in Model.ZoneGroupList)
+                                    {
+                                        <option value="@item.ZoneGroupCode">@item.ZoneGroupName</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <input name="zoneGroupCode" value="@context.Users.FirstOrDefault(m => m.Id == currentUserId).ZoneGroup" hidden />
+                    }
+
+
+                <!--ZONE-->
+                    if (ZoneName != "Head Office")
+                    {
+
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Zone</div></div>
+                            <div class="col-sm-9 pad5">
+
+                                <select name="zoneName" id="zoneName" class="form-control  w100per" title="Select Zone" onchange="changeinputs(this) " required>
+                                    <option value="">-- Select Zone --</option>
+                                    <option value='All'>All</option>
+                                    @foreach (var item in Model.ZoneList.Where(m => m.ZoneGroup == zonegroupid.ToString()))
+                                    {
+                                        <option value="@item.ZoneCode">@item.ZoneName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="container w100per pad0  bgColor-White semi-square br1db"> 
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Zone</div></div>
+                            <div class="col-sm-9 pad5">
+                                <select name="zoneName" id="zoneName" class="form-control  w100per" title="Select Zone" onchange="changeinputs(this) " required></select>
+                            </div>
+                        </div>
+                    }
+
+
+                <!--Billing Period-->
+                    if (ZoneName != "Head Office")
+                    {
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Billing Period</div></div>
+                            <div class="col-sm-9 pad5">
+                                <select name="billingPeriod" id="billingPeriod" class="form-control  w100per" title="Select Zone" required>
+                                    <option value="">-- Select Billing Period -- </option>
+                                    @foreach (var item in Model.BillingPeriodList.OrderByDescending(m => m.BillingPeriodId).Where(m => m.groupCode == zoneGroupCode && m.Generated == ViewBag.IsGenerated))
+                                    {
+                                        <option value="@item.BillingPeriodId">@item.DateFrom.ToString("MM-dd-yyyy") - @item.DateTo.ToString("MM-dd-yyyy")</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Billing Period</div></div>
+                            <div class="col-sm-9 pad5">
+                                <select name="billingPeriod" id="billingPeriod" class="form-control  w100per" title="Select Zone" required></select>
+                            </div>
+                        </div>
+                    }
+
+                }
+                <!--RADIO BUTTOn-->
+
+                <div class="container w100per pad0">
+                    <div class="col-sm-4 pad0">
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Billings</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input id="Billing" type="radio" name="generatedType" class="form-control" value="AllBillingType" required>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 padlr5">
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Passed on Billing</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input id="Billing" type="radio" name="generatedType" class="form-control " value="PassedOnBilling" required>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <div class="col-sm-4 padlr5">
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Admin Fee</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input id="Billing" type="radio" name="generatedType" class="form-control " value="AdminFee" required>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="container w100per pad0  bgColor-White semi-square br1db">
+                        <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Enterprise Type</div></div>
+                        <div class="col-sm-9 pad5">
+                            <select name="entrpType" id="entrpType" class="form-control  w100per" title="Enterprise Type" onchange="updateCompany(this)" required>
+                                <option value="" disabled selected>Select Enterprise</option>
+                                <option value="All">All</option>
+                                @foreach (var item in Model.EnterpriseTypeList)
+                                {
+                                    <option value="@item.EnterpriseType">@item.EnterpriseType</option>
+                                }
+                            </select>
+
+                        </div>
+                    </div>
+                    
+                    <div id="allcompselect" class="col-sm-4 padlr5">
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5" id="AllCompanyText" name="AllCompanyText"><div class="form-control bgColor-lb fontBld">All Companies</div></div>
+                            <div class="col-sm-2 pad5">
+                                <input type="checkbox" id="AllCompany" name="filteredby" class="form-control" value="AllCompany" onchange="">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="compsearch" class="col-sm-8 bgColor-White semi-square br1db padlr5">
+                        <div class="col-sm-3 pad5" id="CompanyText"><div class="form-control bgColor-lb fontBld">Company</div></div>
+                        <div class="col-sm-9 pad5">
+                    
+                            <div id="show1">
+                                <input type="text" onkeyup="updateCompany()" id="txtCompany" name="filteredby" onclick="this.select()" list="txtlist" class="form-control" placeholder="Search Company" />
+                                <datalist id="txtlist">
+                                    <option></option>
+                                </datalist>
+                            </div>
+                        
+
+                            @*<input name="txtCompany" id="txtCompany" type="text" class="form-control" />*@
+                            <div id="show2">
+                                <input type="text" onkeyup="getcompany()" id="txtCompany2" name="filteredby" onclick="this.select()" list="txtlist" class="form-control"  placeholder="Search Company" />
+                                <datalist id="txtlist">
+                                    <option></option>
+                                </datalist>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div  class="modal-footer pad10">
+                <div class="col-sm-8"></div>
+                <div class="col-sm-2"><input type="submit" id="viewreport" class="btn btn-primary" onclick="enableMe()"name="viewreport" formtarget="_blank" value="View Report" alt="View Report"></div>
+                <div class="col-sm-2"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="clearFields()">Clear</button></div>
+            </div>
+
+           
+        </div>
+
+    </center>
+
+}
+
+@*<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('#AllCompany').change(function () {
+                $('#Company').attr('disabled', this.checked);
+            });
+        });
+
+        function Clear() {
+
+            document.getElementById("form1").reset();
+        }
+
+
+
+    </script>*@
+<script>
+
+        //$(document).ready(function () {
+        //    $('#AllCompany').change(function () {
+        //        $('#Company').attr('disabled', this.checked);
+        //    });
+        //});
+
+        function enableMe() {
+            document.getElementById("viewreport").disabled = false;
+        }
+
+        //function enableMeBtn() {
+        //    $('#viewreport').prop('disabled', false);
+        //}
+
+        function clearFields() {
+            alert('Clearing Fields . . . ');
+
+            var enterprise = document.getElementById("entrpType");
+            var filteredby = document.getElementById("txtCompany");
+
+            $('#txtCompany').val('');
+            $('#txtCompany2').val('');
+            $('#entrpType').val('');
+            $('#txtlist').val('');
+            $('#viewreport').attr
+
+            $("#AllCompany").removeAttr("checked");
+
+            $(':input[id="viewreport"]').prop('disabled', false);
+            document.getElementById("txtCompany").val('');
+            document.getElementById("AllCompany").checked = false;
+            document.getElementById("txtCompany").disabled = false;
+            document.getElementById("viewreport").disabled = false;
+            document.getElementById("viewreportadminfee").disabled = false;
+
+            enterprise.value = '';
+            allCompany.value = '';
+            per.value = '';
+            filteredby.value = '';
+        }
+
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}
+

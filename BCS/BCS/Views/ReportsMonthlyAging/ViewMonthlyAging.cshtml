@@ -1,0 +1,153 @@
+﻿@using Microsoft.AspNet.Identity;
+@using BCS.Models;
+@{
+    ViewBag.Title = "ViewMonthlyAging";
+}
+@using (Html.BeginForm("MonthlyAging", "ReportsMonthlyAging"))
+{
+    @Html.AntiForgeryToken()
+    ApplicationDbContext context1 = new ApplicationDbContext();
+    BCS_Context db1 = new BCS_Context();
+    var currentUserId1 = User.Identity.GetUserId();
+    var username = context1.Users.Where(m => m.Id == currentUserId1).FirstOrDefault().UserName;
+    var hasAccess = db1.RoleAssignmentMatrix.Where(m => m.UserName == username).FirstOrDefault().Aging;
+
+    if (hasAccess != null && hasAccess == true)
+    {
+   
+    <center>
+        <div class="modal-content w700px">
+            <div class="modal-header text-left">
+                @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+                <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span> AGING OF ACCOUNTS RECEIVABLE - Show Monthly Aging</h4>
+            </div>
+
+            <div class="modal-body bgColor-lv pad10">
+                <!--MODE-->
+
+                <div class="container ">
+                    <div class="col-sm-12 pad0">
+                        <div align="center"><h4>Billing</h4></div>
+                        <div class="container w100per pad0 bgColor-White semi-square br1db">
+                            
+                            <div class="col-sm-6 pad5">
+                                <select id="billingMonth" name="billingMonth" class="form-control  w100per ">
+                                    <option value="">-- Select Month --</option>
+                                    <option value="1">JANUARY</option>
+                                    <option value="2">FEBRUARY</option>
+                                    <option value="3">MARCH</option>
+                                    <option value="4">APRIL</option>
+                                    <option value="5">MAY</option>
+                                    <option value="6">JUNE</option>
+                                    <option value="7">JULY</option>
+                                    <option value="8">AUGUST</option>
+                                    <option value="9">SEPTEMBER</option>
+                                    <option value="10">OCTOBER</option>
+                                    <option value="11">NOVEMBER</option>
+                                    <option value="12">DECEMBER</option>
+                                </select>
+                            </div>
+                            @*<div class="col-sm-1"></div>*@
+                            <div class="col-sm-6 pad5">
+                                <select id="billingYear" name="billingYear" class="form-control  w100per ">
+                                    <option value="">-- Select Year --</option>
+                                    @foreach (var items in Model.BCSAgingOutput)
+                                    {
+                                        <option value="@items">@items</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="container">
+
+                    <div class="col-sm-5 pad0">
+                        <div align="center"><h4>Mode</h4></div>
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Full/Detailed</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" id="Mode" name="Mode" value="AgingOfAccountsReceivable" class="form-control" checked="checked">
+
+                            </div>
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Summary</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" id="Mode" name="Mode" value="MonthlyAgingSummary" class="form-control">
+
+                            </div>
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">By Month</div></div>
+
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" id="Mode" name="Mode" value="MonthlyAgingByMonth" class="form-control">
+
+                            </div>
+
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">With prior years</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" id="Mode" name="Mode" value="MonthlyAgingPriorWithYears" class="form-control">
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-5 pad0">
+                        <div align="center"><h4>Scope</h4></div>
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">All Companies</div></div>
+
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" id="Scope" name="Scope" value="All" class="form-control" checked="checked">
+
+                            </div>
+
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Active Companies</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" id="Scope" name="Scope" value="Active" class="form-control">
+
+                            </div>
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Inactive Companies</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" id="Scope" name="Scope" value="Inactive" class="form-control">
+
+                            </div>
+
+
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+
+
+                <!--SCOPE-->
+
+            </div>
+
+            <div class="modal-footer pad10">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><input type="submit" class="btn btn-primary w150px" value="OK" formtarget="_blank" target="_blank" /></div>
+                <div class="col-sm-4"><button type="reset" class="btn btn-primary w150px">CLEAR</button></div>
+
+            </div>
+
+        </div>
+    </center>
+    }
+}

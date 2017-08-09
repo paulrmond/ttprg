@@ -1,0 +1,242 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 6/6/16
+// Modified By:
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@{
+    ViewBag.Title = "Maintenance - Period Table";
+}
+@model BCS.Models.SearchHolidayTableViewModel
+@*<script>
+    function showModal
+</script>*@
+
+<script>
+    function EditHoliday(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+        }
+    }
+</script>
+
+<div ID="contentDataEntryRental" class="">
+    <!-- Page Title -->
+    <CENTER><H2 CLASS="fcWhite">HOLIDAY TABLE MAINTENANCE</H2></CENTER>
+
+    <!-- Enterprise Detail -->
+    <div class="container bgColor-White pad10 w400px">
+        <!-- Rental Datails Table -->
+        <div class="container br1 w100per br2 pad0">
+            <div class="container w100per bgColor-blk fcWhite fontBld br1-bot-Blk pad0 text-center pad" align="center">LIST OF HOLIDAY</div>
+            <div class="container w100per pad0">
+                <div class="w100per pad5">
+                    <div class="container w100per text-center fontBld fs11">
+                        <div class="col-sm-4 pad0">Date</div>
+                        <div class="col-sm-4 pad0">Description</div>
+                        <div class="col-sm-2 pad0"></div>
+                        <div class="col-sm-2 pad0"></div>
+                    </div>
+                    <div class="w100per ovrFlw-YAuto">
+                        <div class="container w100per text-center fontBld pad0">
+
+@using (Html.BeginForm("ViewHolidayTable", "MaintenanceHolidayTable"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.HolidayList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="HolidayTableId" name="HolidayTableId" />
+    }
+
+    if (Model.HolidayList.Count > 0)
+    {
+        foreach (var item in Model.HolidayList)
+        {
+            <div id="@Html.DisplayFor(modelItem => item.HolidayTableId)">
+                <div class="col-sm-1 br1Grey pad0 cell h25px" hidden="hidden" title="HolidayTableId">@item.HolidayTableId</div>
+                <div class="col-sm-1 br1Grey pad0 cell h25px" title="ID">@item.HolidayTableId</div>
+                <div class="col-sm-3 br1Grey pad0 cell h25px ovrFlwHide" title="Date">@item.HolidayTableDate</div>
+                <div class="col-sm-4 br1Grey pad0 cell h25px" title="Description">@item.HolidayTableDescription</div>
+                <div class="col-sm-2 pad0"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalAddEditHoliday" class="w100per h25px" title="@Html.DisplayFor(modelItem => item.HolidayTableId)" onclick="EditHoliday(this.title)" id="@Html.DisplayFor(modelItem => item.HolidayTableId)"></div>
+                <div class="col-sm-2 pad0"><input type="submit" VALUE="DELETE" class="w100per h25px" title="@Html.DisplayFor(modelItem => item.HolidayTableId)" onclick="EditHoliday(this.title)" name ="@Html.DisplayFor(modelItem => item.HolidayTableId)" id="@Html.DisplayFor(modelItem => item.HolidayTableId)"></div>
+            </div>
+        }
+
+    }
+}
+            </div>
+                    </div>
+                    <div class="container w100per text-center">
+                        <div class="col-sm-10 pad0"></div>
+                        <div class="col-sm-2 pad5"><input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalEditHoliday" class="w100per btn btn-primary h25px pad0" id="inputWarning"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal edit Holiday-->
+@using (Html.BeginForm("UpdateHoliday", "MaintenanceHolidayTable"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.HolidayList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="ID" name="ID" />
+    }
+<div class="modal fade" id="modalAddEditHoliday" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal edit Holiday Content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalAddEditHoliday" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="addHolidayDiv"><span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Edit Holiday</h4>
+                <h4 class="modal-title" id="EditHolidayDiv" hidden="hidden"><span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Edit Holiday</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+
+                <div class="pad5 bgColor-red fontBld fcWhite">
+                    <div class="container"></div>
+                </div>
+
+                <div class="pad5 bgColor-White fontBld">
+                    <div class="container">
+                        <div class="col-sm-2">DATE:</div>
+                        <div class="col-sm-3 pad0"><input type="text" class="w100per" id="Date" name="Date" /></div>
+
+                        <div></div>
+                        <div class="col-sm-3">Description:</div>
+                        <div class="col-sm-4 pad0"><input type="text" class="w100per" id="Description" name="Description" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">CANCEL</button></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+}
+<!-- End Modal Edit Holiday -->
+
+
+<!-- Modal add Holiday-->
+@using (Html.BeginForm("AddHoliday", "MaintenanceHolidayTable"))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="modalEditHoliday" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal add Holiday Content-->
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalEditHoliday" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="newaddHolidayDiv"><span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Holiday</h4>
+                    <h4 class="modal-title" id="newEditHolidayDiv" hidden="hidden"><span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Holiday</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="pad5 bgColor-red fontBld fcWhite">
+                        <div class="container">Select Date</div>
+                    </div>
+
+                    <div class="pad5 bgColor-White fontBld">
+                        <div class="container">
+                            <div class="col-sm-2">Month:</div>
+                            <div class="col-sm-2 pad0">
+                                <select class="w100per breadcrumb clr br1Grey h20px" id="Month" name="Month">
+                                    <option class="br1-bot pad5" selected="selected" value="01">January</option>
+                                    <option class="br1-bot pad5" value="02">February</option>
+                                    <option class="br1-bot pad5" value="03">March</option>
+                                    <option class="br1-bot pad5" value="04">April</option>
+                                    <option class="br1-bot pad5" value="05">May</option>
+                                    <option class="br1-bot pad5" value="06">June</option>
+                                    <option class="br1-bot pad5" value="07">July</option>
+                                    <option class="br1-bot pad5" value="08">August</option>
+                                    <option class="br1-bot pad5" value="09">September</option>
+                                    <option class="br1-bot pad5" value="10">October</option>
+                                    <option class="br1-bot pad5" value="11">November</option>
+                                    <option class="br1-bot pad5" value="12">December</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">Day:</div>
+                            <div class="col-sm-2 pad0">
+                                <select class="w100per breadcrumb clr br1Grey h20px" id="Day" name="Day">
+                                    <option class="br1-bot pad5" selected="selected" value="1">1</option>
+                                    <option class="br1-bot pad5" value="2">2</option>
+                                    <option class="br1-bot pad5" value="3">3</option>
+                                    <option class="br1-bot pad5" value="4">4</option>
+                                    <option class="br1-bot pad5" value="5">5</option>
+                                    <option class="br1-bot pad5" value="6">6</option>
+                                    <option class="br1-bot pad5" value="7">7</option>
+                                    <option class="br1-bot pad5" value="8">8</option>
+                                    <option class="br1-bot pad5" value="9">9</option>
+                                    <option class="br1-bot pad5" value="10">10</option>
+                                    <option class="br1-bot pad5" value="11">11</option>
+                                    <option class="br1-bot pad5" value="12">12</option>
+                                    <option class="br1-bot pad5" value="13">13</option>
+                                    <option class="br1-bot pad5" value="14">14</option>
+                                    <option class="br1-bot pad5" value="15">15</option>
+                                    <option class="br1-bot pad5" value="16">16</option>
+                                    <option class="br1-bot pad5" value="17">17</option>
+                                    <option class="br1-bot pad5" value="18">18</option>
+                                    <option class="br1-bot pad5" value="19">19</option>
+                                    <option class="br1-bot pad5" value="20">20</option>
+                                    <option class="br1-bot pad5" value="21">21</option>
+                                    <option class="br1-bot pad5" value="22">22</option>
+                                    <option class="br1-bot pad5" value="23">23</option>
+                                    <option class="br1-bot pad5" value="24">24</option>
+                                    <option class="br1-bot pad5" value="25">25</option>
+                                    <option class="br1-bot pad5" value="26">26</option>
+                                    <option class="br1-bot pad5" value="27">27</option>
+                                    <option class="br1-bot pad5" value="28">28</option>
+                                    <option class="br1-bot pad5" value="29">29</option>
+                                    <option class="br1-bot pad5" value="30">30</option>
+                                    <option class="br1-bot pad5" value="31">31</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">Year:</div>
+                            <div class="col-sm-2 pad0">
+                                <select class="w100per breadcrumb clr br1Grey h20px" id="Year" name="Year">
+                                    <option class="br1-bot pad5" selected="selected" value="2016">2016</option>
+                                    <option class="br1-bot pad5" value="2017">2017</option>
+                                    <option class="br1-bot pad5" value="2018">2018</option>
+                                    <option class="br1-bot pad5" value="2019">2019</option>
+                                    <option class="br1-bot pad5" value="2020">2020</option>
+                                </select>
+                            </div>
+                            &nbsp;
+                            <div></div>
+                            <div class="col-sm-3 h25px">Description:</div>
+                            <div class="col-sm-9 pad0">
+                                <input type="text" class="w100per" id="Description" name="Description" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">CANCEL</button></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Add Holiday -->

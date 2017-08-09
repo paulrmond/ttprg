@@ -1,0 +1,32 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+}
+
+@*<h1 class="text-danger">Error.</h1>
+    <h2 class="text-danger">An error occurred while processing your request.</h2>
+
+    <hgroup class="title">
+        <h1 class="error">Error.</h1>
+        <h2 class="error">An error occurred while processing your request.</h2>
+    </hgroup>
+
+    <p>
+        Controller: @Model.ControllerName
+    </p>
+    <p>
+        Action: @Model.ActionName
+    </p>
+    <p>
+        Exception: @Model.Exception
+    </p>*@
+
+<div class="modal-dialog w900px">
+    <div class="modal-content pad0">
+        <div class="container bgColor-errgrey semi-square pad0">
+            <div class="col-sm-6 pad0 "><img src="~/images/error.gif" class="semi-square w90per" /></div>
+            <div class="col-sm-6 fs1em fcWhite pad20 fontBld"><span class="fcBl fs5vw shadow-White hidden">OOPS!</span><p>The server encountered temporary error and could not complete your request.<br /> <br /> <span class="fs1hem fcBlack shadow-Blue">Please try again later.</span> @*<br /><br /> If frequent incident happens, please contact your MIS for further assistance.*@</p></div>
+        </div>
+    </div>
+</div>

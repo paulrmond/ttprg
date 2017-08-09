@@ -1,0 +1,179 @@
+﻿@model IEnumerable<BCS.Models.BillingRate>
+
+<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified: 6/13/16
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@{
+    ViewBag.Title = "Maintenance Billing and Collection Rate";
+}
+
+<script>
+
+    function EditRate(item, isEdit) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].getAttribute('divID');
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            //var elementToPopulate =
+            if (childId == 'editRate') {
+                document.getElementById('FakeeditRate').value = childValue;
+                document.getElementById(childId).value = childValue;
+                formatAmount(childId);
+            }
+            //document.getElementById(childId).value = childValue;
+            //alert(elementToPopulate.id);
+            //elementToPopulate.value = childValue;
+            //alert(elementToPopulate.value);
+        }
+    }
+
+    function PassValueOfId(transactionType,rateId) {
+        var id = document.getElementById('FromBillRateIdTo').value;
+        var subcat = document.getElementById('FromSubCategory').value;
+        var cat = document.getElementById('FromCategory').value;
+        document.getElementById('BillRateIdTo').value = rateId;
+        document.getElementById('SubCategory').value = subcat;
+        document.getElementById('Category').value = cat;
+        document.getElementById('TransactionType').value = transactionType;
+
+        if(transactionType == 'Delete'){
+            $('#submitRate').html("Delete");
+            $('#ConfirmTransaction').html("Delete this item?");
+        }else{
+            $('#submitRate').html('Save');
+            $('#ConfirmTransaction').html("");
+        }
+    }
+
+    function GetSubCategory() {
+        var a = document.getElementById('SubCategory').value;
+        return a;
+    }
+
+    function addeditrate(editItem, rateTransaction) {
+        document.getElementById('AddEditRate').innerHTML = "";
+        document.getElementById('EditRateItem').innerHTML = "";
+        document.getElementById('AddEditRate').innerHTML = rateTransaction;
+        document.getElementById('EditRateItem').innerHTML = editItem;
+
+
+
+    }
+
+    function clearTxt() {
+        $("#editRate").val("");
+        $("#FakeeditRate").val("");
+    }
+
+</script>
+
+<div ID="contentDataEntryRental" class="">
+    <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <!-- Enterprise Detail -->
+    <div class="container modal-content w700px bgColor-White pad0">
+        <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">BILLING AND COLLECTION RATES</span></div>
+        <div class="modal-body">
+            <div class="container w100per br2 pad0">
+                <div class="container br1-bot-Blk bgColor-blk fcWhite pad0 text-center fontBld">
+                    <div class="col-sm-7 txtCenter">SUBCATEGORY</div>
+                    <div class="col-sm-3 txtCenter">RATES</div>
+                </div>
+
+                @foreach (var item in Model)
+                {
+                    var newRate = string.Format("{0:n}", item.Rate);
+                    
+                    <div id="@item.BillingRateId">
+
+                        <div class="col-sm-7 br1Grey h35px txtCenter">@item.SubCategory</div>
+                        <div divID="editRate" class="col-sm-3 br1Grey h35px txtCenter cell">@newRate</div>
+
+                        @if (ViewBag.IsValidRole == true)
+                        {
+                            <div class="col-sm-2 pad0">
+                                <input type="button" class="w100per btn btn-default showElement hideElement" title="Edit sub category" value="MODIFY" onclick="PassValueOfId('Edit',@item.BillingRateId), EditRate(@item.BillingRateId,'True'), addeditrate('@item.SubCategory','EDIT RATE')" showElement="editSubCat" hideElement="addSubCat" data-toggle="modal" data-target="#modalAddEditSubCategory">
+                                <input type="button" class="w100per btn btn-default showElement hideElement" title="Edit sub category" value="DELETE" onclick="PassValueOfId('Delete',@item.BillingRateId), EditRate(@item.BillingRateId,'True'), addeditrate('@item.SubCategory','DELETE RATE')" showElement="editSubCat" hideElement="addSubCat" data-toggle="modal" data-target="#modalAddEditSubCategory">
+                            </div>
+                            @*<div class="col-sm-1 padlr5"><input type="button" class="w100per h25px clr btn br1Grey" title="Remove sub category rate" value="REMOVE"></div>*@
+                        }
+                        <input type="text" hidden="hidden" id="FromBillRateIdTo" value="@item.BillingRateId" />
+                        <input type="text" hidden="hidden" id="FromSubCategory" value="@item.SubCategory" />
+                        <input type="text" hidden="hidden" id="FromCategory" value="@item.Category" />
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer mar0 bgColor-lb">
+            <div class="row">
+                @*@Html.ActionLink("View Report", "BillingRatesReport", "MaintenanceBillingAndCollectionRates", new { reportType = "BillingRatesAlphaList" }, new { @class = "btn btn-primary btn-sm", Type = "button", target = "_blank" })*@
+
+                @if (ViewBag.IsValidRole == true)
+                {
+                    <input type="button" class="btn btn-primary showElement hideElement w150px" value="ADD" onclick="PassValueOfId('Add',''), addeditrate('','ADD RATE')" title="Add Sub Category rate" showElement="addSubCat" hideElement="editSubCat" data-toggle="modal" data-target="#modalAddEditSubCategory">
+                }
+                @Html.ActionLink("BACK", "FillSubCategory", "MaintenanceBillingAndCollectionRates", new { Category = @ViewBag.Category }, new { @class = "btn btn-primary w150px showElement hideElement" })
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add/Edit Sub Category-->
+<div class="modal fade" id="modalAddEditSubCategory" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal Add/Edit Rate Content-->
+        @using (Html.BeginForm("EditRates", "MaintenanceBillingAndCollectionRates"))
+        {
+            @Html.AntiForgeryToken()
+            <input type="text" hidden="hidden" id="BillRateIdTo" name="BillRateIdTo" />
+            <input type="text" hidden="hidden" id="SubCategory" name="SubCategory" />
+            <input type="text" hidden="hidden" id="Category" name="Category" />
+            <input type="text" hidden="hidden" id="TransactionType" name="TransactionType" />
+            <input type="text" hidden="hidden" id="NGAS" name="NGAS" value="@ViewBag.NGASCode" />
+            <div class="container modal-content pad0">
+                <div class="modal-header fs18 fontBld bgColor-lb">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddEditSubCategory" aria-hidden="true">&times;</button>
+
+                    <span class="glyphicon glyphicon-list icon clr"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> <span class="addSubCat fs20 fontBld" id="AddEditRate"><span id="EditRateItem"></span></span>
+                    <span class="glyphicon glyphicon-list icon clr"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> <span class="addSubCat fs20 fontBld" id="ConfirmTransaction"><span id="ConfirmTransaction"></span></span>
+                </div>
+                <div class="modal-body">
+                    <!-- Start Category List-->
+                    <div class="row pad5">
+                        <div class="col-sm-2"><label for="Rate">Rate</label></div>
+                        <div class="col-sm-10"><input type="text" id="FakeeditRate" onkeyup="formatNumber(event.keyCode, this.id, 'editRate')" data-val="true" data-val-required="Rate is required" class="form-control h25px w100per" name="FakeRate" placeholder="Rate" /></div>
+                        <div class="col-sm-10"><input type="text" id="editRate" hidden="hidden" style="visibility:hidden" onkeyup="formatNumber(event.keyCode, this.id)" data-val="true" data-val-required="Rate is required" class="form-control h25px w100per" name="Rate" placeholder="Rate" /></div>
+
+                        @*<div class="col-sm-1 pad0"><button type="button" class="h25px clr bgColor-White glyphicon glyphicon-pencil br0 pad0">&nbsp;</button><button type="button" class="h25px clr bgColor-White glyphicon glyphicon-trash br0 pad0"></button></div>*@
+                        <span class="field-validation-valid" data-valmsg-for="Rate" data-valmsg-replace="true"></span>
+                    </div>
+                    <!-- End CategoryList-->
+                </div>
+                <div class="modal-footer bgColor-lb mar0">
+                    <div class="container">
+
+                        <div class="col-sm-9"><button type="submit" id="submitRate" class="btn btn-primary" data-target="#modalAddCategory">Save</button></div>
+                        <div class="col-sm-3"><button type="button" class="btn btn-primary w100px" onclick="clearTxt()" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- End Modal Add/Edit  Sub Category-->
+
+
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

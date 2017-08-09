@@ -1,0 +1,613 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consultant: DCI
+-->
+
+@{
+    ViewBag.Title = "ViewAdvance";
+}
+@model BCS.Models.SearchSubsidiaryLedgerViewModel
+
+<script>
+    function EditSubsidiary(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        //var BillRef = document.getElementById('BillingReference').innerHTML;
+        //$('#EditBillingType').append($("<option></option>").val(BillRef).html(BillRef));
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+            
+           
+        }
+       
+    }
+
+    //function Clear(val) {
+    //    document.getElementById("AddDebit").value = "";
+    //    document.getElementById("AddCredit").value = "";
+    //}
+
+    function getSubData() {
+        var CompId = $('#SubsiCompName').val();
+        var BillType = $('#GetBillingType').val();
+        $.ajax({
+            url: '/MaintenanceSubsidiaryLedger/SubsiData',
+            type: 'POST',
+            data: { 'BillType': BillType, 'CompId': CompId },
+            dataType: 'json',
+            success: function (a) {
+                $('#AddBillingType').empty();
+                $.each(a, function (key, value) {
+                    $('#AddBillingType').append($("<option></option>").val(value.TransactionNo).html(value.TransactionDescription));
+                    //$('#AddBillingType').append($("<option></option>").val(value.TransactionNo).html(value.TransactionNo));
+                });
+            },
+            error: function (err) {
+                // alert(err.responseText);
+            }
+        });
+    }
+
+    function EditgetSubData() {
+        var CompId = $('#SubsiCompName').val();
+        var BillType = $('#BillingType').val();
+        $.ajax({
+            url: '/MaintenanceSubsidiaryLedger/EditSubsiData',
+            type: 'POST',
+            data: { 'BillType': BillType, 'CompId': CompId },
+            dataType: 'json',
+            success: function (a) {
+                $('#EditBillingType').empty();
+                $.each(a, function (key, value) {
+                    
+                    $('#EditBillingType').append($("<option></option>").val(value.TransactionNo).html(value.TransactionDescription));
+                    //$('#EditBillingType').append($("<option></option>").val(value.TransactionNo).html(value.TransactionNo));
+                });
+            },
+            error: function (err) {
+                // alert(err.responseText);
+            }
+        });
+    }
+
+    function ForPOB(val) {
+        if (val.value == "PASSED ON BILLING") {
+            document.getElementById("ContOther").hidden = false;
+        } else {
+            document.getElementById("ContOther").hidden = true;
+        }
+    }
+</script>
+
+<div class="container modal-content bgColor-White pad0">
+    <!-- Page Title -->
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">SUBSIDIARY LEDGER ADJUSTMENT</span></div>
+    <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <!-- Enterprise Detail -->
+    <div class="modal-body bgColor-White pad10 br0">
+
+        <table class="w100per br2 pad0">
+
+            <tr class=" br1-bot-Blk">
+                <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">COMPANY</td>
+                <td id="CompanyName" class="col-sm-9 pad5 h25px">
+                    @if (Model.CompanyList.Count == 1)
+                    {
+                        if (Model.CompanyList[0].CompanyName != null)
+                        {
+                            @Html.DisplayFor(m => m.CompanyList[0].CompanyName)
+
+                        }
+                    }
+                </td>
+                <td class="col-sm-1 fontBld pad2">
+                    <!-- Trigger the modal Search Enterprise with a button -->
+                    <CENTER class="pad0"><button type="button" id="searchEnterpriseButton" class="btn-default bgColor-cgrey btn-sm w100per" data-toggle="modal" data-target="#modalSearchEnterprise"><span class="glyphicon glyphicon-search"></span> Search</button></CENTER>
+                </td>
+            </tr>
+
+            <tr class=" br1-bot-Blk">
+                <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">ADDRESS</td>
+                <td id="CompanyAddress" class="col-sm-10 h25px pad5" colspan="2">
+                    @if (Model.CompanyList.Count == 1)
+                    {
+                        if (Model.CompanyList[0].CompanyName != null)
+                        {
+                            @Html.DisplayFor(m => m.CompanyList[0].Address)
+                        }
+                    }
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">ZONE NAME</td>
+                <td id="CompanyAddress" class="col-sm-10 h25px pad5" colspan="2">
+                    @if (Model.CompanyList.Count == 1)
+                    {
+                        if (Model.CompanyList[0].CompanyName != null)
+                        {
+                            @Model.ZoneList.FirstOrDefault(x => x.ZoneCode == Model.CompanyList[0].ZoneCode).ZoneName
+                        }
+                    }
+                </td>
+            </tr>
+
+        </table>
+        <br />
+        <div class="container br2 pad0">
+            <table class="container w100per pad0" id="companyCnt" isValidPostback="@ViewBag.ValidatePostback" CompanySelected="@ViewBag.CompanySelected">
+                <thead class="container w100per  pad0">
+                    <tr class="container w100per pad0 bgColor-blk fcWhite fontBld text-center">
+                        <td class="col-sm-1">TRAN DATE</td>
+                        <td class="col-sm-1">DUE DATE</td>
+                        <td class="col-sm-1">DEBIT</td>
+                        <td class="col-sm-1 txtRight">CREDIT</td>
+                        <td class="col-sm-2 txtRight">BILL TYPE</td>
+                        <td class="col-sm-2 txtCenter">SUB TYPE</td>
+                        <td class="col-sm-1 txtRight">TRAN TYPE</td>
+                        <td class="col-sm-1 txtRight">OTHER</td>
+                        <td class="col-sm-2 hidden">REMARKS</td>
+                        <td class="col-sm-2"></td>
+                    </tr>
+                </thead>
+            </table>
+            <div class="container ovrFlw-YAuto pad0" style="height:100px;">
+                <table class="container w100per pad0">
+                    <tbody class="container w100per pad0">
+                        @using (Html.BeginForm("DisplaySubsidiaryLedgerList", "MaintenanceSubsidiaryLedger"))
+                        {
+                            @Html.AntiForgeryToken()
+                            if (Model.SubsidiaryLedgerList.Count > 0)
+                            {
+                                <tr type="text" id="CompanyId" class="hidden" hidden="hidden" name="CompanyId"></tr>
+                            }
+                            if (Model.CompanyList.Count == 1)
+                            {
+                                if (Model != null)
+                                {
+                                    foreach (var SubsidiaryLedger in Model.SubsidiaryLedgerList)
+                                    {
+                                        <tr class="container w100per text-center fontBld" id="@SubsidiaryLedger.SubsidiaryLedgerId">
+                                            <td id="CcompId" title="CompId" class="col-sm-2 pad0 br1Grey cell h25px hidden">@SubsidiaryLedger.CompanyId</td>
+                                            <td title="RemoveCompId" class="col-sm-2 pad0 br1Grey cell h25px hidden">@SubsidiaryLedger.CompanyId</td>
+                                            <td title="SubsidiaryId" class="col-sm-2 pad0 br1Grey cell h25px hidden">@SubsidiaryLedger.SubsidiaryLedgerId</td>
+                                            <td title="SubLedgerId" class="col-sm-2 pad0 br1Grey cell h25px hidden">@SubsidiaryLedger.SubsidiaryLedgerId</td>
+                                            <td title="TransactionDate" class="col-sm-1 pad0 br1Grey cell h25px">@SubsidiaryLedger.TransactionDate.ToShortDateString()</td>
+                                            <td title="DueDate" class="col-sm-1 pad0 br1Grey cell h25px">@SubsidiaryLedger.DueDate.ToShortDateString()</td>
+                                            <td title="Debit" class="col-sm-1 pad0 br1Grey cell h25px txtRight">@String.Format("{0:n}", SubsidiaryLedger.DebitAmount)</td>
+                                            <td title="Credit" class="col-sm-1 pad0 br1Grey cell h25px txtRight">@String.Format("{0:n}", SubsidiaryLedger.CreditAmount)</td>
+
+                                            <td title="BillingType" class="col-sm-2 pad0 br1Grey cell h25px">@SubsidiaryLedger.BillingType</td>
+                                            <td title="BillingSubType" class="col-sm-2 pad0 br1Grey cell h25px">@SubsidiaryLedger.BillingSubType</td>
+                                            <td class="col-sm-1 pad0 br1Grey cell h25px">@SubsidiaryLedger.TransactionType</td>
+                                            <td class="col-sm-1 pad0 br1Grey h25px ">@SubsidiaryLedger.Other</td>
+                                            <td title="Remarks" class="col-sm-2 pad0 br1Grey cell h25px hidden">@SubsidiaryLedger.Remarks</td>
+                                            <td title="BillingReference" class="col-sm-2 pad0 br1Grey cell h25px hidden">@SubsidiaryLedger.BillingReference</td>
+                                            <td></td>
+                                            @if (ViewBag.IsValidRole == true)
+                                            {
+                                                if (SubsidiaryLedger.Remarks != null)
+                                                {
+                                                    @*<td class="col-sm-1 pad2 padlr5"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditSubsidiary" class="w100per roundedButton grad3 " title="@Html.DisplayFor(modelItem => SubsidiaryLedger.SubsidiaryLedgerId)" onclick="EditSubsidiary(this.title);alert();" id="@Html.DisplayFor(modelItem => SubsidiaryLedger.SubsidiaryLedgerId)"></td>*@
+                                                    <td class="col-sm-1 pad2"><input type="submit" VALUE="DELETE" data-toggle="modal" data-target="#modalRemove" class="w100per roundedButton grad3 " title="@Html.DisplayFor(modelItem => SubsidiaryLedger.SubsidiaryLedgerId)" onclick="EditSubsidiary(this.title)" id="@Html.DisplayFor(modelItem => SubsidiaryLedger.SubsidiaryLedgerId)"></td>
+                                                }
+                                                else
+                                                {
+                                                    @*<td class="col-sm-1 pad2 padlr5"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditSubsidiary" class="w100per  bgColor-lgrey" disabled="disabled"></td>*@
+                                                    <td class="col-sm-1 pad2"><input type="submit" VALUE="DELETE" data-toggle="modal" data-target="#modalRemove" class="w100per   bgColor-lgrey" disabled="disabled"></td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br />
+        <div class="container">
+            <div class="col-sm-2 pad5 br1Grey h25px text-center fontBld">BILLING TYPE</div>
+            <div class="col-sm-2 pad5 br1Grey h25px text-center fontBld">PREVIOUS BALANCE</div>
+            <div class="col-sm-2 pad5 br1Grey h25px text-center fontBld">DEBIT</div>
+            <div class="col-sm-2 pad5 br1Grey h25px txtCenter fontBld">CREDIT</div>
+            <div class="col-sm-2 pad5 br1Grey h25px txtCenter fontBld">CURRENT BALANCE</div>
+            <div class="col-sm-1 pad5"></div>
+        </div>
+
+        @if (Model.Credit.Count != 0)
+            {
+                for (int x = 0; x <= Model.CategoryList.Count - 1; x++)
+                {
+                <div class="container">
+                    <div class="col-sm-2 pad5 br1Grey h25px text-center">@Model.CategoryList[x]</div>
+                    <div class="col-sm-2 pad5 br1Grey h25px text-center txtRight">@String.Format("{0:n}", Model.PreviousBalance[x])</div>
+                    <div class="col-sm-2 pad5 br1Grey h25px text-center txtRight">@String.Format("{0:n}", Model.Debit[x])</div>
+                    <div class="col-sm-2 pad5 br1Grey h25px text-center txtRight">@String.Format("{0:n}", Model.Credit[x])</div>
+                    <div class="col-sm-2 pad5 br1Grey h25px text-center txtRight">@String.Format("{0:n}", Model.CurrentBalance[x])</div>
+                </div>
+            }
+        }
+        <br />
+        <div class="container w100per text-center">
+            <div class="col-sm-5 pad5"></div>
+            @if (ViewBag.IsValidRole == true)
+            {
+                <div class="col-sm-2 pad5"><input type="button" class="btn btn-primary w100per h25px clr" value="SEARCH" data-toggle="modal" data-target="#modalSearch"></div>
+                <div class="col-sm-2 pad5"><button type="button" class="btn btn-primary w200px" data-toggle="modal" data-target="#modalAddLedger" onclick="Clear()">ADD</button></div>
+            }
+            <div class="col-sm-1 pad5"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+    </div>
+</div>
+
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterprise" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="pad5 bgColor-red fontBld fcWhite">
+                    <div class="container ovrFlwHide">
+                        <div class="col-sm-3 pad0">Company Name</div>
+
+                        @using (Html.BeginForm("ViewSubsidiaryLedger", "MaintenanceSubsidiaryLedger"))
+                        {
+                            @Html.AntiForgeryToken();
+                            <div class="col-sm-7 h25px">@Html.EditorFor(model => model.SearchInput)</div>
+                            <div class="col-sm-2 pad0"> <input type="submit" class="btn bgColor-lv w100px br0 clr" value="Search" /></div>
+                        }
+                        <div class="col-sm-2 pad0">  </div>
+                    </div>
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+
+                    @foreach (var item in Model.CompanyList)
+                    {
+                        using (Html.BeginForm("ViewSubsidiaryLedger", "MaintenanceSubsidiaryLedger"))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div>
+                                <button class="w100per btn-default txtLeft bgColor-lb" id="@item.CompanyID" name="@item.CompanyID" value="@item.CompanyID">
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyCode</span> -
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyName</span> |
+                                    <span id="@item.CompanyID + 'EntAdd'">@Model.ZoneList.FirstOrDefault(x => x.ZoneCode == item.ZoneCode).ZoneName</span>
+                                    <span id="@item.CompanyCode" value="@item.CompanyName" />
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+                <div id="companyName" value=""></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                @*<div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="selectEnterprise();">OK</button></div>*@
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Filter Bill. Type -->
+<div class="modal fade" id="modalSearch" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearch" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-file"></span><span class="glyphicon glyphicon-search left10px fcBl"></span> Filter Billing Type</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div id="searchCompanyFld" class="container itemHide">
+                    <div class="pad5 bgColor-red fontBld fcWhite">
+                        <div class="container">
+                            @* Start *@
+                            <div class="col-sm-3 pad0">Billing Type</div>
+                            @using (Html.BeginForm("FilterBillType", "MaintenanceSubsidiaryLedger"))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="col-sm-6 h25px pad0">
+                                    <select class="h25px w100per" id="BillType" name="BillType" onchange="ForPOB(this)">
+                                        <option>--</option>
+                                        @foreach (var items in Model.SubsidiaryLedgerToList)
+                                        {
+                                            <option value="@items.BillingType">@items.BillingType</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-1 pad0"></div>
+                                <div class="col-sm-2 pad0"><input type="submit" value="Search" id="seachCompanyMainBtn" class="h25px w75px" /><br></div>
+                                @* End *@
+                                @* Start *@
+                                <div class="col-sm-3 pad0">Billing Ref</div>
+                                <div class="col-sm-6 h25px pad0">
+                                    <select class="h25px w100per" id="BillRef" name="BillRef">
+                                        <option>--</option>
+                                        @foreach (var items in Model.SubsidiaryLedgerToList)
+                                        {
+                                            <option value="@items.BillingReference">@items.BillingReference</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-1 pad0"></div>
+                                <div class="col-sm-2 pad0"><br><br></div>
+                                @* End *@
+                                @* Start *@
+                                <div id="ContOther" hidden="hidden">
+                                    <div class="col-sm-3 pad0">Other</div>
+                                    <div class="col-sm-6 h25px pad0">
+                                        <select class="h25px w100per" id="Other" name="Other">
+                                            @foreach (var items in Model.SubsidiaryLedgerToList)
+                                            {
+                                                <option value="@items.Other">@items.Other</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1 pad0"></div>
+                                    <div class="col-sm-2 pad0"></div>
+                                </div>
+                                @* End *@
+                                <div class="col-sm-1 pad0 hidden">
+                                    @if (Model.CompanyList.Count >= 1)
+                                    {
+                                        <input id="CompyId" name="CompyId" class="w100per h25px hidden" value="@Model.CompanyList[0].CompanyID" />
+                                    }
+                                    else
+                                    {
+                                        <input id="CompyId" name="CompyId" class="w100per h25px hidden" />
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Filter Bill. Type -->
+<!-- Modal Edit Company Detail -->
+@using (Html.BeginForm("UpdateSubsidiaryLedger", "MaintenanceSubsidiaryLedger"))
+{
+    @Html.AntiForgeryToken()
+    if (Model.SubsidiaryLedgerList.Count > 0)
+    {
+        <input type="text" hidden="hidden" name="CompId" id="CompId" />
+        <input type="text" hidden="hidden" name="SubsidiaryId" id="SubsidiaryId" />
+    }
+    <div class="modal fade" id="modalEditSubsidiary" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Edit Company Detail Content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="TransactionDate" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="DueDate" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingSubType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Debit" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Credit" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Remarks" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalEditSubsidiary" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Edit Subsidiary Ledger Adjustment</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Trans. Date</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="TransactionDate is required" class="w90per date-picker" id="TransactionDate" name="TransactionDate"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Due Date</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="Due Date is required" class="w90per date-picker" id="DueDate" name="DueDate"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Bill Type</div>
+                        <div class="col-sm-9 h25px col-sm-push-1">
+                            <select id="BillingType" name="BillingType" data-val="true" data-val-required="Billing Type is required"  onchange="    EditgetSubData()">
+                                <option>--</option>
+                                @foreach (var item in Model.Category)
+                                {
+                                    <option value="@item.ToUpper()">@item.ToUpper()</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Trans. No</div>
+                        <div class="col-sm-9 h25px col-sm-push-1">
+                            <select id="EditBillingType" name="EditBillRef">
+                                <option>--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Type</div>
+                        <div class="col-sm-9 h25px col-sm-push-1">
+                            <select id="BillingSubType" name="BillingSubType" data-val="true" data-val-required="Transaction Type is required">
+                                @*<option value="BILLING">BILLING</option>
+                                    <option value="PAYMENT">PAYMENT</option>*@
+                                <option value="PRINCIPAL">PRINCIPAL</option>
+                                <option value="INTEREST">INTEREST</option>
+                                <option value="VAT">VAT</option>
+                                <option value="WITHHOLDING TAX">WITHHOLDING TAX</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Debit</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="Debit is required" data-val-number="Invalid Number Format(Debit)" class="w90per" id="Debit" name="Debit"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Credit</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="Credit is required" data-val-number="Invalid Number Format(Credit)" class="w90per" id="Credit" name="Credit"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 h50px ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Remarks</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><textarea class="bgColor-lb btn h50px w80per br1Grey" wrap="hard" id="Remarks" name="Remarks" data-val="true" data-val-required="Remarks is required"></textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Edit Company Detail -->
+<!-- Modal Add Company Detail -->
+@using (Html.BeginForm("AddSubsidiaryLedger", "MaintenanceSubsidiaryLedger"))
+{
+    @Html.AntiForgeryToken()
+    if (Model.CompanyList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="SubsiCompName" name="CompanyID" value="@Model.CompanyList[0].CompanyID" />
+    }
+    <div class="modal fade" id="modalAddLedger" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Add Company Detail Content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="AddTransactionDate" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="AddDueDate" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="TransactionType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Debit" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Credit" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Remarks" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddLedger" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Subsidiary Ledger Adjustment</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Trans. Date</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="TransactionDate is required" class="w90per date-picker" id="AddTransactionDate" name="AddTransactionDate" value="@DateTime.Today.ToShortDateString()"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Due Date</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="Due Date is required" class="w90per date-picker" id="AddDueDate" name="AddDueDate" value="@DateTime.Today.ToShortDateString()"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Bill Type</div>
+                        <div class="col-sm-9 h25px col-sm-push-1">
+                            <select id="GetBillingType" name="BillingType" data-val="true" data-val-required="Billing Type is required" onchange="getSubData()">
+                                <option>--</option>
+                                @foreach (var item in Model.Category)
+                                {
+                                    <option value="@item.ToUpper()">@item.ToUpper()</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Trans. No</div>
+                        <div class="col-sm-9 h25px col-sm-push-1">
+                            <select id="AddBillingType" name="AddBillRef">
+                                <option>--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Type</div>
+                        <div class="col-sm-9 h25px col-sm-push-1">
+                            <select id="TransactionType" name="BillingSubType" data-val="true" data-val-required="Transaction Type is required">
+                                @*<option value="BILLING">BILLING</option>
+                                    <option value="PAYMENT">PAYMENT</option>*@
+                                <option value="PRINCIPAL">PRINCIPAL</option>
+                                <option value="INTEREST">INTEREST</option>
+                                <option value="VAT">VAT</option>
+                                <option value="WITHHOLDING TAX">WITHHOLDING TAX</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Debit</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" value="0.00" data-val-required="Debit is required" data-val-number="Invalid Number Format(Debit)" class="w90per" id="AddDebit" name="Debit"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Credit</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" value="0.00" data-val-required="Credit is required" data-val-number="Invalid Number Format(Credit)" class="w90per" id="AddCredit" name="Credit"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 h50px ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Remarks</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><textarea class="bgColor-lb btn h50px w80per br1Grey" wrap="hard" id="Remarks" name="Remarks" data-val="true" data-val-required="Remarks is required"></textarea></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Add Company Detail -->
+<!-- Modal Remove-->
+@using (Html.BeginForm("RemoveSubsidiary", "MaintenanceSubsidiaryLedger"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.SubsidiaryLedgerList.Count > 0)
+    {
+        <input type="text" hidden="hidden" name="RemoveCompId" id="RemoveCompId" />
+        <input type="text" hidden="hidden" id="SubLedgerId" name="SubLedgerId" />
+    }
+    <div class="modal fade" id="modalRemove" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalRemoveRental">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-trash icon clr"></span> Remove Subsidiary</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <h4> Are you sure you want to remove this record?</h4>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <button type="submit" class="btn btn-primary w100px">Yes</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Remove -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

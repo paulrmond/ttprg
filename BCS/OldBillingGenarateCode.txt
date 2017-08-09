@@ -1,0 +1,879 @@
+//-------RENTAL--------------
+                            billingBusinessLayer.rentalGeneralBilling();
+                            GeneralBilling rentalGeneralBilling = new GeneralBilling();
+                            SubsidiaryLedger rentalSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger rentalInterestSubsidiaryLedger = new SubsidiaryLedger();
+                            Balances rentalBalances = new Balances();
+
+                            ClassAssignment.CompleteGeneralLedger(billingBusinessLayer.generalBilling, rentalGeneralBilling);
+                            ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.subsidiaryLedger, rentalSubsidiaryLedger);
+                            ClassAssignment.CompleteBalances(billingBusinessLayer.balances, rentalBalances);
+                            if (billingBusinessLayer.interestSubsidiaryLedger != null)
+                            {
+                                ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.interestSubsidiaryLedger, rentalInterestSubsidiaryLedger);
+                                db.SubsidiaryLedger.Add(rentalInterestSubsidiaryLedger);
+                            }
+                            db.GeneralBilling.Add(rentalGeneralBilling);
+                            db.SubsidiaryLedger.Add(rentalSubsidiaryLedger);
+                            db.Balances.Add(rentalBalances);
+
+                            //-------WATER--------------
+                            billingBusinessLayer.waterGeneralBilling();
+                            GeneralBilling WaterGeneralBilling = new GeneralBilling();
+                            SubsidiaryLedger WaterSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger WaterInterestSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger SewerageSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger SewerageInterestSubsidiaryLedger = new SubsidiaryLedger();
+                            Balances WaterBalances = new Balances();
+
+                            ClassAssignment.CompleteGeneralLedger(billingBusinessLayer.generalBilling, WaterGeneralBilling);
+                            ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.subsidiaryLedger, WaterSubsidiaryLedger);
+                            ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.sewerageSubsidiaryLedger, SewerageSubsidiaryLedger);
+                            ClassAssignment.CompleteBalances(billingBusinessLayer.balances, rentalBalances);
+                            if (billingBusinessLayer.interestSubsidiaryLedger != null)
+                            {
+                                ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.interestSubsidiaryLedger, WaterInterestSubsidiaryLedger);
+                                db.SubsidiaryLedger.Add(WaterInterestSubsidiaryLedger);
+                            }
+
+                            if (billingBusinessLayer.interestSubsidiaryLedger != null)
+                            {
+                                ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.sewerageInterestSubsidiaryLedger, SewerageInterestSubsidiaryLedger);
+                                db.SubsidiaryLedger.Add(SewerageInterestSubsidiaryLedger);
+                            }
+                            db.GeneralBilling.Add(WaterGeneralBilling);
+                            db.SubsidiaryLedger.Add(WaterSubsidiaryLedger);
+                            db.SubsidiaryLedger.Add(SewerageSubsidiaryLedger);
+                            db.Balances.Add(WaterBalances);
+
+                            //-------POLE--------------
+                            billingBusinessLayer.PoleGeneralBilling();
+                            GeneralBilling PoleGeneralBilling = new GeneralBilling();
+                            SubsidiaryLedger PoleSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger PoleInterestSubsidiaryLedger = new SubsidiaryLedger();
+                            Balances PoleBalances = new Balances();
+
+                            ClassAssignment.CompleteGeneralLedger(billingBusinessLayer.generalBilling, PoleGeneralBilling);
+                            ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.subsidiaryLedger, PoleSubsidiaryLedger);
+                            ClassAssignment.CompleteBalances(billingBusinessLayer.balances, PoleBalances);
+                            if (billingBusinessLayer.interestSubsidiaryLedger != null)
+                            {
+                                ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.interestSubsidiaryLedger, PoleInterestSubsidiaryLedger);
+                                db.SubsidiaryLedger.Add(PoleInterestSubsidiaryLedger);
+                            }
+                            db.GeneralBilling.Add(PoleGeneralBilling);
+                            db.SubsidiaryLedger.Add(PoleSubsidiaryLedger);
+                            db.Balances.Add(PoleBalances);
+
+                            //-------FRANCHISE--------------
+                            billingBusinessLayer.FranchiseGeneralBilling();
+                            GeneralBilling FranchiseGeneralBilling = new GeneralBilling();
+                            SubsidiaryLedger FranchiseSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger FranchiseInterestSubsidiaryLedger = new SubsidiaryLedger();
+                            Balances FranchiseBalances = new Balances();
+
+                            ClassAssignment.CompleteGeneralLedger(billingBusinessLayer.generalBilling, FranchiseGeneralBilling);
+                            ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.subsidiaryLedger, FranchiseSubsidiaryLedger);
+                            ClassAssignment.CompleteBalances(billingBusinessLayer.balances, FranchiseBalances);
+                            if (billingBusinessLayer.interestSubsidiaryLedger != null)
+                            {
+                                ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.interestSubsidiaryLedger, FranchiseInterestSubsidiaryLedger);
+                                db.SubsidiaryLedger.Add(FranchiseInterestSubsidiaryLedger);
+                            }
+                            db.GeneralBilling.Add(FranchiseGeneralBilling);
+                            db.SubsidiaryLedger.Add(FranchiseSubsidiaryLedger);
+                            db.Balances.Add(FranchiseBalances);
+
+                            //-------GARBAGE--------------
+                            billingBusinessLayer.GarbageGeneralBilling();
+                            GeneralBilling GarbageGeneralBilling = new GeneralBilling();
+                            SubsidiaryLedger GarbageSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger GarbageInterestSubsidiaryLedger = new SubsidiaryLedger();
+                            Balances GarbageBalances = new Balances();
+
+                            ClassAssignment.CompleteGeneralLedger(billingBusinessLayer.generalBilling, GarbageGeneralBilling);
+                            ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.subsidiaryLedger, GarbageSubsidiaryLedger);
+                            ClassAssignment.CompleteBalances(billingBusinessLayer.balances, GarbageBalances);
+                            if (billingBusinessLayer.interestSubsidiaryLedger != null)
+                            {
+                                ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.interestSubsidiaryLedger, GarbageInterestSubsidiaryLedger);
+                                db.SubsidiaryLedger.Add(GarbageInterestSubsidiaryLedger);
+                            }
+                            db.GeneralBilling.Add(GarbageGeneralBilling);
+                            db.SubsidiaryLedger.Add(GarbageSubsidiaryLedger);
+                            db.Balances.Add(GarbageBalances);
+
+                            //-------SECURITY--------------
+                            billingBusinessLayer.SecurityGuardGeneralBilling();
+                            GeneralBilling SecurityGuardGeneralBilling = new GeneralBilling();
+                            SubsidiaryLedger SecurityGuardSubsidiaryLedger = new SubsidiaryLedger();
+                            SubsidiaryLedger SecurityGuardInterestSubsidiaryLedger = new SubsidiaryLedger();
+                            Balances SecurityGuardBalances = new Balances();
+
+                            ClassAssignment.CompleteGeneralLedger(billingBusinessLayer.generalBilling, SecurityGuardGeneralBilling);
+                            ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.subsidiaryLedger, SecurityGuardSubsidiaryLedger);
+                            ClassAssignment.CompleteBalances(billingBusinessLayer.balances, SecurityGuardBalances);
+                            if (billingBusinessLayer.interestSubsidiaryLedger != null)
+                            {
+                                ClassAssignment.CompleteSubsidiaryLedger(billingBusinessLayer.interestSubsidiaryLedger, SecurityGuardInterestSubsidiaryLedger);
+                                db.SubsidiaryLedger.Add(SecurityGuardInterestSubsidiaryLedger);
+                            }
+                            db.GeneralBilling.Add(SecurityGuardGeneralBilling);
+                            db.SubsidiaryLedger.Add(SecurityGuardSubsidiaryLedger);
+                            db.Balances.Add(SecurityGuardBalances);
+
+
+//-----------------------------------------------------------------------------
+
+//CHECK FOR USD BILLING
+            List<RentalInformation> rentalinformation1 = new List<RentalInformation>();
+            rentalinformation1 = db.RentalInformation.Where(m => m.EndDate >= dtCoverageFrom).Where(m => m.StartDate <= dtCoverageTo).ToList();
+            bool isCurrencyValid = false;
+            foreach (var rental in rentalinformation1)
+            {
+                company = db.Company.Where(m => m.CompanyID == rental.CompanyId).Single();
+                if (company.Status == "Active" && rental.Currency == "USD") //Check for active company and USD currency
+                {
+                    decimal outFxRate;
+                    if (decimal.TryParse(frm["FxRate"].ToString(), out outFxRate)) //Try to parse  returned FX rate value
+                    {
+                        FxRate = decimal.Parse(frm["FxRate"].ToString()); //if true pass the value
+
+                        if (FxRate <= 0) //if value is less than equal to zero NOT VALID
+                            isCurrencyValid = true;
+                    }
+                    else //if parse is failed NOT VALID
+                        isCurrencyValid = true;
+                }
+            }
+            //END OF CHECKING
+
+//-----------------------------------------------------------------------------
+
+
+//START OF RENTAL BILLING GENERATION
+                        List<RentalInformation> rentalinformation = new List<RentalInformation>();
+                        rentalinformation = db.RentalInformation.ToList();
+                        //rentalinformation = db.RentalInformation.Where(m => m.EndDate >= dtCoverageFrom).Where(m => m.StartDate <= dtCoverageTo).ToList();
+                        foreach (var rental in rentalinformation)
+                        {
+                            company = db.Company.Where(m => m.CompanyID == rental.CompanyId).Single();
+                            if (company.Status == "Active")
+                            {
+                                DateTime dtStart = rental.StartDate;
+                                DateTime dtEnd = rental.EndDate;
+
+                                if (dtCoverageFrom <= dtEnd && dtCoverageTo >= dtStart)
+                                {
+                                    if (rental.BillMode == 4)
+                                    {
+                                        if (dtCoverageFrom <= dtEnd) //Check for past rentals.
+                                        {
+                                            if (dtCoverageTo >= dtStart) //check for future rentals.
+                                            {
+                                                decimal Amount = rental.Area * rental.Rate;
+                                                InterestModel newInterest = new InterestModel(dtCoverageFrom, DateTime.Now, dtBillingDue, rental.CompanyId);
+                                                if (newInterest.Rental > 0)
+                                                {
+                                                    Amount = Amount * newInterest.interest;
+                                                }
+
+                                                GeneralBilling generalbilling = new GeneralBilling();
+                                                generalbilling.CompanyId = rental.CompanyId;
+                                                generalbilling.BillingPeriod = int.Parse(frm["PeriodId"].ToString());
+                                                generalbilling.BillingDate = DateTime.Parse(frm["BillDate"].ToString());
+                                                generalbilling.DueDate = DateTime.Parse(frm["DueDate"].ToString());
+                                                generalbilling.BillingType = "Rental";
+                                                generalbilling.TransactionType = "BILLING";
+                                                generalbilling.BillingReference = rental.RentalInformationId.ToString();
+                                                generalbilling.BillingAmount = Amount;
+
+
+                                                generalbilling.GenerationDate = DateTime.Now;
+                                                generalbilling.CoverageFrom = dtCoverageFrom;
+                                                generalbilling.CoverageTo = dtCoverageTo;
+
+                                                if (rental.Currency.ToUpper() == "USD")
+                                                    generalbilling.Currency = "USD";
+                                                else
+                                                    generalbilling.Currency = "PHP";
+
+                                                var RentalBillingNum = db.GeneralBilling.Where(m => m.CompanyId == rental.CompanyId).Max(m => (int?)m.BillingNumber) ?? 0;
+                                                generalbilling.BillingNumber = ++RentalBillingNum;
+
+                                                SubsidiaryLedger subsidiaryledger = new SubsidiaryLedger();
+                                                subsidiaryledger.CompanyId = rental.CompanyId;
+                                                subsidiaryledger.BillingPeriod = int.Parse(frm["PeriodId"].ToString());
+                                                subsidiaryledger.BillingDate = DateTime.Parse(frm["BillDate"].ToString());
+                                                subsidiaryledger.DueDate = DateTime.Parse(frm["DueDate"].ToString());
+                                                subsidiaryledger.BillingType = "Rental";
+                                                subsidiaryledger.TransactionType = "BILLING";
+                                                subsidiaryledger.BillingReference = rental.RentalInformationId.ToString();
+                                                subsidiaryledger.TransactionReference = "03" + ZoneGroup + RentalBillingNum;
+
+
+                                                if (rental.Currency.ToUpper() == "USD")
+                                                {
+                                                    subsidiaryledger.Currency = "USD";
+                                                    subsidiaryledger.CreditAmount = Amount * FxRate;
+                                                    subsidiaryledger.DollarAmount = Amount;
+                                                }
+                                                else
+                                                {
+                                                    subsidiaryledger.Currency = "PHP";
+                                                    subsidiaryledger.CreditAmount = Amount;
+                                                }
+
+                                                subsidiaryledger.DebitAmount = 0;
+                                                subsidiaryledger.TransactionDate = DateTime.Now;
+
+                                                db.GeneralBilling.Add(generalbilling);
+                                                db.SubsidiaryLedger.Add(subsidiaryledger);
+                            
+                                                if (newInterest.Rental > 0) //if(balance detected). save interest subsidiary ledger.
+                                                {
+                                                    SubsidiaryLedger interestsubsidiaryledger = new SubsidiaryLedger();
+
+                                                    interestsubsidiaryledger.CompanyId = subsidiaryledger.CompanyId;
+                                                    interestsubsidiaryledger.BillingPeriod = subsidiaryledger.BillingPeriod;
+                                                    interestsubsidiaryledger.BillingDate = subsidiaryledger.BillingDate;
+                                                    interestsubsidiaryledger.DueDate = subsidiaryledger.DueDate;
+                                                    interestsubsidiaryledger.BillingType = subsidiaryledger.BillingType;
+                                                    interestsubsidiaryledger.TransactionType = "INTEREST";
+                                                    interestsubsidiaryledger.BillingReference = subsidiaryledger.BillingReference;
+                                                    interestsubsidiaryledger.TransactionReference = subsidiaryledger.TransactionReference;
+                                                    interestsubsidiaryledger.Currency = subsidiaryledger.Currency;
+                                                    interestsubsidiaryledger.CreditAmount = subsidiaryledger.CreditAmount;
+                                                    interestsubsidiaryledger.DebitAmount = subsidiaryledger.DebitAmount;
+                                                    interestsubsidiaryledger.TransactionDate = subsidiaryledger.TransactionDate;
+
+                                                    Balances newBalance = new Balances();
+                                                    newBalance.BillingType = subsidiaryledger.BillingType;
+                                                    newBalance.TransactionReference = subsidiaryledger.TransactionReference;
+                                                    newBalance.TransactionType = "BALANCE";
+                                                    newBalance.CompanyId = subsidiaryledger.CompanyId;
+                                                    newBalance.Amount = newInterest.Balance;
+
+                                                    db.Balances.Add(newBalance);
+                                                    db.SubsidiaryLedger.Add(interestsubsidiaryledger);
+                                                }
+                                                else
+                                                {
+                                                    Balances newBalance = new Balances();
+                                                    newBalance.BillingType = subsidiaryledger.BillingType;
+                                                    newBalance.TransactionReference = subsidiaryledger.TransactionReference;
+                                                    newBalance.TransactionType = "BALANCE";
+                                                    newBalance.CompanyId = subsidiaryledger.CompanyId;
+                                                    newBalance.Amount = newInterest.Balance;
+
+                                                    db.Balances.Add(newBalance);
+                                                }
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //END OF RENTAL BILLING GENERATION
+
+
+
+                        //START OF WATER BILLING GENERATION
+
+                        //WATER BILLING
+                        List<WaterMeterAssignment> waterMeterAssignmentList = new List<WaterMeterAssignment>();
+                        waterMeterAssignmentList = db.WaterMeterAssignment.Where(m => m.IncludeBilling == 1).ToList();
+
+                        foreach (var item in waterMeterAssignmentList)
+                        {
+                            company = db.Company.Where(m => m.CompanyID == item.CompanyId).Single();
+                            if (company.Status == "Active")
+                            {
+                                DateTime dtStart = item.StartDate;
+                                DateTime dtEnd = item.EndDate;
+                                if (dtCoverageFrom <= dtEnd && dtCoverageTo >= dtStart)
+                                {
+                                    List<WaterMeterReading> WaterMeterReadingList = db.WaterMeterReading.Where(m => m.MeterNumber == item.MeterNumber).ToList();
+                                    if (WaterMeterReadingList.Count > 0)
+                                    {
+                                        foreach (var watermeterreading in WaterMeterReadingList)
+                                        {
+                                            GeneralBilling NewGeneralBilling = new GeneralBilling();
+                                            SubsidiaryLedger NewSubsidiaryLedger = new SubsidiaryLedger();
+                                            SubsidiaryLedger NewSubsidiaryLedgerSewerage = new SubsidiaryLedger();
+
+                                            decimal? SewerageFee = db.BillingRates.Single(m => m.Category == "Sewerage").Rate;
+                                            int PreviousReading = watermeterreading.PreviousReading;
+                                            int PresentReading = watermeterreading.PresentReading;
+
+                                            //START OF WATER CONSUMPTION COMPUTATION
+                                            int WaterConsumption = PresentReading - PreviousReading;
+                                            double? WaterAmount = 0;
+
+                                            List<BillingRate> BillingRates = new List<BillingRate>();
+                                            BillingRates = db.BillingRates.Where(m => m.Category == "Water").ToList();
+                                            int i = BillingRates.Count;
+                                            BillingRate tempBillRate = new BillingRate();
+                                            List<BillingRate> tempBillingRates = new List<BillingRate>();
+                                            bool isTrue = true;
+                                            bool isSorted = false;
+
+                                            while (isTrue)
+                                            {
+                                                isTrue = false;
+                                                isSorted = true;
+                                                for (int j = 0; j < i - 1; j++)
+                                                {
+
+                                                    string[] first = BillingRates[j].SubCategory.Split('-');
+                                                    string[] sec = BillingRates[j + 1].SubCategory.Split('-');
+                                                    double dblFirst = Convert.ToDouble(first[0]);
+                                                    double dblSec = Convert.ToDouble(sec[0]);
+
+                                                    if (dblFirst > dblSec)
+                                                    {
+                                                        tempBillRate = BillingRates[j + 1];
+                                                        BillingRates[j + 1] = BillingRates[j];
+                                                        BillingRates[j] = tempBillRate;
+
+                                                        isTrue = true;
+                                                        isSorted = false;
+                                                    }
+                                                }
+                                            }
+
+                                            if (isSorted)
+                                            {
+                                                double PrevRange = 0;
+                                                double AddToAmount = 0;
+                                                for (int j = 0; j < i; j++)
+                                                {
+                                                    string[] SubcatRange = BillingRates[j].SubCategory.Split('-');
+                                                    double StartRange = double.Parse(SubcatRange[0]);
+                                                    double EndRange = double.Parse(SubcatRange[1]);
+                                                    decimal? Rate = BillingRates[j].Rate;
+                                                    AddToAmount += EndRange;
+
+                                                    if (WaterConsumption >= StartRange && WaterConsumption <= EndRange)
+                                                    {
+                                                        if (j > 0)
+                                                        {
+                                                            WaterAmount = AddToAmount + ((WaterConsumption - PrevRange) * Convert.ToDouble(Rate));
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            WaterAmount = Convert.ToDouble(Rate);
+                                                            break;
+                                                        }
+                                                    }
+                                                    PrevRange = EndRange;
+                                                }
+                                            }
+
+                                            //END OF COMPUTATION
+
+                                            //if (WaterConsumption <= 25)
+                                            //    WaterAmount = 185.00;
+                                            //else if (WaterConsumption > 25 && WaterConsumption < 1000)
+                                            //{
+                                            //    WaterAmount = 185.00 + ((WaterConsumption - 25) * 7.4);
+                                            //}                                    
+                                            //else if (WaterConsumption > 1000)
+                                            //{
+                                            //    WaterAmount = (185.00 + 975) + ((WaterConsumption - 1000) * 8.64);
+                                            //}                                            
+
+                                            InterestModel newInterest = new InterestModel(dtCoverageFrom, DateTime.Now, dtBillingDue, item.CompanyId);
+                                            if (newInterest.Water > 0)
+                                            {
+                                                decimal tempAmount;
+                                                tempAmount = (Convert.ToDecimal(WaterAmount) * newInterest.Water);
+                                                WaterAmount = Convert.ToDouble(tempAmount);
+                                            }
+
+                                            if (newInterest.Sewerage > 0)
+                                            {
+                                                decimal tempSewerage;
+                                                tempSewerage = (Convert.ToDecimal(WaterConsumption * (SewerageFee / 100)) * newInterest.Sewerage);
+                                                SewerageFee = tempSewerage;
+                                            }
+                                            else
+                                            {
+                                                SewerageFee = WaterConsumption * (SewerageFee / 100);
+                                            }
+
+                                            NewGeneralBilling.CompanyId = item.CompanyId;
+                                            NewGeneralBilling.BillingPeriod = billingPeriodId;
+                                            NewGeneralBilling.BillingDate = dtBillingDate;
+                                            NewGeneralBilling.DueDate = dtBillingDue;
+                                            NewGeneralBilling.BillingType = "Water";
+                                            NewGeneralBilling.TransactionType = "BILLING";
+                                            NewGeneralBilling.BillingReference = watermeterreading.MeterNumber.ToString();
+                                            NewGeneralBilling.BillingAmount = Convert.ToDecimal(WaterAmount);
+                                            NewGeneralBilling.GenerationDate = DateTime.Now;
+                                            NewGeneralBilling.CoverageFrom = DateTime.Now;
+                                            NewGeneralBilling.CoverageTo = DateTime.Now;
+
+                                            var WaterBillingNum = db.GeneralBilling.Where(m => m.CompanyId == watermeterreading.CompanyId).Max(m => (int?)m.BillingNumber) ?? 0;
+                                            NewGeneralBilling.BillingNumber = ++WaterBillingNum;
+
+                                            NewSubsidiaryLedger.CompanyId = item.CompanyId;
+                                            NewSubsidiaryLedger.BillingPeriod = billingPeriodId;
+                                            NewSubsidiaryLedger.BillingDate = dtBillingDate;
+                                            NewSubsidiaryLedger.DueDate = dtBillingDue;
+                                            NewSubsidiaryLedger.BillingType = "Water";
+                                            NewSubsidiaryLedger.TransactionType = "BILLING";
+                                            NewSubsidiaryLedger.BillingReference = item.WaterMeterAssignmentId.ToString();
+                                            NewSubsidiaryLedger.TransactionReference = watermeterreading.MeterNumber.ToString();
+                                            NewSubsidiaryLedger.DebitAmount = 0;
+                                            NewSubsidiaryLedger.CreditAmount = Convert.ToDecimal(WaterAmount);
+                                            NewSubsidiaryLedger.TransactionDate = DateTime.Now;
+
+                                            NewSubsidiaryLedgerSewerage.CompanyId = item.CompanyId;
+                                            NewSubsidiaryLedgerSewerage.BillingPeriod = billingPeriodId;
+                                            NewSubsidiaryLedgerSewerage.BillingDate = dtBillingDate;
+                                            NewSubsidiaryLedgerSewerage.DueDate = dtBillingDue;
+                                            NewSubsidiaryLedgerSewerage.BillingType = "Sewerage";
+                                            NewSubsidiaryLedgerSewerage.TransactionType = "BILLING";
+                                            NewSubsidiaryLedgerSewerage.BillingReference = watermeterreading.MeterNumber.ToString();
+                                            NewSubsidiaryLedgerSewerage.TransactionReference = "03" + ZoneGroup + WaterBillingNum;
+                                            NewSubsidiaryLedgerSewerage.DebitAmount = 0;
+                                            NewSubsidiaryLedgerSewerage.CreditAmount = Convert.ToDecimal(SewerageFee);
+                                            NewSubsidiaryLedgerSewerage.TransactionDate = DateTime.Now;
+
+
+                                            if (newInterest.Water > 0)
+                                            {
+                                                SubsidiaryLedger interestsubsidiaryledger = new SubsidiaryLedger();
+
+                                                interestsubsidiaryledger.CompanyId = NewSubsidiaryLedger.CompanyId;
+                                                interestsubsidiaryledger.BillingPeriod = NewSubsidiaryLedger.BillingPeriod;
+                                                interestsubsidiaryledger.BillingDate = NewSubsidiaryLedger.BillingDate;
+                                                interestsubsidiaryledger.DueDate = NewSubsidiaryLedger.DueDate;
+                                                interestsubsidiaryledger.BillingType = NewSubsidiaryLedger.BillingType;
+                                                interestsubsidiaryledger.TransactionType = "INTEREST";
+                                                interestsubsidiaryledger.BillingReference = NewSubsidiaryLedger.BillingReference;
+                                                interestsubsidiaryledger.TransactionReference = NewSubsidiaryLedger.TransactionReference;
+                                                interestsubsidiaryledger.Currency = NewSubsidiaryLedger.Currency;
+                                                interestsubsidiaryledger.CreditAmount = NewSubsidiaryLedger.CreditAmount;
+                                                interestsubsidiaryledger.DebitAmount = NewSubsidiaryLedger.DebitAmount;
+                                                interestsubsidiaryledger.TransactionDate = NewSubsidiaryLedger.TransactionDate;
+
+                                                Balances newBalance = new Balances();
+                                                newBalance.BillingType = NewSubsidiaryLedger.BillingType;
+                                                newBalance.TransactionReference = NewSubsidiaryLedger.TransactionReference;
+                                                newBalance.TransactionType = "BALANCE";
+                                                newBalance.CompanyId = NewSubsidiaryLedger.CompanyId;
+                                                newBalance.Amount = newInterest.Balance;
+
+                                                db.Balances.Add(newBalance);
+                                                db.SubsidiaryLedger.Add(interestsubsidiaryledger);
+                                            }
+                                            else
+                                            {
+                                                Balances newBalance = new Balances();
+                                                newBalance.BillingType = NewSubsidiaryLedger.BillingType;
+                                                newBalance.TransactionReference = NewSubsidiaryLedger.TransactionReference;
+                                                newBalance.TransactionType = "BALANCE";
+                                                newBalance.CompanyId = NewSubsidiaryLedger.CompanyId;
+                                                newBalance.Amount = newInterest.Balance;
+
+                                                db.Balances.Add(newBalance);
+                                            }
+
+                                            if (newInterest.Sewerage > 0)
+                                            {
+                                                SubsidiaryLedger interestsubsidiaryledgerSewerage = new SubsidiaryLedger();
+                                                interestsubsidiaryledgerSewerage.CompanyId = NewSubsidiaryLedgerSewerage.CompanyId;
+                                                interestsubsidiaryledgerSewerage.BillingPeriod = NewSubsidiaryLedgerSewerage.BillingPeriod;
+                                                interestsubsidiaryledgerSewerage.BillingDate = NewSubsidiaryLedgerSewerage.BillingDate;
+                                                interestsubsidiaryledgerSewerage.DueDate = NewSubsidiaryLedgerSewerage.DueDate;
+                                                interestsubsidiaryledgerSewerage.BillingType = NewSubsidiaryLedgerSewerage.BillingType;
+                                                interestsubsidiaryledgerSewerage.TransactionType = "INTEREST";
+                                                interestsubsidiaryledgerSewerage.BillingReference = NewSubsidiaryLedgerSewerage.BillingReference;
+                                                interestsubsidiaryledgerSewerage.TransactionReference = NewSubsidiaryLedgerSewerage.TransactionReference;
+                                                interestsubsidiaryledgerSewerage.Currency = NewSubsidiaryLedgerSewerage.Currency;
+                                                interestsubsidiaryledgerSewerage.CreditAmount = NewSubsidiaryLedgerSewerage.CreditAmount;
+                                                interestsubsidiaryledgerSewerage.DebitAmount = NewSubsidiaryLedgerSewerage.DebitAmount;
+                                                interestsubsidiaryledgerSewerage.TransactionDate = NewSubsidiaryLedgerSewerage.TransactionDate;
+
+                                                Balances newBalance = new Balances();
+                                                newBalance.BillingType = NewSubsidiaryLedgerSewerage.BillingType;
+                                                newBalance.TransactionReference = NewSubsidiaryLedgerSewerage.TransactionReference;
+                                                newBalance.TransactionType = "BALANCE";
+                                                newBalance.CompanyId = NewSubsidiaryLedgerSewerage.CompanyId;
+                                                newBalance.Amount = newInterest.Balance;
+
+                                                db.Balances.Add(newBalance);
+                                                db.SubsidiaryLedger.Add(interestsubsidiaryledgerSewerage);
+                                            }
+                                            else
+                                            {
+                                                Balances newBalance = new Balances();
+                                                newBalance.BillingType = NewSubsidiaryLedgerSewerage.BillingType;
+                                                newBalance.TransactionReference = NewSubsidiaryLedgerSewerage.TransactionReference;
+                                                newBalance.TransactionType = "BALANCE";
+                                                newBalance.CompanyId = NewSubsidiaryLedgerSewerage.CompanyId;
+                                                newBalance.Amount = newInterest.Balance;
+
+                                                db.Balances.Add(newBalance);
+                                            }
+
+                                            db.GeneralBilling.Add(NewGeneralBilling);
+                                            db.SubsidiaryLedger.Add(NewSubsidiaryLedger);
+                                            db.SubsidiaryLedger.Add(NewSubsidiaryLedgerSewerage);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        //END OF WATER BILLING GENERATION
+
+
+                        //START OF FRANCHISE
+
+                        List<FranchiseFeeInformation> franchiseFeeInformation = new List<FranchiseFeeInformation>();
+                        franchiseFeeInformation = db.FranchiseFeeInformation.ToList();
+                        foreach (var franchisefeeinfo in franchiseFeeInformation)
+                        {
+                            company = db.Company.Where(m => m.CompanyID == franchisefeeinfo.CompanyId).Single();
+                            if (company.Status == "Active")
+                            {
+                                DateTime FranchiseDateStart = franchisefeeinfo.StartDate;
+                                DateTime FranchiseDateEnd = franchisefeeinfo.EndDate;
+                                int NumberOfMonths = 0;
+
+                                if (dtCoverageTo.Month == 1)
+                                {
+                                    if (dtCoverageTo.Year <= (FranchiseDateEnd.Year + 1) && dtCoverageTo.Year >= (FranchiseDateStart.Year + 1)) //Check if within the range of period.
+                                    {
+                                        if ((FranchiseDateStart.Year + 1) == dtCoverageTo.Year) //Check for first annual payment
+                                            NumberOfMonths = 12 - FranchiseDateStart.Month;
+                                        else if ((FranchiseDateEnd.Year + 1) == dtCoverageTo.Year) //Check for last annual payment
+                                            NumberOfMonths = FranchiseDateEnd.Month;
+                                        else                                                    //In between payments. ALWAYS 12 MONTHS
+                                            NumberOfMonths = 12;
+                                    }
+
+                                    GeneralBilling NewGeneralBilling = new GeneralBilling();
+                                    SubsidiaryLedger NewSubsidiaryLedger = new SubsidiaryLedger();
+
+                                    NewGeneralBilling.CompanyId = franchisefeeinfo.CompanyId;
+                                    NewGeneralBilling.BillingPeriod = billingPeriodId;
+                                    NewGeneralBilling.BillingDate = dtBillingDate;
+                                    NewGeneralBilling.DueDate = dtBillingDue;
+                                    NewGeneralBilling.BillingType = "Franchise";
+                                    NewGeneralBilling.TransactionType = "BILLING";
+                                    NewGeneralBilling.BillingReference = franchisefeeinfo.FranchiseFeeInformationId.ToString();
+                                    NewGeneralBilling.BillingAmount = franchisefeeinfo.Amount * NumberOfMonths;
+                                    NewGeneralBilling.GenerationDate = DateTime.Now;
+                                    NewGeneralBilling.CoverageFrom = DateTime.Now;
+                                    NewGeneralBilling.CoverageTo = DateTime.Now;
+
+                                    var FranchiseBillingNum = db.GeneralBilling.Where(m => m.CompanyId == franchisefeeinfo.CompanyId).Max(m => (int?)m.BillingNumber) ?? 0;
+                                    NewGeneralBilling.BillingNumber = ++FranchiseBillingNum;
+
+                                    NewSubsidiaryLedger.CompanyId = franchisefeeinfo.CompanyId;
+                                    NewSubsidiaryLedger.BillingPeriod = billingPeriodId;
+                                    NewSubsidiaryLedger.BillingDate = dtBillingDate;
+                                    NewSubsidiaryLedger.DueDate = dtBillingDue;
+                                    NewSubsidiaryLedger.BillingType = "Franchise";
+                                    NewSubsidiaryLedger.TransactionType = "BILLING";
+                                    NewSubsidiaryLedger.BillingReference = franchisefeeinfo.FranchiseFeeInformationId.ToString();
+                                    NewSubsidiaryLedger.TransactionReference = "03" + ZoneGroup + FranchiseBillingNum;
+                                    NewSubsidiaryLedger.DebitAmount = 0;
+                                    NewSubsidiaryLedger.CreditAmount = franchisefeeinfo.Amount * NumberOfMonths;
+                                    NewSubsidiaryLedger.TransactionDate = DateTime.Now;
+
+                                    db.GeneralBilling.Add(NewGeneralBilling);
+                                    //db.SaveChanges();
+
+                                    db.SubsidiaryLedger.Add(NewSubsidiaryLedger);
+                                    //db.SaveChanges();
+                                }
+
+                            }
+                        }
+
+                        //END OF FRANCHISE
+
+                        //START OF GARBAGE
+
+                        List<GarbageInformation> GarbageInformations = new List<GarbageInformation>();
+                        GarbageInformations = db.GarbageInformations.ToList();
+                        foreach (var GarbageInformation in GarbageInformations)
+                        {
+                            company = db.Company.Single(m => m.CompanyID == GarbageInformation.CompanyId);
+                            if (company.Status == "Active" && GarbageInformation.BillingPeriod == billingPeriodId)
+                            {
+                                decimal Amount = GarbageInformation.Rate * GarbageInformation.Weight;
+                                GeneralBilling generalBilling = new GeneralBilling();
+                                SubsidiaryLedger subsidiaryLedger = new SubsidiaryLedger();
+
+                                InterestModel newInterest = new InterestModel(dtCoverageFrom, DateTime.Now, dtBillingDue, GarbageInformation.CompanyId);
+                                if (newInterest.Garbage > 0)
+                                {
+                                    Amount = Amount * newInterest.Garbage;
+                                }
+
+                                generalBilling.CompanyId = GarbageInformation.CompanyId;
+                                generalBilling.BillingPeriod = GarbageInformation.BillingPeriod;
+                                generalBilling.BillingDate = dtBillingDate;
+                                generalBilling.DueDate = dtBillingDue;
+                                generalBilling.BillingType = "Garbage";
+                                generalBilling.TransactionType = "BILLING";
+                                generalBilling.BillingReference = GarbageInformation.GarbageInformationId.ToString();
+                                generalBilling.BillingAmount = Amount;
+                                generalBilling.GenerationDate = DateTime.Now;
+                                generalBilling.CoverageFrom = dtCoverageFrom;
+                                generalBilling.CoverageTo = dtCoverageTo;
+
+                                var GarbageBillingNum = db.GeneralBilling.Where(m => m.CompanyId == GarbageInformation.CompanyId).Max(m => (int?)m.BillingNumber) ?? 0;
+                                generalBilling.BillingNumber = ++GarbageBillingNum;
+
+                                subsidiaryLedger.CompanyId = GarbageInformation.CompanyId;
+                                subsidiaryLedger.BillingPeriod = GarbageInformation.BillingPeriod;
+                                subsidiaryLedger.BillingDate = dtBillingDate;
+                                subsidiaryLedger.DueDate = dtBillingDue;
+                                subsidiaryLedger.BillingType = "Garbage";
+                                subsidiaryLedger.TransactionType = "BILLING";
+                                subsidiaryLedger.BillingReference = GarbageInformation.GarbageInformationId.ToString();
+                                subsidiaryLedger.TransactionReference = "03" + ZoneGroup + GarbageBillingNum;
+                                subsidiaryLedger.DebitAmount = 0;
+                                subsidiaryLedger.CreditAmount = Amount;
+                                subsidiaryLedger.TransactionDate = DateTime.Now;
+
+                                if (newInterest.Garbage > 0) //if(balance detected). save interest subsidiary ledger.
+                                {
+                                    SubsidiaryLedger interestsubsidiaryledger = new SubsidiaryLedger();
+
+                                    interestsubsidiaryledger.CompanyId = subsidiaryLedger.CompanyId;
+                                    interestsubsidiaryledger.BillingPeriod = subsidiaryLedger.BillingPeriod;
+                                    interestsubsidiaryledger.BillingDate = subsidiaryLedger.BillingDate;
+                                    interestsubsidiaryledger.DueDate = subsidiaryLedger.DueDate;
+                                    interestsubsidiaryledger.BillingType = subsidiaryLedger.BillingType;
+                                    interestsubsidiaryledger.TransactionType = "INTEREST";
+                                    interestsubsidiaryledger.BillingReference = subsidiaryLedger.BillingReference;
+                                    interestsubsidiaryledger.TransactionReference = subsidiaryLedger.TransactionReference;
+                                    interestsubsidiaryledger.Currency = subsidiaryLedger.Currency;
+                                    interestsubsidiaryledger.CreditAmount = subsidiaryLedger.CreditAmount;
+                                    interestsubsidiaryledger.DebitAmount = subsidiaryLedger.DebitAmount;
+                                    interestsubsidiaryledger.TransactionDate = subsidiaryLedger.TransactionDate;
+
+                                    Balances newBalance = new Balances();
+                                    newBalance.BillingType = subsidiaryLedger.BillingType;
+                                    newBalance.TransactionReference = subsidiaryLedger.TransactionReference;
+                                    newBalance.TransactionType = "BALANCE";
+                                    newBalance.CompanyId = subsidiaryLedger.CompanyId;
+                                    newBalance.Amount = newInterest.Balance;
+
+                                    db.Balances.Add(newBalance);
+                                    db.SubsidiaryLedger.Add(interestsubsidiaryledger);
+                                }
+                                else
+                                {
+                                    Balances newBalance = new Balances();
+                                    newBalance.BillingType = subsidiaryLedger.BillingType;
+                                    newBalance.TransactionReference = subsidiaryLedger.TransactionReference;
+                                    newBalance.TransactionType = "BALANCE";
+                                    newBalance.CompanyId = subsidiaryLedger.CompanyId;
+                                    newBalance.Amount = newInterest.Balance;
+
+                                    db.Balances.Add(newBalance);
+                                }
+
+                                db.GeneralBilling.Add(generalBilling);
+                                db.SubsidiaryLedger.Add(subsidiaryLedger);
+                            }
+                        }
+
+                        //END OF GARBAGE
+
+
+                        //START OF SECURITY GUARD
+
+                        List<SecurityGuardFeeInformation> SecurityGuardFeeInformations = new List<Models.SecurityGuardFeeInformation>();
+                        SecurityGuardFeeInformations = db.SecurityGuardFeeInformation.Where(m => m.BillingPeriod == billingPeriodId).ToList();
+                        foreach (var SecurityGuardInformation in SecurityGuardFeeInformations)
+                        {
+                            decimal SecurityAmount = 0;
+                            GeneralBilling generalBilling = new GeneralBilling();
+                            SubsidiaryLedger subsidiaryLedger = new SubsidiaryLedger();
+
+                            InterestModel newInterest = new InterestModel(dtCoverageFrom, DateTime.Now, dtBillingDue, SecurityGuardInformation.CompanyId);
+                            if (newInterest.SecurityGuard > 0)
+                            {
+                                SecurityAmount = SecurityGuardInformation.Amount * newInterest.SecurityGuard;
+                            }
+                            else
+                            {
+                                SecurityAmount = SecurityGuardInformation.Amount;
+                            }
+
+                            generalBilling.CompanyId = SecurityGuardInformation.CompanyId;
+                            generalBilling.BillingPeriod = SecurityGuardInformation.BillingPeriod;
+                            generalBilling.BillingDate = dtBillingDate;
+                            generalBilling.DueDate = dtBillingDue;
+                            generalBilling.BillingType = "Security Guard";
+                            generalBilling.TransactionType = "BILLING";
+                            generalBilling.BillingReference = SecurityGuardInformation.SecurityGuardFeeInformationId.ToString();
+                            generalBilling.BillingAmount = SecurityAmount;
+                            generalBilling.GenerationDate = DateTime.Now;
+                            generalBilling.CoverageFrom = DateTime.Now;
+                            generalBilling.CoverageTo = DateTime.Now;
+
+                            var GuardBillingNum = db.GeneralBilling.Where(m => m.CompanyId == SecurityGuardInformation.CompanyId).Max(m => (int?)m.BillingNumber) ?? 0;
+                            generalBilling.BillingNumber = ++GuardBillingNum;
+
+                            subsidiaryLedger.CompanyId = SecurityGuardInformation.CompanyId;
+                            subsidiaryLedger.BillingPeriod = SecurityGuardInformation.BillingPeriod;
+                            subsidiaryLedger.BillingDate = dtBillingDate;
+                            subsidiaryLedger.DueDate = dtBillingDue;
+                            subsidiaryLedger.BillingType = "Security Guard";
+                            subsidiaryLedger.TransactionType = "BILLING";
+                            subsidiaryLedger.BillingReference = SecurityGuardInformation.SecurityGuardFeeInformationId.ToString();
+                            subsidiaryLedger.TransactionReference = "03" + ZoneGroup + GuardBillingNum;
+                            subsidiaryLedger.DebitAmount = 0;
+                            subsidiaryLedger.CreditAmount = SecurityAmount;
+                            subsidiaryLedger.TransactionDate = DateTime.Now;
+
+                            if (newInterest.SecurityGuard > 0) //if(balance detected). save interest subsidiary ledger.
+                            {
+                                SubsidiaryLedger interestsubsidiaryledger = new SubsidiaryLedger();
+
+                                interestsubsidiaryledger.CompanyId = subsidiaryLedger.CompanyId;
+                                interestsubsidiaryledger.BillingPeriod = subsidiaryLedger.BillingPeriod;
+                                interestsubsidiaryledger.BillingDate = subsidiaryLedger.BillingDate;
+                                interestsubsidiaryledger.DueDate = subsidiaryLedger.DueDate;
+                                interestsubsidiaryledger.BillingType = subsidiaryLedger.BillingType;
+                                interestsubsidiaryledger.TransactionType = "INTEREST";
+                                interestsubsidiaryledger.BillingReference = subsidiaryLedger.BillingReference;
+                                interestsubsidiaryledger.TransactionReference = subsidiaryLedger.TransactionReference;
+                                interestsubsidiaryledger.Currency = subsidiaryLedger.Currency;
+                                interestsubsidiaryledger.CreditAmount = subsidiaryLedger.CreditAmount;
+                                interestsubsidiaryledger.DebitAmount = subsidiaryLedger.DebitAmount;
+                                interestsubsidiaryledger.TransactionDate = subsidiaryLedger.TransactionDate;
+
+                                Balances newBalance = new Balances();
+                                newBalance.BillingType = subsidiaryLedger.BillingType;
+                                newBalance.TransactionReference = subsidiaryLedger.TransactionReference;
+                                newBalance.TransactionType = "BALANCE";
+                                newBalance.CompanyId = subsidiaryLedger.CompanyId;
+                                newBalance.Amount = newInterest.Balance;
+
+                                db.Balances.Add(newBalance);
+                                db.SubsidiaryLedger.Add(interestsubsidiaryledger);
+                            }
+                            else
+                            {
+                                Balances newBalance = new Balances();
+                                newBalance.BillingType = subsidiaryLedger.BillingType;
+                                newBalance.TransactionReference = subsidiaryLedger.TransactionReference;
+                                newBalance.TransactionType = "BALANCE";
+                                newBalance.CompanyId = subsidiaryLedger.CompanyId;
+                                newBalance.Amount = newInterest.Balance;
+
+                                db.Balances.Add(newBalance);
+                            }
+
+                            db.GeneralBilling.Add(generalBilling);
+                            db.SubsidiaryLedger.Add(subsidiaryLedger);
+                        }
+
+                        //END OF SECURITY GUARD
+
+
+                        //START OF POLE RENTAL
+
+                        List<PoleInformation> PoleInformations = new List<PoleInformation>();
+                        PoleInformations = db.PoleInformation.Where(m => m.StartDate <= dtCoverageTo).Where(m => m.EndDate >= dtCoverageFrom).ToList();
+                        foreach (var PoleInfo in PoleInformations)
+                        {
+                            decimal PoleAmount = 0;
+                            GeneralBilling generalBilling = new GeneralBilling();
+                            SubsidiaryLedger subsidiaryLedger = new SubsidiaryLedger();
+
+                            InterestModel newInterest = new InterestModel(dtCoverageFrom, DateTime.Now, dtBillingDue, PoleInfo.CompanyId);
+                            if (newInterest.PoleRental > 0)
+                            {
+                                PoleAmount = PoleInfo.Amount * newInterest.PoleRental;
+                            }
+                            else
+                            {
+                                PoleAmount = PoleInfo.Amount;
+                            }
+
+                            generalBilling.CompanyId = PoleInfo.CompanyId;
+                            generalBilling.BillingPeriod = billingPeriodId;
+                            generalBilling.BillingDate = dtBillingDate;
+                            generalBilling.DueDate = dtBillingDue;
+                            generalBilling.BillingType = "Pole Rental";
+                            generalBilling.TransactionType = "BILLING";
+                            generalBilling.BillingReference = PoleInfo.PoleInformationId.ToString();
+                            generalBilling.BillingAmount = PoleAmount;
+                            generalBilling.GenerationDate = DateTime.Now;
+                            generalBilling.CoverageFrom = DateTime.Now;
+                            generalBilling.CoverageTo = DateTime.Now;
+
+                            var PoleBillingNum = db.GeneralBilling.Where(m => m.CompanyId == PoleInfo.CompanyId).Max(m => (int?)m.BillingNumber) ?? 0;
+                            generalBilling.BillingNumber = ++PoleBillingNum;
+
+                            subsidiaryLedger.CompanyId = PoleInfo.CompanyId;
+                            subsidiaryLedger.BillingPeriod = billingPeriodId;
+                            subsidiaryLedger.BillingDate = dtBillingDate;
+                            subsidiaryLedger.DueDate = dtBillingDue;
+                            subsidiaryLedger.BillingType = "Pole Rental";
+                            subsidiaryLedger.TransactionType = "BILLING";
+                            subsidiaryLedger.BillingReference = PoleInfo.PoleInformationId.ToString();
+                            subsidiaryLedger.TransactionReference = "03" + ZoneGroup + PoleBillingNum;
+                            subsidiaryLedger.DebitAmount = 0;
+                            subsidiaryLedger.CreditAmount = PoleAmount;
+                            subsidiaryLedger.TransactionDate = DateTime.Now;
+
+                            if (newInterest.PoleRental > 0) //if(balance detected). save interest subsidiary ledger.
+                            {
+                                SubsidiaryLedger interestsubsidiaryledger = new SubsidiaryLedger();
+
+                                interestsubsidiaryledger.CompanyId = subsidiaryLedger.CompanyId;
+                                interestsubsidiaryledger.BillingPeriod = subsidiaryLedger.BillingPeriod;
+                                interestsubsidiaryledger.BillingDate = subsidiaryLedger.BillingDate;
+                                interestsubsidiaryledger.DueDate = subsidiaryLedger.DueDate;
+                                interestsubsidiaryledger.BillingType = subsidiaryLedger.BillingType;
+                                interestsubsidiaryledger.TransactionType = "INTEREST";
+                                interestsubsidiaryledger.BillingReference = subsidiaryLedger.BillingReference;
+                                interestsubsidiaryledger.TransactionReference = subsidiaryLedger.TransactionReference;
+                                interestsubsidiaryledger.Currency = subsidiaryLedger.Currency;
+                                interestsubsidiaryledger.CreditAmount = subsidiaryLedger.CreditAmount;
+                                interestsubsidiaryledger.DebitAmount = subsidiaryLedger.DebitAmount;
+                                interestsubsidiaryledger.TransactionDate = subsidiaryLedger.TransactionDate;
+
+                                Balances newBalance = new Balances();
+                                newBalance.BillingType = subsidiaryLedger.BillingType;
+                                newBalance.TransactionReference = subsidiaryLedger.TransactionReference;
+                                newBalance.TransactionType = "BALANCE";
+                                newBalance.CompanyId = subsidiaryLedger.CompanyId;
+                                newBalance.Amount = newInterest.Balance;
+
+                                db.Balances.Add(newBalance);
+                                db.SubsidiaryLedger.Add(interestsubsidiaryledger);
+                            }
+                            else
+                            {
+                                Balances newBalance = new Balances();
+                                newBalance.BillingType = subsidiaryLedger.BillingType;
+                                newBalance.TransactionReference = subsidiaryLedger.TransactionReference;
+                                newBalance.TransactionType = "BALANCE";
+                                newBalance.CompanyId = subsidiaryLedger.CompanyId;
+                                newBalance.Amount = newInterest.Balance;
+
+                                db.Balances.Add(newBalance);
+                            }
+
+                            db.GeneralBilling.Add(generalBilling);
+                            db.SubsidiaryLedger.Add(subsidiaryLedger);
+                        }
+
+                        //END OF POLE RENTAL  

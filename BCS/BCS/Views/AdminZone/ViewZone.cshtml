@@ -1,0 +1,232 @@
+﻿@{
+    ViewBag.Title = "Zone Maintenance";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@model BCS.Models.SearchZoneViewModel
+<script>
+    function EditZone(item, a) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            //alert(i + " = " + childId);
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + p[i].innerHTML);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.id);
+            elementToPopulate.value = childValue;
+        }
+
+        var zonenameorig = document.getElementById("ZoneNameOrig");
+        zonenameorig.value = a;
+    }
+</script>
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<div class="modal-content mar10">
+    <div class="modal-header">
+        <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> ZONE INFORMATION</h4>
+    </div>
+    <div class="modal-body bgColor-lv">
+
+        <div class="container w100per">
+
+            <table class="col-sm-12 table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-3">ZONE CODE</th>
+                        <th class="col-sm-3">ZONE NAME</th>
+                        <th class="col-sm-4">ZONE GROUP</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div class="container w100per ovrFlw-Y hmax300px">
+
+            <table class="table-condensed">
+                @using (Html.BeginForm("ViewZone", "AdminZone"))
+                {
+                    @Html.AntiForgeryToken()
+
+
+                    if (Model.ZoneList.Count > 0)
+                    {
+                        foreach (var item in Model.ZoneList)
+                        {
+                            if (item.ZoneGroup != null)
+                            {
+                                var zonegroupid = item.ZoneGroup;
+                                var zonegroupname = Model.ZoneGroupList.Single(m => m.ZoneGroupId == int.Parse(zonegroupid)).ZoneGroupName;
+
+
+                                <tbody>
+                                    <tr id="@Html.DisplayFor(modelItem => item.ZoneId)">
+                                        @if (Model.ZoneList.Count > 0)
+                                        {
+                                            <td class="hidden"><input type="text" hidden="hidden" id="ZoneId" name="ZoneId" /></td>
+                                        }
+                                        <td class="hidden" title="ZoneId">@item.ZoneId</td>
+                                        <td class="hidden cell" title="ZoneId2">@item.ZoneId</td>
+                                        <td class="hidden" title="ZoneGroup">@item.ZoneGroup</td>
+                                        <td class="cell col-sm-3" title="ZoneCode">@item.ZoneCode</td>
+                                        <td class="cell col-sm-3" title="ZoneName">@item.ZoneName</td>
+                                        <td class="col-sm-4">@zonegroupname</td>
+                                        <td><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditZone" class="w100per h25px" title="@Html.DisplayFor(modelItem => item.ZoneId)" onclick="EditZone(this.title,this.name)" name="@item.ZoneName" id="@Html.DisplayFor(modelItem => item.ZoneId)"></td>
+                                        @*
+                                            <td><input type="submit" VALUE="DELETE" class="w100per h25px" title="@Html.DisplayFor(modelItem => item.ZoneId)" onclick="EditZone(this.title)" name="@Html.DisplayFor(modelItem => item.ZoneId)" id="@Html.DisplayFor(modelItem => item.ZoneId)"></td>*@
+                                    </tr>
+                                </tbody>
+                            }
+                        }
+                    }
+                }
+
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-sm-6"></div>
+        <div class="col-sm-3"><button type="button" class="btn btn-primary w100px" data-toggle="modal" data-target="#modalAddZone">ADD</button></div>
+        @*<div class="col-sm-2">@Html.ActionLink("AlphaList Report", "ZoneReport", "AdminZone", new { reportType = "ZoneAlphaList" }, new { @class = "btn btn-primary w100per h25px clr", Type = "button", Target = "_blank" })</div>*@
+        <div class="col-sm-3">@Html.ActionLink("View Report", "ZoneReport", "AdminZone", new { reportType = "ZoneAlphaList" }, new { @class = "btn btn-primary", Type = "button", Target = "_blank" })</div>
+    </div>
+</div>
+
+
+
+<!-- Modal Edit Zone-->
+@using (Html.BeginForm("UpdateZone", "AdminZone"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.ZoneList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="ZoneId2" name="ZoneId2" />
+    }
+    <div class="modal fade ovrFlwHide" id="modalEditZone" role="dialog">
+        <div class="modal-dialog w700px">
+            <input type="text" hidden="hidden" id="ZoneNameOrig" name="ZoneNameOrig" />
+            <!-- Modal Edit Zone Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneName" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroup" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalEditZone">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Edit Zone</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container pad0">
+                        <div class="col-sm-2 pad0"><label for="zoneCode">Zone Code</label></div>
+                        <div class="col-sm-10 pad0"><input type="text" data-val="true" data-val-required="Zone code is required" class="form-control  text-center" id="ZoneCode" name="ZoneCode"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-2 pad0"><label for="zoneName">Zone Name</label></div>
+                        <div class="col-sm-10 pad0"><input type="text" data-val="true" data-val-required="Zone name is required" class="form-control  text-center" id="ZoneName" name="ZoneName"></div>
+                    </div>
+                    <br />
+                    <div class="container pad0">
+                        @if (ViewBag.ZoneGroup == "99")
+                        {
+                            <div class="col-sm-2 pad0"><label for="zoneGroup">Zone Group</label></div>
+                            <div class="col-sm-10 pad0">
+                                <select class="w35per" data-val="true" data-val-required="Zone group is required" id="ZoneGroup" name="ZoneGroup">
+                                    @if (Model.ZoneGroupList.Count >= 1)
+                                    {
+                                        foreach (var item in Model.ZoneGroupList)
+                                        {
+                                            <option value="@item.ZoneGroupId">@item.ZoneGroupName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <input type="submit" class="btn btn-primary w100px" value="SAVE" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="reset" class="btn btn-primary w100px" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Edit Zone -->
+<!-- Modal Add Zone-->
+@using (Html.BeginForm("AddZone", "AdminZone"))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade ovrFlwHide" id="modalAddZone" role="dialog">
+
+        <div class="modal-dialog w700px">
+
+            <!-- Modal Add Zone Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneName" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroup" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddZone">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Add Zone</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container pad0">
+                        <div class="col-sm-2 pad0"><label for="zoneCode">Zone Code</label></div>
+                        <div class="col-sm-10 pad0"><input type="text" data-val="true" data-val-required="Zone code is required" class="form-control h25px " id="ZoneCode" name="ZoneCode"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-2 pad0"><label for="zoneName">Zone Name</label></div>
+                        <div class="col-sm-10 pad0"><input type="text" data-val="true" data-val-required="Zone name is required" class="form-control h25px " id="ZoneName" name="ZoneName"></div>
+                    </div>
+                    <br />
+                    <div class="container pad0">
+                        @if (ViewBag.ZoneGroup == "99")
+                        {
+                            <div class="col-sm-3 pad0"><label for="zoneGroup">Zone Group</label></div>
+                            <div class="col-sm-9 pad0">
+
+                                <select class="w40per" data-val="true" data-val-required="Zone group is required" id="ZoneGroup" name="ZoneGroup">
+                                    <option selected="selected" value="">Select</option>
+                                    @if (Model.ZoneGroupList.Count >= 1)
+                                    {
+                                        foreach (var item in Model.ZoneGroupList)
+                                        {
+                                            <option value="@item.ZoneGroupId">@item.ZoneGroupName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        }
+                    </div>
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <input type="submit" class="btn btn-primary w100px" value="SAVE" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="reset" class="btn btn-primary w100px" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Add Zone -->
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

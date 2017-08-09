@@ -1,0 +1,170 @@
+﻿@model IEnumerable<BCS.Models.systemlogs>
+
+
+@{
+    ViewBag.Title = "SystemlogsView";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+    var unlist = Model.GroupBy(un => un.UserName).Select(un => un.First());
+    var lvllist = Model.Select(lvl => lvl.loglevel);
+
+    
+
+}
+
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<div class="modal-content mar10">
+    <div class="modal-header">
+
+        <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> System Logs Information</h4>
+
+    </div><!--end of modal header-->
+    <div class="modal-body  bgColor-lv" style="padding:0px;">
+
+        <div class="container pad10 bgColor-db">
+
+            @using (Ajax.BeginForm("GetLogs", "SystemLogs", new AjaxOptions
+            {
+                UpdateTargetId = "systemlogspartial",
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "Post",
+                LoadingElementId = "loading"
+            }))
+            {
+
+                <div class="col-sm-2">
+                    <label>Search by:</label>
+                </div>
+                <div class="col-sm-3">
+
+                    <select class="form-control" id="selsrch" name="selsrch" onchange="changeinput(this);">
+                        <option value="default" showfld="showName" hidefld="hideName">All</option>
+                        <option value="username" showfld="showName" hidefld="hideName">Username</option>
+                        <option value="date" showfld="showdate" hidefld="hideDate">Date</option>
+                        <option value="level" showfld="showLevel" hidefld="hideLevel">Level</option>
+                        <option value="message" showfld="showRemark" hidefld="hideRemark">Message</option>
+                    </select>
+
+                </div>
+                <div id="showinput" class="col-sm-3">
+
+                    <input type='text' name='searchstr' class='form-control' disabled />
+
+
+                </div>
+                <div class="col-sm2">
+                    <input type="submit" value="Search" class="btn btn-default" />
+                </div>
+
+            }
+        </div>
+        <div id="systemlogspartial" style="padding-top:10px;">
+            <div class="container pad0 mar0">
+                <table class="table table-responsive">
+                    <thead class="h25px bgColor-blk fcWhite ">
+                        <tr>
+                            <th class="hidden">
+                                @Html.DisplayNameFor(model => model.ZoneGroupCode)
+                            </th>
+                            <th class="br1Grey txtCenter">
+                                Name
+                            </th>
+                            <th class="br1Grey txtCenter">
+                                Message
+                            </th>
+
+                            <th class="br1Grey txtCenter">
+                                Date & Time
+                            </th>
+                            <th class="br1Grey txtCenter">
+                                Accessed
+                            </th>
+                            <th class="br1Grey txtCenter">
+                                Level
+                            </th>
+
+
+           
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="container ovrFlw-Y hmax300px" >
+                <table class="table table-responsive">
+                    <tbody>
+                        @foreach (var item in Model)
+            {
+                            <tr>
+                                <td class="hidden">
+                                    @Html.DisplayFor(modelItem => item.ZoneGroupCode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UserName)
+                                </td>
+                                <td width="150px" style="word-break:break-word">
+                                    @Html.DisplayFor(modelItem => item.remarks)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.timestamp)
+                                </td>
+                                <td width="150px" style="word-break:break-word">
+                                    @Html.DisplayFor(modelItem => item.AreaAccessed)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.loglevel)
+                                </td>
+                      
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+@using (@Html.BeginForm("SystemLogsView", "Systemlogs", FormMethod.Post, new { @id = "form1", @enctype = "multipart/form-data" }))
+{
+    <div class="modal-footer pad5">
+        <div class="col-sm-1">
+            <label>From:</label>
+        </div>
+        <div class="col-sm-3">
+        <input type="date" id="logStartDate" placeholder="START" name="tdstartDate" class="form-control br1Grey w100per date-picker" /> 
+        </div>
+        <div class="col-sm-1">
+            <label>To:</label> 
+        </div>
+        <div class="col-sm-3">
+       
+            <input type="date" id="logEndDate" placeholder="END" name="tdEndDate" class="form-control br1Grey w100per date-picker" /> 
+        </div>
+        <div class="col-sm-3"><button type="submit" class="btn btn-primary h25px" data-dismiss="modal"  formtarget="_blank">View Logs</button></div>
+    </div>
+}
+</div>
+
+
+<script>
+
+    function changeinput(v) {
+        if (v.value == "username") {
+            document.getElementById("showinput").innerHTML = "<select class='form-control' name='searchstr' >@foreach(var item in unlist){<option value='@item.UserName'>@item.UserName</option>}</select>";
+        } else if (v.value == "level") {
+            document.getElementById("showinput").innerHTML = "<select class='form-control' name='searchstr'><option value='INFO'>INFO</option><option value='WARNING'>WARNING</option><option value='ERROR'>ERROR</option></select>";
+        } else if (v.value == "remarks") {
+            document.getElementById("showinput").innerHTML = "<input type='text' name='searchstr' class='form-control showName hideDate hideLevel hideLevel'/>";
+        } else if (v.value == "default") {
+
+            document.getElementById("showinput").innerHTML = "<input type='text' name='searchstr' class='form-control showName hideDate hideLevel hideLevel' disabled/>";
+
+            //document.getElementById("myform").submit();
+        } else if (v.value == "date") {
+            document.getElementById("showinput").innerHTML = " <input type='date' name='searchstr' class='form-control showRemark hideName hideDate hideLevel' />";
+        }
+    }
+</script>

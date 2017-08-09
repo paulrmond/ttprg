@@ -1,0 +1,236 @@
+<div>
+    @using (Html.BeginForm("UpdateRental", "DataEntryRental"))
+{
+        @Html.ValidationSummary(false)
+        @Html.AntiForgeryToken()
+    if (Model.CompanyList.Count > 0)
+    {
+        <input type="text" hidden="hidden" name="CompanyID" value="@Model.CompanyList[0].CompanyID" />
+    }
+
+        <div class="modal fade" id="modalEditRental" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal Edit Rental Content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Edit Rentals</h4>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <div class="row">
+                            <div class="col-sm-3">Company</div>
+                            <div class="col-sm-8 clr"><input type="text" disabled="disabled" VALUE="Company Name" class="form-control pad2 h25px w100per" id="EditCompanyName"></div>
+                            <div class="col-sm-1 clr">
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">Address</div>
+                            <div class="col-sm-8 clr"><input type="text" disabled="disabled" VALUE="Company Name" class="form-control pad2 h25px w100per" id="EditCompanyAddress"></div>
+                            <div class="col-sm-1 clr">
+                                <input type="text" hidden="hidden" id="rentID" name="RentalInformationId" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">Currency</div>
+
+                        <div class="col-sm-8 pad0">
+                            <select class="btn clr br1Grey w100per h20px pad2 mdlInBxWd" name="Currency" id="Currency" onchange="ChangeVal(this.value, 'option-containerEditCurrency', 'Type1')">
+                                <option value="PHP" selected="selected">PHP</option>
+                                <option value="USD">USD</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="button" class="dropbtn btn clr bgColor-None" data-toggle="modal" data-target="#modalRentalType">
+                                <span class="glyphicon glyphicon-plus fcBl  clr"></span>
+                            </button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">Add Type</div>
+                            <div class="col-sm-8 pad0">
+                                <span id="option-containerEditCurrency" style="visibility:hidden;position:absolute"></span>
+                                <select class="w100per h25px" name="Type" id="Type1" onchange="ChangeVal(this.value,'option-containerEdit','RateEdit')">
+                                    @if (Model.SubCategory.Count > 0)
+                                {
+                                    foreach (var item in Model.SubCategory)
+                                    {
+                                        string getCurrency = item.ToString();
+                                        getCurrency = getCurrency.Substring(0, 3).ToUpper() == "USD" ? getCurrency.Substring(0, 3).ToUpper() : "PHP";
+                                        <option subcat="@getCurrency" value="@item.ToString()">@item.ToString()</option>
+                                        @*<option value="@item.ToString()">@item.ToString()</option>*@
+                                    }
+                                }
+                                </select>
+                                @*@Html.ValidationMessage("Type")*@
+                            </div>
+                            <div class="col-sm-1 pad0">
+                                <button type="button" class="dropbtn btn clr" data-toggle="modal" data-target="#modalRentalType">
+                                    <span class="glyphicon glyphicon-plus fcBl bgColor-lv clr"></span>
+                                </button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">Add Rate</div>
+                            <div class="col-sm-7 pad0">
+                                <span id="option-containerEdit" style="visibility:hidden;position:absolute"></span>
+                                <select class="w100per h25px" name="Rate" id="RateEdit">
+
+                                    @if (Model.SubCategory.Count > 0)
+                                {
+                                    foreach (var item in Model.BillingRate)
+                                    {
+                                        <option subcat="@item.SubCategory" value="@item.Rate">@item.Rate</option>
+                                    }
+                                }
+                                </select>
+                                @*@Html.ValidationMessage("Rate")*@
+                            </div>
+                            <div class="col-sm-1 pad0">
+                                <button type="button" class="dropbtn btn clr" data-toggle="modal" data-target="#modalRentalRate">
+                                    <span class="glyphicon glyphicon-plus fcBl bgColor-lv clr"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">Currency</div>
+                            <div class="col-sm-7 pad0">
+                                <select class="w100per h25px" name="Currency" id="CurrencyEdit">
+                                    <option selected="selected" value="PHP">PHP</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                                @*@Html.ValidationMessage("Currency")*@
+                            </div>
+                            <div class="col-sm-1 pad0">
+                                <button type="button" class="dropbtn btn clr" data-toggle="modal" data-target="#modalRentalRate">
+                                    <span class="glyphicon glyphicon-plus fcBl bgColor-lv clr"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">Area</div>
+                            <div class="col-sm-7 pad0">
+                                <input type="text" VALUE="Enter Area" class="w100per" id="Area" name="Area">
+                                @*@Html.ValidationMessage("Area")*@
+                            </div>
+                            <div class="col-sm-1 pad0">
+                                Sq.m.
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">Start Date</div>
+                            <div class="col-sm-3 pad0">
+                                <div id="datetimepicker1" class="input-append date">
+                                    <input data-format="dd/MM/yyyy hh:mm:ss" type="text" class="w100px date-picker" id="StartDate" name="StartDate">
+                                    @*@Html.ValidationMessage("StartDate")*@
+                                    <span class="add-on glyphicon glyphicon-calendar"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">End Date</div>
+                            <div class="col-sm-3 pad0">
+                                <div id="datetimepicker1" class="input-append date">
+                                    <input data-format="dd/MM/yyyy hh:mm:ss" type="text" class="w100px date-picker" id="EndDate" name="EndDate">
+                                    @*@Html.ValidationMessage("EndDate")*@
+                                    <span class="add-on glyphicon glyphicon-calendar"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">Bill Mode</div>
+                            <div class="col-sm-3 pad0">
+                                <select class="w100per h25px" id="BillMode" name="BillMode">
+                                    <option value="1">Annual</option>
+                                    <option value="2">Bi-Annual</option>
+                                    <option value="3">Irregular</option>
+                                    <option value="4">Monthly</option>
+                                    <option value="5">Quarterly</option>
+                                </select>
+                                @*@Html.ValidationMessage("BillMode")*@
+                            </div>
+                            <div class="col-sm-2 pad0 txtRight">Due on</div>
+                            <div class="col-sm-2 pad0">
+                                <select class="w100per h25px" id="DueOn" name="DueOn">
+                                    <option value="1">1st</option>
+                                    <option value="2">2nd</option>
+                                    <option value="3">3rd</option>
+                                    <option value="4">4th</option>
+                                    <option value="5">5th</option>
+                                    <option value="6">6th</option>
+                                    <option value="7">7th</option>
+                                    <option value="8">8th</option>
+                                    <option value="9">9th</option>
+                                    <option value="10">10th</option>
+                                    <option value="11">11th</option>
+                                    <option value="12">12th</option>
+                                    <option value="13">13th</option>
+                                    <option value="14">14th</option>
+                                    <option value="15">15th</option>
+                                    <option value="16">16th</option>
+                                    <option value="17">17th</option>
+                                    <option value="18">18th</option>
+                                    <option value="19">19th</option>
+                                    <option value="20">20th</option>
+                                    <option value="21">21st</option>
+                                    <option value="22">22nd</option>
+                                    <option value="23">23rd</option>
+                                    <option value="24">24th</option>
+                                    <option value="25">25th</option>
+                                    <option value="26t">26th</option>
+                                    <option value="27">27th</option>
+                                    <option value="28">28th</option>
+                                    <option value="29">29th</option>
+                                    <option value="30">30th</option>
+                                    <option value="31">31th</option>
+                                </select>
+                                @*@Html.ValidationMessage("DueOn")*@
+                            </div>
+                        </div>
+                        <div class="row pad10">
+                            <div class="col-sm-3 w100per br1Grey bgColor-red fcWhite">
+                                <center>
+                                    <b>Billing Month</b>
+                                    <button type="button" class="dropbtn btn bgColor-red clr" onclick="disabledField()">
+                                        <span class="glyphicon glyphicon-edit fcWhite clr"></span>
+                                    </button>
+                                </center>
+                            </div>
+                            <div class="col-sm-10 pad0 w100per br1Grey">
+                                <select multiple id="billingMonths" class="w100per disFld" disabled="disabled">
+                                    <option class="br1-bot pad5" value="January">January</option>
+                                    <option class="br1-bot pad5" value="February">February</option>
+                                    <option class="br1-bot pad5" selected="selected" value="March">March</option>
+                                    <option class="br1-bot pad5" value="May">May</option>
+                                    <option class="br1-bot pad5" value="June">June</option>
+                                    <option class="br1-bot pad5" value="July">July</option>
+                                    <option class="br1-bot pad5" value="August">August</option>
+                                    <option class="br1-bot pad5" value="September">September</option>
+                                    <option class="br1-bot pad5" value="October">October</option>
+                                    <option class="br1-bot pad5" value="November">November</option>
+                                    <option class="br1-bot pad5" value="December">December</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-sm-6 pad0">
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="submit" class="btn btn-primary w100px" data-target="#modalAddRental">Save</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-primary w100px" data-dismiss="modal" data-target="#modalAddRental">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+}
+</div>

@@ -1,0 +1,136 @@
+﻿@using Microsoft.AspNet.Identity;
+@using BCS.Models;
+@using Microsoft.AspNet.Identity;
+<div id="menuNav" class="container h105px">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-header bgColor-White w100per">
+            <div class="col-sm-8 txtCent pad0">
+                <div class="col-sm-1 txtCent pad0 h100per">
+                    <a class="clr br0" href="~/" title="Return to Home Page"><img src="../images/pezalogo.jpg"></a>
+                </div>
+                <div class="col-sm-11 pad0">
+                    <div id="pezaNameTop" class="container pad0 logo fcBl fs2vw">Philippine Economic Zone Authority @*<img src="../images/pezaname.jpg" alt="Peza Logo">*@</div>
+                    @if (User.Identity.IsAuthenticated) //GET THE CURRENT USER GROUP AND DISPLAY IN HEADER.
+                    {
+                        ApplicationDbContext context = new ApplicationDbContext();
+                        BCS_Context db = new BCS_Context();
+
+                        var currentUserId = User.Identity.GetUserId();
+                        var currentUserZoneGroup = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+                        var ZoneName = db.ZoneGroup.Single(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupName;
+                        <div id="pezaNameBottom" class="container pad0">@ZoneName</div>
+                    }
+                </div>
+            </div>
+            <div class="col-sm-4 pad0 txtRight">
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <ul class="nav navbar-nav pad5">
+                    @*@if (User.IsInRole("System Administrator"))
+                        {*@
+                    @{
+                        BCS_Context db = new BCS_Context();
+                        var username = User.Identity.GetUserName();
+                        RoleAssignmentMatrix roleAssignmentMatrix = db.RoleAssignmentMatrix.SingleOrDefault(m => m.UserName == username);
+                        bool? isValidAdmin = roleAssignmentMatrix.Administrative == null || roleAssignmentMatrix.Administrative == false ? false : true;
+                        bool? isValidHO = roleAssignmentMatrix.HO == null || roleAssignmentMatrix.HO == false ? false : true;
+                    }
+                    <li class="dropdown">
+                        <button href="#" class="dropbtn btn btn-primary w200px" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">DATA ENTRY<span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-content">
+                            <li><a class="btn btn-default w100per" href="~/DataEntryRental/ViewRentals">Rental</a></li>
+                            <li><a class="btn btn-default w100per" href="~/DataEntryPoleRental/ViewPoleRentals">Pole Rental</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a class="btn btn-default w100per" href="~/DataEntryGarbage/ViewGarbage">Garbage</a></li>
+                            <li><a class="btn btn-default w100per" href="~/DataEntryWater/ViewWater">Water</a></li>
+                            <li><a class="btn btn-default w100per" href="~/DataEntryFranchise/ViewFranchise">Franchise</a></li>
+                            @if (isValidAdmin == true)
+                            {
+                                <li><a class="btn btn-default w100per" href="~/DataEntryAdminFee/ViewAdminFee">Admin Fee</a></li>
+                            }
+                            <li><a class="btn btn-default w100per" href="~/DataEntrySecurityGuardFee/ViewSecurityGuardFee">Security Guard Fee</a></li>
+                        </ul>
+                    </li>
+                    @*}
+                        @if (User.IsInRole("System Administrator"))
+                        {*@
+                    <li class="dropdown">
+                        <button href="#" class="dropbtn btn btn-primary w200px" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">BILLING <span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-content">
+                            <li><a class="btn btn-default w100per" href="~/BillingGenerate/ViewGenerate">Generate</a></li>
+                            <li><a class="btn btn-default w100per" href="~/BillingPayments/ViewPayments">Order of Payment</a></li>
+                            @if (isValidHO == true)
+                            {
+                                <li><a class="btn btn-default w100per" href="~/HOBatchUpdate/Index">HO Batch Update</a></li>
+                            }
+                            <li><a class="btn btn-default w100per" href="~/EndOfMonthProcessing/GenerateEOMProcessing">EOM Processing</a></li>
+                        </ul>
+                    </li>
+                    @*}
+                        @if (User.IsInRole("System Administrator"))
+                        {*@
+                    <li class="dropdown">
+                        <button href="#" class="dropbtn btn btn-primary w200px" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">REPORT <span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-content">
+                            <li><a class="btn btn-default w100per" href="~/ReportsJBR/ViewJBR">JBR</a></li>
+                            <li><a class="btn btn-default w100per" href="~/ReportsBillingStatement/ViewBillingStatement">Billing Statement</a></li>
+                            <li><a class="btn btn-default w100per" href="~/ReportsSubsidiaryLedger/ViewSubsidiaryLedger">Subsidiary Ledger</a></li>
+                            <li><a class="btn btn-default w100per" href="~/ReportsMonthlyAging/ViewMonthlyAging">Monthly Aging</a></li>
+                            <li><a class="btn btn-default w100per" href="~/ReportsCollection/ViewCollection">Collection</a></li>
+                            <li><a class="btn btn-default w100per" href="~/SendMailer/Index">Email</a></li>
+                        </ul>
+                    </li>
+                    @*}
+                        @if (User.IsInRole("System Administrator"))
+                        {*@
+                    <li class="dropdown">
+                        <button href="#" class="dropbtn btn btn-primary w200px" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">MAINTENANCE<span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-content">
+                            <li><a class="btn btn-default w100per" href="~/MaintenanceCompany/ViewCompany">Company</a></li>
+                            <li><a class="btn btn-default w100per" href="~/MaintenanceBillingAndCollectionRates/ViewBillingAndCollectionRates">Rates</a></li>
+                            <li><a class="btn btn-default w100per" href="~/MaintenanceSubsidiaryLedger/ViewSubsidiaryLedger">Subsidiary Ledger</a></li>
+                            <li><a class="btn btn-default w100per" href="~/MaintenancePeriodTable/ViewPeriodTable">Period Table</a></li>
+                            <li><a class="btn btn-default w100per" href="~/MaintenanceAdvances/ViewAdvances">Advances</a></li>
+                            <li><a class="btn btn-default w100per" href="~/MaintenanceVAT/ViewVAT">VAT</a></li>
+                            <li><a class="btn btn-default w100per" href="~/MaintenanceOrderOfPaymentAccounts/ViewOrderOfPaymentAccounts">Order of Payment Accounts</a></li>
+                        </ul>
+                    </li>
+                    @*}*@
+                </ul>
+                            //if (User.IsInRole("System Administrator"))
+                            //{
+
+                            //}
+                        }
+
+            <div id="admin" class="dropdown vAlignAuto h25px">
+                <button type="button" class="dropbtn btn clr br0 iconLg bgColor-None" data-toggle="dropdown" title="Manage the system">
+                    <span class="glyphicon glyphicon-cog"></span>
+                </button>
+                <div class="dropdown-menu dropdown-content w100per pad10">
+                    <a class="btn btn-default w100per" href="~/Account/ViewUser" title="Manage Users (Add/Edit Account)">User</a>
+                    <a class="btn btn-default w100per" href="~/Role/Index" title="Manage User's Task in the system">User Role</a>
+                    <a class="btn btn-default w100per" href="~/AdminZone/ViewZone" title="Manage Zone (Add/Edit Zone)">Zone</a>
+                    <a class="btn btn-default w100per" href="~/AdminZone/ViewZoneGroup" title="Manage Zone Group (Add/Edit Zone Clustering)">Zone Group</a>
+                    <a class="btn btn-default w100per" href="~/RoleAssignmentMatrix/Details" title="Manage Role Assignment">Role Access</a>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

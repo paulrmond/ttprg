@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "Upload";
+}
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    function uploadFile() {
+        var tran = $('#SelectTransaction').val();
+        if (tran != "" || tran != null) {
+            //var x = document.getElementById("BillingPeriod").value;
+            var ufile = $('#UploadFile')[0].files[0];
+            var a = document.getElementById("progressbar");
+            var newformdata = new FormData();
+
+            if (ufile.name == "") {
+                alert('Please select billing period or file to upload.')
+                return false;
+            }
+
+            newformdata.append('uploadData', $('#UploadFile')[0].files[0]);
+            var uploadURL = "";
+            if (tran == "BILLING") {
+                uploadURL = '/Handler/BillingHandler.ashx';
+            } else if (tran == "PAYMENT") {
+                uploadURL = '/Handler/PaymentHandler.ashx';
+            }
+            //newformdata.append('billPeriod', x);
+            //for (var pair of newformdata.entries()) {
+            //    alert(pair[0] + ', ' + pair[1]);
+            //}
+            $.ajax({
+                //url: '/DataEntryAdminFee/uploaddata',
+                url: uploadURL,
+                type: 'POST',
+                data: newformdata,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    var con = confirm("Are you sure you want to upload this file? Press OK to proceed.");
+                    if (con) {
+                        document.body.style.cursor = 'wait';
+                        a.hidden = false;
+                    } else {
+                        return false;
+                    }
+
+                },
+                success: function () {
+                    alert('Upload complete');
+                    document.body.style.cursor = 'default';
+                    a.hidden = true;
+                    document.getElementById("UploadFile").value = "";
+                    //document.getElementById("BillingPeriod").value = "";
+                    location.reload();
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                    a.hidden = true;
+                    document.body.style.cursor = 'default';
+                    location.reload();
+                }
+            });
+        }
+    }
+</script>
+
+    <div class="panel panel-default br1db w700px" style="margin:0 auto;">
+        <div class="panel-heading bgColor-lb fontBld bgColor-lb">Upload List</div>
+        <div class="panel-body bgColor-lgrey">
+            <select id="SelectTransaction" data-val="true" data-val-required="Select transaction type.">
+                <option value="">Select Transaction</option>
+                <option value="BILLING">BILLING</option>
+                <option value="PAYMENT">PAYMENT</option>
+            </select>
+            <label for="UploadFile" class="pad10">Upload File:</label>
+            <input type="file" name="UploadFile" id="UploadFile" accept=".xls" data-val="true" data-val-required="File to upload is required" class="form-control" />
+
+            <div id="progressbar" style="position:relative" hidden="hidden">
+                <img src="~/Gif/loading_g.gif" width="500" height="20" />
+                <span id="progressbar-label" style="position:absolute; left:40%">Loading...</span>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <input type="submit" onclick="uploadFile()" class="btn btn-primary" value="Upload" />
+            <input id="resetModal" hidden="hidden" type="reset">
+        </div>
+    </div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}
+

@@ -1,0 +1,57 @@
+﻿<!-- Page Initialization -->
+
+@using System.Linq
+
+@{
+    ViewBag.Title = "Billing Status Delinquent Company";
+}
+@model BCS.Models.SearchIndexViewModel
+@using System.Linq
+
+<div ID="contentDataEntryRental" class="pad0">
+    <!-- Enterprise Detail -->
+    <div class="container modal-content bgColor-White pad0" id="companyCnt" companyCnt="@Model.CompanyList.Count" SelectedCompany="@ViewBag.SelectedCompany">
+        <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">DELINQUENT COMPANY</span></div>
+        <div class="modal-body ">
+            <div class="col-sm-12 padr25 br2 bgColor-blk">
+                <table class="">
+                    <thead class="br1-bot-Blk bgColor-blk fcWhite pad10 text-center fontBld ">
+                        <tr class="container w100per pad0">
+                            <td class="col-sm-1"></td>
+                            <td class="col-sm-3 pad0 txtCenter">COMPANY NAME</td>
+                            <td class="col-sm-1"></td>
+                            <td class="col-sm-3">BILLING TYPE</td>
+                            <td class="col-sm-3 txtLeft">DUE DATE</td>
+                            <td class="col-sm-3 txtLeft">AMOUNT</td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="col-sm-12 hmax300px ovrFlw-YAuto br2 pad0">
+                <table class="">
+                    <tbody class="">
+                        @if (Model.DelinCompanyName != null)
+                        {
+                        for (int x = 0; x <= Model.DelinCompanyName.Count - 1; x++)
+                        {
+                                        <tr class="container w100per pad0">
+                                            <td  class="col-sm-4 br1Grey cell ovrFlwHide" align="center">@Model.DelinCompanyName[x]</td>
+                                            <td  class="col-sm-3 br1Grey cell ovrFlwHide h34px" align="center" >@Model.DelinBillingType[x]</td>
+                                            <td  class="col-sm-2 br1Grey cell ovrFlwHide h34px" align="center" >@Model.DelinDueDate[x].ToShortDateString()</td>
+                                            <td  class="col-sm-3 br1Grey cell ovrFlwHide h34px" align="center">@String.Format("{0:n}", Model.DelinAmount[x])</td>
+                                        </tr>
+                              }
+                          }
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

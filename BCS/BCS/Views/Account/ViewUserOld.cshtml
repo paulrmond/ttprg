@@ -1,0 +1,102 @@
+﻿@model BCS.Models.ApplicationUser
+@{
+    ViewBag.Title = "List of Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<script>
+    function valToDelete(id, name) {
+
+        var user = document.getElementById("UserNameTo");
+        var ida = document.getElementById("Id");
+        
+        ida.value = id;
+        user.value = name;
+    }
+</script>
+
+<center class="fcWhite"><h2>USER</h2></center>
+<div class="row">
+    <div class="modal-dialog w90per">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> USERS' INFORMATION</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container br1 w100per pad0">
+                    <div class="container bgColor-blk br0 pad0 fcWhite fontBld txtCenter">
+                        <div class="col-sm-2 pad0">Name</div>
+                        <div class="col-sm-2 pad0">@Html.DisplayNameFor(model => model.UserName)</div>
+                        <div class="col-sm-2 pad0">@Html.DisplayNameFor(model => model.Email)</div>
+                        <div class="col-sm-2 pad0">@Html.DisplayNameFor(model => model.Roles)</div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <div class="container bgColor-White br0 pad0 ovrFlw-YAuto hmax100px">
+                        @foreach (var item in ViewBag.Users)
+                        {
+                            <div class="container pad0">
+                                <div class="col-sm-2 br1Grey h25px ovrFlwHide pad2" data-tooltip="tooltip" data-placement="auto" title="User - Full Name of the user">@item.LastName, @item.GivenName @item.MiddleName</div>
+                                <div class="col-sm-2 br1Grey h25px ovrFlwHide pad2" data-tooltip="tooltip" data-placement="auto" title="Alias of the user">@item.UserName</div>
+                                <div class="col-sm-2 br1Grey h25px ovrFlwHide pad2" data-tooltip="tooltip" data-placement="auto" title="email of the user">@item.Email</div>
+                                <div class="col-sm-2 br1Grey h25px ovrFlwHide pad2" data-tooltip="tooltip" data-placement="auto" title="The Zone Group Role of the user">@item.RoleName</div>
+                                <div class="col-sm-1 pad2">@Html.ActionLink("Edit", "EditUser", new { id = @item.Id }, new { @class = "btn btn-default clr br1Grey h20px bgColor-lgrey w100per" })</div>
+                                <div class="col-sm-2 pad2">@Html.ActionLink("Reset Password", "ResetPassword", new { userid = @item.Id }, new { @class = "btn btn-default clr br1Grey h20px bgColor-lgrey w100per" })</div>
+                                <div class="col-sm-1 pad2">@Html.ActionLink("Delete", "Delete", new { id = @item.Id }, new { @class = "btn btn-default clr br1Grey h20px bgColor-lgrey w100per" })</div>
+                                @*<div class="col-sm-1 pad2">@Html.ActionLink("Delete", "Delete", new { id = @item.Id }, new { @class = "btn btn-default clr br1Grey h20px bgColor-lgrey w100per" })</div>
+                                <input type="button" data-toggle="modal" data-target="#modalRemoveUser" value="Delete" id="@item.Id" onclick="valToDelete(this.id,'@item.UserName')"/>*@                                
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-10"></div>
+                <div class="col-sm-2">@Html.ActionLink("Create New", "Register", "Amount", new { @class = "btn btn-primary w100px" })</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- Modal Remove-->
+<div class="modal fade" id="modalRemoveUser" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        @using (Html.BeginForm("DeleteUser", "Account"))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalRemoveRental">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-trash icon clr"></span> Remove Rental</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <h4> Are you sure you want to remove this record?</h4>
+                    <div class="pad20">
+                        <div class="row">
+                           <input type="text" id="UserNameTo" class="col-sm-4 br1 bgColor-db fontBld fcWhite" disabled="disabled"/>
+                           <input type="text" id="Id" name="Id" hidden="hidden"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <button type="submit" class="btn btn-primary w100px">Yes</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+<!-- End Modal Remove -->

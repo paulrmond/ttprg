@@ -1,0 +1,510 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consultant: DCI
+-->
+@{
+    ViewBag.Title = "ViewPayments";
+}
+@model BCS.Models.SearchMainOrderOfPaymentViewModel
+
+<script>
+
+    function EditOP(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+        }
+    }
+
+    function getComp() {
+        var comp = $('#compName').val();
+        $.ajax({
+            url: '/BillingPayments/CompData',
+            type: 'POST',
+            data: { 'comp': comp },
+            dataType: 'json',
+            success: function (a) {
+                $('#companyName1').empty();
+                //alert(a);
+                $.each(a, function (key, value) {
+                    $('#companyName1').append($("<option></option>").val(value.CompanyName).html(value.ZoneName));
+                });
+            },
+            error: function (err) {
+                // alert(err.responseText);
+            }
+        });
+    }
+
+    function getAddressData() {
+        var comp = $('#compName').val();
+        $.ajax({
+            url: '/BillingPayments/GetAddress',
+            type: 'POST',
+            data: { 'comp': comp },
+            dataType: 'json',
+            success: function (a) {
+                document.getElementById('AddAddress').value = a;
+            },
+            error: function (err) {
+                // alert(err.responseText);
+            }
+        });
+    }
+
+    function getCompCodeData() {
+        var comp = $('#compName').val();
+        $.ajax({
+            url: '/BillingPayments/GetCompCode',
+            type: 'POST',
+            data: { 'comp': comp },
+            dataType: 'json',
+            success: function (a) {
+                document.getElementById('AddCompCode').value = a;
+            },
+            error: function (err) {
+                // alert(err.responseText);
+            }
+        });
+    }
+
+    function getComp2() {
+        var comp2 = $('#compcomp').val();
+        $.ajax({
+            url: '/BillingPayments/CompData2',
+            type: 'POST',
+            data: { 'comp2': comp2 },
+            dataType: 'json',
+            success: function (a) {
+                $('#companyName2').empty();
+                $.each(a, function (key, value) {
+                    $('#companyName2').append($("<option></option>").val(value.CompanyName).html(value.ZoneName));
+                });
+            },
+            error: function (err) {
+                // alert(err.responseText);
+            }
+        });
+    }
+
+    function getAddressData2() {
+        var comp = $('#compcomp').val();
+        $.ajax({
+            url: '/BillingPayments/GetAddress2',
+            type: 'POST',
+            data: { 'comp': comp },
+            dataType: 'json',
+            success: function (a) {
+                document.getElementById('Address').value = a;
+            },
+            error: function (err) {
+                // alert(err.responseText);
+            }
+        });
+    }
+
+    function searchFilter(val) {
+        if (val.value == "Date") {
+            document.getElementById("FilterDate").hidden = false;
+            document.getElementById("opfilter").hidden = true;
+        }
+        else {
+            document.getElementById("FilterDate").hidden = true;
+            document.getElementById("opfilter").hidden = false;
+        }
+    }
+
+    function Clear(val) {
+        document.getElementById("AddCompanyName").value = "";
+        document.getElementById("AddAddress").value = "";
+    }
+</script>
+
+<div ID="contentOrderOfPayment" class="container modal-content bgColor-White pad0">
+    <!-- Page Title -->
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-list"></span> <span class="fs20">ORDER OF PAYMENT</span></div>
+    <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <!-- Enterprise Detail -->
+    <div class="container bgColor-White pad10">
+
+        <!-- Order of Payment Datails Table -->
+        <div class="container br1 w100per br2 pad0" id="companyCnt" companyCnt="@Model.CompanyList.Count" OPCompanySelected="@ViewBag.OPCompanySelected">
+            <table class="container w100per  pad0">
+                <thead class="container">
+                    <tr class="container bgColor-blk fcWhite w100per text-center fontBld fs11">
+                        <td class="col-sm-1 pad0">OP/Ref No.</td>
+                        <td class="col-sm-1 pad0 hidden">Ref No.</td>
+                        <td class="col-sm-1 pad0">Date</td>
+                        <td class="col-sm-2 pad0">Company</td>
+                        <td class="col-sm-2 pad0">Address</td>
+                        <td class="col-sm-2 pad0">Total</td>
+                        <td class="col-sm-1 pad0">Zone</td>
+                        <td class="col-sm-1 pad0">OR No.</td>
+                        <td class="col-sm-1 pad0"> </td>
+                        <td class="col-sm-1 pad0"> </td>
+                        @*<td class="col-sm-1 pad0"> </td>*@
+                    </tr>
+                </thead>
+            </table>
+            <div class="container ovrFlw-Y hmax300px pad0">
+                <table>
+                    <tbody id="companyCnt" companyCnt="">
+                        @using (Html.BeginForm("DisplayOrderOfPayment", "BillingPayments"))
+                        {
+                            @Html.AntiForgeryToken()
+                            if (Model.OrderOfPaymentList.Count > 0)
+                            {
+                                <input type="text" id="OPDId" hidden="hidden" name="OPDId" />
+                            }
+                            for (int z = 0; z <= Model.CompanyName.Count - 1; z++)
+                            {
+                                <tr class="container w100per text-center fontBld pad0" id="@Model.OrderOfPaymentList[z].OrderOfPaymentId">
+                                    <td title="OPId" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].OrderOfPaymentId</td>
+                                    @*<td title="OPId2" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].OrderOfPaymentId</td>*@
+                                    <td title="OrderOfPaymentId" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].OrderOfPaymentId</td>
+                                    <td title="EditCompanyId" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].CompanyId</td>
+                                    <td title="RemoveCompanyId" class="col-sm-1 br1Grey pad0 cell ovrFlw-YAut hidden" align="center">@Model.OrderOfPaymentList[z].CompanyId</td>
+                                    <td title="RefNo" class="col-sm-1 br1Grey pad0 cell ovrFlwHide" align="center">@Model.OrderOfPaymentList[z].ReferenceNo</td>
+                                    <td title="OPDate" class="col-sm-1 br1Grey pad0 cell ovrFlwHide" align="center">@Model.OrderOfPaymentList[z].OPDate.Value.ToShortDateString()</td>
+                                    <td title="compcomp" class="col-sm-2 br1Grey pad0 cell ovrFlw-YAuto" align="center">@Model.CompanyName[z]</td>
+                                    <td title="RemoveCompanyName" class="col-sm-2 br1Grey pad0 cell ovrFlw-YAuto hidden" align="center">@Model.CompanyName[z]</td>
+                                    <td title="Address" class="col-sm-2 br1Grey pad0 cell ovrFlw-YAuto" align="center">@Model.Address[z]</td>
+                                    @foreach (var OrderOfPaymentDetail in Model.OrderOfPaymentDetailList)
+                                    {
+                                        <td title="OPDId" class="col-sm-1 br1Grey pad0 cell ovrFlw-YAuto hidden" align="center">@OrderOfPaymentDetail.OrderOfPaymentDetailId</td>
+                                    }
+                                    <td class="col-sm-2 br1Grey pad0 ovrFlwHide" align="right">@String.Format("{0:n}", Model.OrderOfPaymentList[z].TotalAmount) </td>
+                                    <td class="col-sm-1 pad2 br1Grey pad0 ovrFlwHide" align="center">@Model.ZoneName[z]</td>
+                                    <td class="col-sm-1 pad2 br1Grey pad0 ovrFlwHide" align="center">@Model.OrderOfPaymentList[z].ORNumber</td>
+                                    <td class="col-sm-1 pad5 ovrFlwHide">@Html.ActionLink("Details", "DisplayOrderOfPaymentDetail", "BillingPayments", new { CompanyId = @Model.OrderOfPaymentList[z].CompanyId, opid1 = @Model.OrderOfPaymentList[z].OrderOfPaymentId }, new { @class = "actLink grad3 w100per h25px", Type = "button" })</td>
+                                    @if (Model.OrderOfPaymentList[z].PaymentStatus == "PAID")
+                                    {
+                                        <td class="col-sm-1 pad2 ovrFlwHide"><input type="submit" disabled="disabled" VALUE="EDIT" class=" w100per h25px fontBld" onclick="EditOP(this.title)"></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="col-sm-1 pad2 ovrFlwHide"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditOP" class="roundedButton grad3 w100per h25px fontBld" title="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)" onclick="EditOP(this.title)" id="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)"></td>
+                                    }
+                                    @if (Model.OrderOfPaymentList[z].PaymentStatus == "PAID")
+                                    {
+                                        <td class="col-sm-1 pad2 ovrFlwHide hidden"><input type="submit" VALUE="DELETE" disabled="disabled" data-toggle="modal" data-target="#modalRemove" class=" w100per h25px fontBld" title="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)" onclick="EditOP(this.title)" id="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)"></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="col-sm-1 pad2 ovrFlwHide hidden"><input type="submit" VALUE="DELETE" data-toggle="modal" data-target="#modalRemove" class="roundedButton grad3 w100per h25px fontBld" title="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)" onclick="EditOP(this.title)" id="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)"></td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div class="container w100per text-center">
+            <div class="col-sm-5 pad5"></div>
+            @*<div class="col-sm-2 pad5">@Html.ActionLink("VIEW SUMMARY", "OPSummaryReport", "BillingPayments", new { reportType = "OrderofPaymentSummaryReport" }, new { @class = "w100per btn btn-primary ", Type = "button", target = "_blank" })</div>*@
+            <div class="col-sm-2 pad5"><input type="button" class="btn btn-primary w100per h25px clr" value="SEARCH" data-toggle="modal" data-target="#modalSearch"></div>
+            <div class="col-sm-2 pad5"><input type="button" VALUE="NEW OP" data-toggle="modal" data-target="#modalAddOP" class="w100per btn btn-primary h25px pad0" id="inputWarning" onclick="Clear(this)"></div>
+            <div class="col-sm-1 pad5"></div>
+        </div>
+    </div>
+
+    <!-- Modal Search Enterprise-->
+    <div class="modal fade" id="modalSearch" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalSearch" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-file"></span><span class="glyphicon glyphicon-search left10px fcBl"></span> Search Company Information</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div id="searchCompanyFld" class="container itemHide">
+                        <div class="pad5 bgColor-red fontBld fcWhite">
+                            <div class="container">
+                                <div class="col-sm-2 pad0">Search</div>
+                                @using (Html.BeginForm("selectFilter", "BillingPayments"))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div class="col-sm-3 h25px pad0" id="opfilter" name="opfilter"><input type="text" class="h25px w150per " id="opfilter" name="opfilter" /></div>
+                                    <div class="col-sm-3 h25px pad0" hidden="hidden" id="FilterDate" name="FilterDate"><input type="text" class="h25px w150per date-picker" id="FilDate" name="FilDate" /></div>
+                                    <div class="col-sm-2 pad0"></div>
+                                    <div class="col-sm-2 h25px pad0">
+                                        <select class="h25px w100px" id="selectFilter" name="selectFilter" onchange="searchFilter(this)">
+                                            <option value="CompanyName">Company</option>
+                                            @*<option value="Account">Account</option>*@
+                                            <option value="OP/Ref No">OP/Ref No</option>
+                                            <option value="OR No.">OR No.</option>
+                                            <option value="Date">Date</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1 pad0"></div>
+                                    <div class="col-sm-2 pad0"><input type="submit" value="Search" id="seachCompanyMainBtn" class="h25px w75px" /></div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+                            @foreach (var item in Model.OrderOfPaymentList)
+            {
+                using (Html.BeginForm("selectFilter", "BillingPayments"))
+                {
+                                    @Html.AntiForgeryToken()
+                                    <div>
+                                        <button class="w100per btn-default bgColor-lb" id="@item.OrderOfPaymentId" name="@item.OrderOfPaymentId" value="@item.OrderOfPaymentId">
+                                            <span id="@item.OrderOfPaymentId" value="@item.OrderOfPaymentId">@item.CompanyCode</span> |
+                                            <span id="@item.OrderOfPaymentId" value="@item.OrderOfPaymentId">@item.CompanyName</span> |
+                                            <span id="@item.OrderOfPaymentId + 'EntAdd'">@item.ReferenceNo</span>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Modal Search Enterprise-->
+
+    @using (Html.BeginForm("UpdateOrderOfPayment", "BillingPayments"))
+    {
+        @Html.AntiForgeryToken()
+
+        if (Model.OrderOfPaymentList.Count > 0)
+        {
+            <input type="text" hidden="hidden" value="@Model.OrderOfPaymentList[0].OrderOfPaymentId" id="OPId" name="OPId" />
+        }
+        <div class="modal fade" id="modalEditOP" role="dialog">
+            <div class="modal-dialog w900px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" data-target="#modalEditOP" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Edit Order of Payment</h4>
+                        <div class="bgColor-lb">
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPDate" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="EditcompName" data-valmsg-replace="true"></span></div>
+                        </div>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <div class="container fontBld br1Grey pad0 hidden">
+                            <div class="col-sm-3 h25px bgColor-lv">CompanyId</div>
+                            @if (Model.CompanyList.Count > 0)
+                            {
+                                <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w80per" value="@Model.CompanyList[0].CompanyID" id="EditCompanyId" name="EditCompanyId"></div>
+                            }
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                            <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">OP/Ref Number:</div>
+                            @if (Model.OrderOfPaymentList.Count > 0)
+                            {
+                                <div class="col-sm-9 bgColor-White br1 cell br0 pad0 w205px h25px"><input type="text" readonly="readonly" class="w100per bgColor-lgrey" id="RefNo" name="RefNo" value="@Model.OrderOfPaymentList[0].ReferenceNo"></div>
+                            }
+                            <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px ">OPDate:</div>
+                            <div class="col-sm-9 bgColor-White br1 cell br0 pad0 w206px h25px"><input type="text" data-val="true" data-val-required="*Date Required" class="w100per bgColor-lgrey" readonly="readonly" id="OPDate" name="OPDate" value="@DateTime.Now.ToShortDateString()" /></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                            <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">Company Code:</div>
+                            @if (Model.OrderOfPaymentList.Count > 0)
+                            {
+                                <div class="col-sm-9 bgColor-White br1 cell br0 pad0 w205px h25px"><input type="text" readonly="readonly" class="w100per bgColor-lgrey" id="RefNo" name="RefNo" value="@Model.OrderOfPaymentList[0].CompanyCode"></div>
+                            }
+                            <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">Company Name:</div>
+                            <div class="col-sm-9 bgColor-White br1 cell br0 pad0 w207px h25px">
+                                <input type="text" onkeydown="getComp2()" oninput="getAddressData2()" id="compcomp" name="EditcompName" list="companyName2" class="w100per" data-val="true" data-val-required="*Company Required" />
+                                <datalist id="companyName2">
+                                    <option></option>
+                                </datalist>
+                            </div>
+                        </div>
+                        @*<div class="container pad0 br0 ovrFlwHide">
+                                <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">Company Name:</div>
+                                <div class="col-sm-9 bgColor-White br1 cell br0 pad0 h25px">
+                                    <input type="text" onkeydown="getComp2()" oninput="getAddressData2()" id="compcomp" name="EditcompName" list="companyName2" class="w100per" data-val="true" data-val-required="*Company Required" />
+                                    <datalist id="companyName2">
+                                        <option></option>
+                                    </datalist>
+                                </div>
+                            </div>*@
+
+                        <div class="container pad0 br0 ovrFlwHide ">
+                            <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px is-disabled">Address:</div>
+                            <div class="col-sm-9 bgColor-White br1 cell br0 pad0 h25px "><input readonly="readonly" id="Address" name="Address" class="w100per bgColor-lgrey"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide hidden">
+                            <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">ReferenceNumber:</div>
+                            @if (Model.OrderOfPaymentList.Count > 0)
+                            {
+                                <div class="col-sm-9 bgColor-White br1 cell br0 pad0 h25px"><input type="text" readonly="readonly" class="w100per bgColor-lgrey" value="@Model.OrderOfPaymentList[0].ReferenceNo"></div>
+                            }
+                        </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                        <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        /////////////////////////////////////////////////////////
+    }
+    <!-- End Modal Edit Order Of Payment-->
+    <!-- Modal Add Order Of Payment-->
+    @using (Html.BeginForm("AddOrderOfPayment", "BillingPayments"))
+    {
+        @Html.AntiForgeryToken()
+        <div class="modal fade" id="modalAddOP" role="dialog">
+            <div class="modal-dialog w900px">
+                <!-- Modal Add Order Of Payment Content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" data-target="#modalAddOP">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Order of Payment</h4>
+                        <div class="bgColor-lb">
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPDate" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="compName" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="CompanyId" data-valmsg-replace="true"></span></div>
+                        </div>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <br />
+                        <div>
+                        </div>
+                        <div class="form-horizontal">
+                            <div class="container br0 pad0" id="AddTransaction">
+                                <div class="container pad0">
+                                    <div class="container pad0 ovrFlwHide">
+                                        <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">OP/Ref Number:</div>
+                                        <div class="col-sm-9 bgColor-White br1 cell br0 pad0 w206px h25px"><input type="text" readonly="readonly" class="w100per bgColor-lgrey" id="RefNo" name="RefNo" value="AUTO-GENERATED" /></div>
+                                        <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">OP Date:</div>
+                                        <div class="col-sm-9 bgColor-White br1 cell br0 pad0 w207px h25px"><input type="text" data-val="true" data-val-required="*Date Required" class="w100per bgColor-lgrey" readonly="readonly" id="OPDate" name="OPDate" value="@DateTime.Now.ToShortDateString()" /></div>
+                                    </div>
+                                    <div companyCnt="" class="container pad0 bgColor-White h100px br1Grey ovrFlw-Y hidden">
+                                        <div>
+                                            <button class="w100per btn-default bgColor-lb" id="" name="" value="">
+                                                <span id="" value="D"></span> |
+                                                <span></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="container pad0">
+                                    <div class="container pad0 ovrFlwHide">
+                                        <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">Company Code:</div>
+                                        <div class="col-sm-9 bgColor-White br1 cell br0 pad0 w206px h25px"><input type="text" readonly="readonly" class="w100per bgColor-lgrey" id="AddCompCode" name="AddCompCode" /></div>
+                                        <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">Company Name:</div>
+                                        <div class="col-sm-9 bgColor-White br1 cell br0 pad0 h25px w207px">
+                                            <input type="text" onkeydown="getComp(),getCompCodeData()" oninput="getAddressData(),getCompCodeData()" id="compName" name="compName" list="companyName1" class="w100per" data-val="true" data-val-required="*Company Required" />
+                                            <datalist id="companyName1">
+                                                <option></option>
+                                            </datalist>
+                                        </div>
+                                    </div>
+                                    <div companyCnt="" class="container pad0 bgColor-White h100px br1Grey ovrFlw-Y hidden">
+                                        <div>
+                                            <button class="w100per btn-default bgColor-lb" id="" name="" value="">
+                                                <span id="" value="D"></span> |
+                                                <span></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="container pad0 br0 ovrFlwHide">
+                                        <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">Company Name:</div>
+                                        <div class="col-sm-9 bgColor-White br1 cell br0 pad0 h25px">
+                                            <input type="text" onkeydown="getComp()" oninput="getAddressData()" id="compName" name="compName" list="companyName1" class="w100per" data-val="true" data-val-required="*Company Required" />
+                                            <datalist id="companyName1">
+                                                <option></option>
+                                            </datalist>
+                                        </div>
+                                    </div>*@
+                                <div class="container pad0 br0 ovrFlwHide">
+                                    <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px is-disabled">Address:</div>
+                                    <div class="col-sm-9 bgColor-White br1 cell br0 pad0 h25px "><input readonly="readonly" id="AddAddress" name="AddAddress" class="w100per bgColor-lgrey"></div>
+                                </div>
+                                <div class="container pad0 ovrFlwHide hidden">
+                                    <div class="col-sm-3 bgColor-red fcWhite fontBld br1 h25px">Reference Number:</div>
+                                    <div class="col-sm-9 bgColor-White br1 cell br0 pad0 h25px"><input type="text" readonly="readonly" class="w100per bgColor-lgrey" value="@Model.AutoReferenceNumber" /></div>
+                                </div>
+
+                                <div class="container pad0 br0">
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+
+                    </div>
+                    <div class="modal-footer bgColor-White">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                        <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+<!-- End Modal Add Order Of Payment-->
+<!-- Modal Remove-->
+@using (Html.BeginForm("RemoveOrderOfPayment", "BillingPayments"))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="text" id="OrderOfPaymentId" hidden="hidden" name="OrderOfPaymentId" />
+    <input type="text" id="RemoveCompanyId" hidden="hidden" name="RemoveCompanyId" />
+
+    <div class="modal fade" id="modalRemove" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalRemoveRental">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-trash icon clr"></span> Remove Order Of Payment</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <h4> Are you sure you want to remove this record?</h4>
+                    <div class="pad20">
+                        <div class="row">
+                            <div class="col-sm-5 br1 bgColor-db fontBld fcWhite">Company</div>
+                            <div class="col-sm-7"><textarea id="RemoveCompanyName" name="RemoveCompanyName" class="w150per text-center bgColor-lgrey" readonly="readonly"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <button type="submit" class="btn btn-primary w100px">Yes</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Remove -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}
+

@@ -1,0 +1,487 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@{
+    ViewBag.Title = "ViewWater";
+}
+@model BCS.Models.SearchWaterViewModel
+@using Microsoft.AspNet.Identity;
+@using BCS.Models;
+<script>
+    function submitDetailsForm() {
+        $("#GetWaterReading").submit();
+    }
+    function ShowWaterReading() {
+        $("#modalWaterMeterReading").show;
+    }
+
+    function passMeterNum(elem) {
+        $("#MeterNum").val(elem.value);
+    }
+
+    function AddEditModal(itemID, itemCls) {
+        //document.getElementById("EditCompanyName").value = document.getElementById("CompanyName").innerHTML
+        document.getElementById("isEdit").value = "True";
+        var p = document.getElementById(itemID).getElementsByClassName(itemCls);
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            var elementToPopulate = document.getElementById(childId);
+            //alert(childId + " = " + childValue);
+            elementToPopulate.value = childValue
+        }
+    }
+
+    function getWaterMeterData() {
+        // alert("ON");
+        var MeterNumber = $('#WaterMeterNumber').val();
+        var CompanyID = $('#CompanyId').val();
+
+        if (!!$('#WaterMeterNumber').val() && !!$('#CompanyId').val())
+        {
+            $.ajax({
+                url: '/DataEntryWater/PeriodicConsumptionReport',
+                type: 'POST',
+                data: { 'MeterNumber': MeterNumber, 'CompanyID': CompanyID },
+                dataType: 'json',
+                success: function (a) {
+                    $(location).attr('href', a)
+                    a.preventDefault();
+                },
+                error: function (err) {
+                }
+            });
+        }
+
+        else
+        {
+            alert("Please Select Billing Period");
+        }
+        
+    }
+
+    // Json for Water Reports
+
+    function getWaterMeterList() {
+        // alert("ON");
+        var BillingPeriod = $('#BillingPeriod').val();
+        $.ajax({
+            url: '/DataEntryWater/WaterMeterAlphaListReport',
+            type: 'POST',
+            data: { 'BillingPeriod': BillingPeriod },
+            dataType: 'json',
+            success: function (a) {
+                //$(location).attr('href', a)
+                //a.preventDefault();
+                window.open(a);
+                window.stop();
+                $('#MeterList').prop("disabled", false);
+                $('#ReadingList').prop("disabled", false);
+                $('#ReadingReport').prop("disabled", false);
+            },
+            error: function (err) {
+            }
+        });
+    }
+
+    function getWaterReadingList() {
+        // alert("ON");
+        var BillingPeriod = $('#BillingPeriod').val();
+        $.ajax({
+            url: '/DataEntryWater/WaterReadingAlphaListReport',
+            type: 'POST',
+            data: { 'BillingPeriod': BillingPeriod },
+            dataType: 'json',
+            success: function (a) {
+               // $(location).attr('href', a)
+                // a.preventDefault();
+                window.open(a);
+                window.stop();
+                $('#MeterList').prop("disabled", false);
+                $('#ReadingList').prop("disabled", false);
+                $('#ReadingReport').prop("disabled", false);
+            },
+            error: function (err) {
+            }
+        });
+    }
+
+    function getWaterReadingReport() {
+        // alert("ON");
+        var BillingPeriod = $('#BillingPeriod').val();
+        $.ajax({
+            url: '/DataEntryWater/WaterReadingReport',
+            type: 'POST',
+            data: { 'BillingPeriod': BillingPeriod },
+            dataType: 'json',
+            success: function (a) {
+               // $(location).attr('href', a)
+                // a.preventDefault();
+                window.open(a);
+                window.stop();
+                $('#MeterList').prop("disabled", false);
+                $('#ReadingList').prop("disabled", false);
+                $('#ReadingReport').prop("disabled", false);
+            },
+            error: function (err) {
+            }
+        });
+    }
+
+</script>
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<div ID="contentDataEntryPoleRental" class="">
+    <!-- Page Title -->
+    <!-- Enterprise Detail -->
+    <div class="container modal-content bgColor-White pad0">
+        <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-tint"></span> <span class="fs20">WATER</span></div>
+        <div class="modal-body">
+            <div class="container br1 w100per br2 pad0">
+                <div class="container w100per br1-bot-Blk pad0 ovrFlwHide">
+                    <div class="col-sm-2 pad5 bgColor-lb fontBld h34px">COMPANY</div>
+                    <div id="CompanyName" class="col-sm-9 pad5 cell h34px">
+                        @if (ViewBag.CompanySelected == "OK")
+                        {
+                            <div class="col-sm-10 pad5">@Model.Companies[0].CompanyName (@Model.Companies[0].ZoneCode)</div>
+                        }
+                    </div>
+
+                    <div class="col-sm-1 fontBld pad0">
+                        <!-- Trigger the modal Search Enterprise with a button -->
+                        <CENTER class="pad0"><button type="button" id="searchEnterpriseButton" class="btn-default bgColor-cgrey btn-sm w100per" data-toggle="modal" data-target="#modalSearchEnterprise"><span class="glyphicon glyphicon-search"></span> Search</button></CENTER>
+                    </div>
+                </div>
+
+                <div class="container w100per br1-bot-Blk pad0">
+                    <div class="col-sm-2 pad5 bgColor-lb fontBld">ADDRESS</div>
+                    @if (ViewBag.CompanySelected == "OK")
+                    {
+                        <div class="col-sm-10 pad5">@Model.Companies[0].Address</div>
+                    }
+
+                </div>
+
+                <div class="col-sm-2 pad5 bgColor-lb fontBld h34px">ZONE</div>
+                <div id="CompanyName" class="col-sm-9 pad5 cell h34px">
+                    @if (ViewBag.CompanySelected == "OK")
+                    {
+                        BCS_Context db = new BCS_Context();
+                        var zonecode = @Model.Companies[0].ZoneCode;
+                        var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                        <div class="col-sm-10 pad5">@zonename</div>
+                    }
+                </div>
+
+
+
+            </div>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                ApplicationDbContext context = new ApplicationDbContext();
+                BCS_Context db = new BCS_Context();
+
+                var currentUserId = User.Identity.GetUserId();
+                var currentUserZoneGroup = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+                ViewBag.ZoneCode = db.ZoneGroup.Single(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupCode;
+                ViewBag.IsGenerated = "YES";
+            }
+        </div>
+        <div class="modal-footer mar0 pad5 bgColor-lb">
+            <form>
+                <div class="col-sm-3 pad5">
+                    <select id="BillingPeriod" name="BillingPeriod" class="form-control  w100per" title="Select Zone" required>
+                        <option value="" selected>Select Billing Period</option>
+                        @foreach (var item in Model.BillingPeriods.OrderBy(m => m.BillingPeriodId).Where(m => m.groupCode == ViewBag.ZoneCode && m.Generated == ViewBag.IsGenerated))
+                        {
+                            <option value="@item.BillingPeriodId">@item.DateFrom.ToString("dd MMM yyyy") - @item.DateTo.ToString("dd MMM yyyy")</option>
+                        }
+                    </select>
+                </div>
+                <!-- Trigger the modal Search Enterprise with a button -->
+                @*<div class="col-sm-4 pad5">@Html.ActionLink("View Meter List", "WaterMeterAlphaListReport", "DataEntryWater", new { @class = "btn btn-primary w100per", Type = "button", Target = "_blank" })</div>
+                <div class="col-sm-4 pad5">@Html.ActionLink("View Reading List", "WaterReadingAlphaListReport", "DataEntryWater", new { @class = "btn btn-primary w100per", Type = "button", Target = "_blank" })</div>
+                <div class="col-sm-4 pad5">@Html.ActionLink("View Reading Report", "WaterReadingReport", "DataEntryWater", new { billingPeriod = Model.BillingPeriods.Select(x => x).LastOrDefault().BillingPeriodId }, new { @class = "btn btn-primary w100per", Type = "button", Target = "_blank" })</div>*@
+                <div class="col-sm-3 pad5"><input id="MeterList" value="View Meter List" class="btn btn-primary w100per h25px" type="submit" onclick="getWaterMeterList();" /></div>
+                <div class="col-sm-3 pad5"><input id="ReadingList" value="View Reading List" class="btn btn-primary w100per h25px" type="submit" onclick="getWaterReadingList();" /></div>
+                <div class="col-sm-3 pad5"><input id="ReadingReport" value="View Reading Report" class="btn btn-primary w100per h25px" type="submit" onclick="getWaterReadingReport();" /></div>
+                <!-- Rental Datails Table -->
+            </form>
+        </div>
+    </div>
+    <br />
+    @using (Html.BeginForm("ViewWaterReading", "DataEntryWater"))
+    {
+
+        @Html.AntiForgeryToken()
+        if (ViewBag.CompanySelected == "OK")
+        {
+            <div class="container modal-content bgColor-White pad0" id="companyCnt" isValidPostback="@ViewBag.ValidatePostback" CompanySelected="@ViewBag.CompanySelected">
+
+                <div class="modal-header bgColor-lv">
+                    <h4 class="modal-title fontBld"><span class="glyphicon glyphicon-dashboard icon clr"></span> WATER METERS</h4>
+                </div>
+                <div class="modal-body pad10">
+                    <div class="container w100per br2 pad0">
+                        <div class="container w100per bgColor-blk fcWhite fontBld br1-bot-Blk pad0 text-center">
+                            <div class="col-sm-2 pad0">Meter</div>
+                            <div class="col-sm-2 pad0">Start Date</div>
+                            <div class="col-sm-2 pad0">End Date</div>
+                            <div class="col-sm-1 pad0">Size</div>
+                            <div class="col-sm-1 pad0">Phase</div>
+                            <div class="col-sm-2 pad0">Include in Billing</div>
+                            <div class="col-sm-1 pad0"></div>
+                            <div class="col-sm-1 pad0"></div>
+                        </div>
+                        <div class="container w100per hmax100px pad0 ovrFlw-YAuto">
+                            @if (Model.WaterMeterAssignments.Count > 0)
+                            {
+                                foreach (var item in Model.WaterMeterAssignments)
+                                {
+                                    BCS.Models.BCS_Context db = new BCS.Models.BCS_Context();
+                                    int readingCount = 0;
+                                    readingCount = db.WaterMeterReading.Count(m => m.MeterNumber == item.MeterNumber);
+                                    <div class="container w100per text-center fontBld pad0" id="@item.MeterNumber">
+                                        <div title="MeterNumber" class="col-sm-2 br1Grey pad0 cell h34px">@item.MeterNumber</div>
+                                        <div title="StartDate" class="col-sm-2 br1Grey pad0 cell h34px">@item.StartDate.ToShortDateString()</div>
+                                        <div title="EndDate" class="col-sm-2 br1Grey pad0 cell h34px">@item.EndDate.ToShortDateString()</div>
+                                        <div title="Size" class="col-sm-1 br1Grey pad0 cell h34px">@item.Size</div>
+                                        <div title="Phase" class="col-sm-1 br1Grey pad0 cell h34px">@item.Phase</div>
+                                        @if (@item.IncludeBilling == 1)
+                                        {
+                                            <div title="IncludeInBilling" class="col-sm-2 br1Grey pad0 cell h34px">YES</div>
+                                        }
+                                        else
+                                        {
+                                            <div title="IncludeInBilling" class="col-sm-1 br1Grey pad0 cell h34px">NO</div>
+                                        }
+
+
+                                        <div title="wid" hidden="hidden" class="col-sm-2 br1Grey pad0 cell h34px">@item.WaterMeterAssignmentId</div>
+                                        <input type="text" id="MeterNum" hidden="hidden" VALUE="" class="w100per h25px" name="MeterNum">
+                                        <div class="col-sm-1 h34px pad5">
+                                            <button type="submit" value="@item.MeterNumber" name="MeterNum" class="roundedButton grad3 w100per" onclick="passMeterNum(this)">VIEW</button>
+                                        </div>
+                                        @if (ViewBag.IsValidRole == true && readingCount <= 0)
+                                        {
+                                            <div class="col-sm-1 h34px pad5"><input type="button" VALUE="MODIFY" data-toggle="modal" data-target="#modalAdd" class="w100per roundedButton grad3" id="@item.MeterNumber" onclick="AddEditModal(this.id,'cell')"></div>
+                                            @*<div class="col-sm-1 pad0"><input type="button" VALUE="DELETE" data-toggle="modal" data-target="#modalRemoveWaterMeter" class="w100per h25px"></div>*@
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer mar0 pad10 bgColor-lb">
+                    
+                        <div class="col-sm-3 pad5">
+                            <select id="WaterMeterNumber" name="WaterMeterNumber" class="form-control  w100per" title="Select Meter Number">
+                                <option value="" selected>Select Water Meter</option>
+                                @foreach (var item in Model.WaterMeterAssignments)
+                                {
+                                    <option value="@item.MeterNumber">@item.MeterNumber.ToString()</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-3 pad5"><input value="View Periodic Consumption" class="btn btn-primary w100per h25px" type="button" onclick="getWaterMeterData();" /></div>
+                  
+                    @*<div class="col-sm-3 pad5">@Html.ActionLink("View Periodic Consumption", "PeriodicConsumptionReport", "DataEntryWater", new { companyId = Model.Companies[0].CompanyID }, new { @class = "btn btn-primary w100per h25px", Type = "button", Target = "_blank" })</div>*@
+
+                    @if (ViewBag.IsValidRole == true)
+                    {
+                        <div class="col-sm-2 pad5"><input type="button" VALUE="New Meter" data-toggle="modal" data-target="#modalAdd" class="w100per btn btn-primary h25px pad0" id="inputWarning"></div>
+                    }
+                </div>
+
+                <input type="text" hidden="hidden" name="CompanyId" id="CompanyId" value="@Model.Companies[0].CompanyID" />
+            </div>
+        }
+    }
+
+    <!-- Modal Search Enterprise-->
+    <div class="modal fade" id="modalSearchEnterprise" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container pad5 bgColor-red fontBld fcWhite w100per">
+                        <div class="col-sm-3 padlr5">Company Name</div>
+                        @using (Html.BeginForm("ViewWater", "DataEntryWater"))
+                        {
+                            @Html.AntiForgeryToken();
+                            <div class="col-sm-7 pad0">@Html.EditorFor(model => model.ReturnedId, new { htmlAttributes = new { id = "searchCompany", @class = "form-control h25px w100per", @onkeyup = "fourCharVal()", @placeholder = "Enter atleast 3 characters" } })</div>
+                            <div class="col-sm-2 padlr5"> <input id="searchBtn" type="submit" class="bgColor-lv br0 clr w100per h25px semi-square" value="Search" disabled="disabled" /></div>
+                        }
+                    </div>
+                    @*<div class="container pad5 bgColor-red fontBld fcWhite w100per">
+                            <div class="col-sm-3 padlr5">Company Name</div>
+                            @using (Html.BeginForm("ViewWater", "DataEntryWater"))
+                            {
+                                <div class="col-sm-7 pad0 bgColor-White cell">@Html.EditorFor(m => m.ReturnedId, new { htmlAttributes = new { @class = "clr br0 h20px cell w100per" } })</div>
+                                <div class="col-sm-2 padlr5"> <input type="submit" class="btn bgColor-lv br0 clr w100per" value="Search" /></div>
+                            }
+
+                        </div>*@
+                    <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+                        @if (Model.Companies.Count > 0)
+                        {
+                            foreach (var item in Model.Companies)
+                            {
+                                BCS.Models.BCS_Context db = new BCS.Models.BCS_Context();
+                                var zonecode = item.ZoneCode;
+                                var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                                using (Html.BeginForm("ViewWaterAssignment", "DataEntryWater"))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div>
+                                        <button class="w100per btn-default txtLeft bgColor-lb" id="@item.CompanyID" name="CompanyID" value="@item.CompanyID">
+                                            <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyCode</span> |
+                                            <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyName</span> |
+                                            <span id="@item.CompanyID + 'EntAdd'">@zonename</span>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                        }
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    <div class="col-sm-4"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Modal Search Enterprise-->
+    <!-- Modal new Water Meter-->
+    @using (Html.BeginForm("AddMeter", "DataEntryWater"))
+    {
+        @Html.AntiForgeryToken()
+        <form>
+            <div class="modal fade" id="modalAdd" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal New Water Meter content-->
+                    @*@Html.ValidationSummary(true)*@
+                    @if (Model.Companies.Count == 1)
+                {
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="bgColor-lb">
+                                    <div class="container"><span class="field-validation-valid" data-valmsg-for="MeterNumber" data-valmsg-replace="true"></span></div>
+                                    <div class="container"><span class="field-validation-valid" data-valmsg-for="StartDate" data-valmsg-replace="true"></span></div>
+                                    <div class="container"><span class="field-validation-valid" data-valmsg-for="EndDate" data-valmsg-replace="true"></span></div>
+                                    <div class="container"><span class="field-validation-valid" data-valmsg-for="Size" data-valmsg-replace="true"></span></div>
+                                    <div class="container"><span class="field-validation-valid" data-valmsg-for="Phase" data-valmsg-replace="true"></span></div>
+                                    <div class="container"><span class="field-validation-valid" data-valmsg-for="IncludeInBilling" data-valmsg-replace="true"></span></div>
+                                </div>
+                                <input type="text" hidden="hidden" name="wid" id="wid" value="" />
+                                <input type="text" hidden="hidden" name="isEdit" id="isEdit" value="" />
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title"><span class="glyphicon glyphicon-dashboard"></span> New Meter Assignment</h4>
+                            </div>
+                            <div class="modal-body bgColor-lv">
+                                <table class="w100per">
+                                    <tr>
+                                        <td colspan="4" class="w100per pad5 bgColor-db">
+                                            Meter Details
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="w25per pad5">
+                                            Meter Number
+                                        </td>
+                                        <td colspan="3" class="w70per">
+                                            <input type="text" data-val="true" data-val-required="Meter number is required" class="w100per" id="MeterNumber" name="MeterNumber">
+                                        </td>
+                                        @*<td>@Html.ValidationMessage("MeterNumber")</td>*@
+                                    </tr>
+                                    <tr>
+                                        <td class="w25per pad5">
+                                            Date Start
+                                        </td>
+                                        <td colspan="3" class="w70per">
+                                            <input type="text" data-val="true" data-val-required="Start date is required" class="w100per date-picker" id="StartDate" name="StartDate">
+                                        </td>
+                                        @*<td>@Html.ValidationMessage("StartDate")</td>*@
+                                    </tr>
+                                    <tr>
+                                        <td class="w25per pad5">
+                                            Date End
+                                        </td>
+                                        <td colspan="3" class="w70per">
+                                            <input type="text" data-val="true" data-val-required="End date is required" class="w100per date-picker" id="EndDate" name="EndDate">
+                                        </td>
+                                        @*<td>@Html.ValidationMessage("EndDate")</td>*@
+                                    </tr>
+                                    <tr>
+                                        <td class="w25per pad5">
+                                            Meter Size
+                                        </td>
+                                        <td class="w25per">
+                                            <input type="text" data-val="true" data-val-required="Size is required" class="w100per" id="Size" name="Size">
+                                        </td>
+                                        @*<td>@Html.ValidationMessage("Size")</td>*@
+                                    </tr>
+                                    <tr>
+                                        <td class="w25per pad5">
+                                            Phase
+                                        </td>
+                                        <td class="w25per">
+                                            <input type="text" data-val="true" data-val-required="Phase is required" class="w100per" id="Phase" name="Phase">
+                                        </td>
+                                        @*<td>@Html.ValidationMessage("Phase")</td>*@
+                                    </tr>
+                                    <tr>
+                                        <td class="w25per pad5">
+                                            Include in Billing
+                                        </td>
+                                        <td class="w25per">
+                                            <select class="w100per" data-val="true" data-val-required="Include in billing option is required" id="IncludeInBilling" name="IncludeInBilling">
+                                                <option value="" selected="selected">Select Option</option>
+                                                <option value="YES">YES</option>
+                                                <option value="NO">NO</option>
+                                            </select>
+                                        </td>
+                                        <td colspan="2" class="w25per pad5"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <button type="submit" class="btn btn-primary w100px">Save</button>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button type="reset" class="btn btn-primary w100px" data-dismiss="modal" onclick="resetmodal()">Cancel</button>
+                                        <input id="resetModal" hidden="hidden" type="reset">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="text" hidden="hidden" name="CompanyID" value="@Model.Companies[0].CompanyID" />
+                    }
+
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

@@ -1,0 +1,228 @@
+﻿@{
+    ViewBag.Title = "Zone Group Maintenance";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@model BCS.Models.SearchZoneGroupViewModel
+<script>
+    function EditZoneGroup(item) {
+        //alert('');
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+        }
+    }
+
+    function isDelete() {
+        return confirm("Are you sure you want to delete?");
+    }
+</script>
+
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<div class="modal-content mar10">
+    <div class="modal-header">
+        <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> ZONE GROUP INFORMATION</h4>
+    </div>
+    <div class="modal-body bgColor-lv">
+        <div class="container w100per bgColor-blk fcWhite">
+
+            <table class="col-sm-12 table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-sm-2">ZONEGROUP</th>
+                        <th class="col-sm-2"> NAME</th>
+                        <th class="col-sm-2"> ADDRESS</th>
+                        <th class="col-sm-1"> ROLE</th>
+                        <th class="col-sm-2"> INITIAL</th>
+                        <th class="col-sm-2"></th>
+                    </tr>
+                </thead>
+
+            </table>
+        </div>
+        <div class="container w100per ovrFlw-Y hmax100px br1Grey">
+
+            <table class="table-condensed">
+                @using (Html.BeginForm("ViewZoneGroup", "AdminZone"))
+                {
+                    @Html.AntiForgeryToken()
+
+                    if (Model.ZoneGroupList.Count > 0)
+                    {
+                        <input type="text" hidden="hidden" id="ZoneGroupId" name="ZoneGroupId" />
+                    }
+
+                    if (Model.ZoneGroupList.Count > 0)
+                    {
+                        foreach (var item in Model.ZoneGroupList)
+                        {
+                            <tbody>
+                                <tr id="@Html.DisplayFor(modelItem => item.ZoneGroupId)">
+                                    <td title="ZoneGroupId" class="hidden cell ">@item.ZoneGroupId</td>
+                                    <td title="ZoneGId" class="hidden cell ">@item.ZoneGroupId</td>
+                                    <td title="ZoneGroupCode" class="cell col-sm-2">@item.ZoneGroupCode</td>
+                                    <td title="ZoneGroupName" class="cell  col-sm-2">@item.ZoneGroupName</td>
+                                    <td title="ZoneGroupAddress" class="cell  col-sm-2">@item.ZoneGroupAddress</td>
+                                    <td title="ZoneGroupRole" class="cell  col-sm-2">@item.ZoneGroupRole</td>
+                                    <td title="ZoneGroupInitial" class="cell">@item.ZoneGroupInitials</td>
+                                    <td><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditZoneGroup" class="btn btn-default clr br1Grey h20px bgColor-lgrey" title="@Html.DisplayFor(modelItem => item.ZoneGroupId)" onclick="EditZoneGroup(this.title)" id="@Html.DisplayFor(modelItem => item.ZoneGroupId)"></td>
+                                    @*<td><input type="submit" VALUE="DELETE" class="btn btn-default clr br1Grey h20px bgColor-lgrey" title="@Html.DisplayFor(modelItem => item.ZoneGroupId)" onclick="EditZoneGroup(this.title)" name="@Html.DisplayFor(modelItem => item.ZoneGroupId)" id="@Html.DisplayFor(modelItem => item.ZoneGroupId)"></td>*@
+                                </tr>
+                            </tbody>
+                        }
+                    }
+                }
+
+            </table>
+
+        </div>
+    </div>
+    <div class="modal-footer mar0">
+
+        <div class="col-sm-12"><button type="button" class="btn btn-primary w100px" data-toggle="modal" data-target="#modalAddZoneGroup">ADD</button></div>
+    </div>
+</div>
+
+
+
+<!-- Modal Edit Zone Group-->
+@using (Html.BeginForm("UpdateZoneGroup", "AdminZone"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.ZoneGroupList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="ZoneGId" name="ZoneGId" />
+    }
+    <div class="modal fade ovrFlwHide" id="modalEditZoneGroup" role="dialog">
+        <div class="modal-dialog w700px">
+
+            <!-- Modal Edit Zone Group Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupName" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupAddress" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupRole" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-toggle="modal" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Edit Zone</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneCode">Zone Group Code</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group code is required" class="form-control text-center" id="ZoneGroupCode" name="ZoneGroupCode"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0" value="fdfdf"><label for="zoneName">Zone Group Name</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group name is required" class="form-control text-center" id="ZoneGroupName" name="ZoneGroupName"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneCode">Zone Group Address</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group address is required" class="form-control  text-center" id="ZoneGroupAddress" name="ZoneGroupAddress"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneCode">Zone Group Initial</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group initial is required" class="form-control h25px " id="ZoneGroupInitial" name="ZoneGroupInitial"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneName">Zone Group Role</label></div>
+                        <div class="col-sm-9 pad0">
+                            <select id="ZoneGroupRole" data-val="true" data-val-required="Zone group role is required" name="ZoneGroupRole">
+                                <option selected="selected" value="">Select</option>
+                                <option value="H.O Cluster Head">H.O Cluster Head</option>
+                                <option value="Zone Cluster Head">Zone Cluster Head</option>
+                                <option value="Zone Cluster Member">Zone Cluster Member</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <input type="submit" class="btn btn-primary w100px" value="SAVE" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Edit Zone Group -->
+<!-- Modal Add Zone Group-->
+@using (Html.BeginForm("AddZoneGroup", "AdminZone"))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade ovrFlwHide" id="modalAddZoneGroup" role="dialog">
+        <div class="modal-dialog w700px">
+
+            <!-- Modal Add Zone Group Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupName" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupAddress" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneGroupRole" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-toggle="modal" data-target="#modalAddZoneGroup">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Add Zone</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneCode">Zone Group Code</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group code is required" class="form-control h25px " id="ZoneGroupCode" name="ZoneGroupCode"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneName">Zone Group Name</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group name is required" class="form-control h25px " id="ZoneGroupName" name="ZoneGroupName"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneCode">Zone Group Address</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group address is required" class="form-control h25px " id="ZoneGroupAddress" name="ZoneGroupAddress"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneCode">Zone Group Initial</label></div>
+                        <div class="col-sm-9 pad0"><input type="text" data-val="true" data-val-required="Zone group initial is required" class="form-control h25px " id="ZoneGroupInitial" name="ZoneGroupInitial"></div>
+                    </div>
+                    <div class="container pad0">
+                        <div class="col-sm-3 pad0"><label for="zoneName">Zone Group Role</label></div>
+                        <div class="col-sm-9 pad0">
+                            <select id="ZoneGroupRole" data-val="true" data-val-required="Zone group role is required" name="ZoneGroupRole">
+                                <option selected="selected" value="">Select Group Role</option>
+                                <option value="H.O Cluster Head">H.O Cluster Head</option>
+                                <option value="Zone Cluster Head">Zone Cluster Head</option>
+                                <option value="Zone Cluster Member">Zone Cluster Member</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <input type="submit" class="btn btn-primary w100px" value="SAVE" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Add Zone Group -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

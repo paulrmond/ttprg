@@ -1,0 +1,117 @@
+﻿@model BCS.Models.SearchCompanyForEmail
+@{
+    ViewBag.Title = "ViewReportsEmail";
+}
+
+<!-- Include the plugin's CSS and JS: -->
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        if ('@ViewBag.Message' == 'Sent') {
+            alert('Mail has been sent successfully');
+        } else if ('@ViewBag.Message' == 'Not Sent') {
+            alert('Mail Not Sent! Contact your Administrator');
+        }
+    });
+</script>
+<div class="modal-dialog">
+    <div class="modal-content ">
+        <div class="modal-header">
+            <h4 class="fontBld"><span class="glyphicon glyphicon-envelope"></span>&nbsp; Email</h4>
+        </div>
+        <div class="modal-body bgColor-lv">
+
+
+            @using (@Html.BeginForm("ViewReportsEmail", "ReportsEmail", FormMethod.Post, new { @id = "form1", @enctype = "multipart/form-data" }))
+            {
+                @Html.ValidationSummary()
+
+                <table>
+                    <tr>
+                        <td>Select Company </td>
+                        <td>
+
+                            <select name="langOpt3[]" id="langOpt3" class="form-control" multiple="multiple" required>
+                                @*<select class="form-control" id="sel1">*@
+                                @foreach (var item in Model.companylist)
+                                {
+                                    <option value="@item.CompanyName">@item.CompanyName</option>
+                                }
+                            </select>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Subject:
+                        </td>
+                        <td>
+                            <input name="forsubject" type="text" class="form-control" placeholder="Subject" required />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Select list:
+                        </td>
+                        <td>
+
+                            <div class="form-group">
+                                <select name="atats" class="form-control" id="sel1" required>
+                                    <option value="PDF\GeneralBillingStatements\GeneralBillingStatements.pdf">General Billing Statements</option>
+
+                                </select>
+                            </div>
+                            @*<input type="file" name="fileUploader" class="btn btn-default" />*@
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Remarks:
+                        </td>
+                        <td>
+                            <textarea class="form-control" name="forbody" required></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+
+                        <td>
+                            <input type="submit" value="Send" class="btn btn-primary w300px" />
+                        </td>
+                    </tr>
+                </table>
+            }
+
+        </div>
+        <div class="modal-footer">
+
+
+
+        </div>
+    </div>
+
+</div>
+
+<script src="~/Scripts/jquery.min.js"></script>
+@*<script src="~/Scripts/jquery.multiselect.js"></script>*@
+<script>
+    @*<!-- Initialize the plugin: -->*@
+
+    $(document).ready(function() {
+        $('#langOpt3').multiselect({
+            enableFiltering: true,
+            includeSelectAllOption: true,
+            
+            maxHeight: 180,
+            buttonWidth: '300px',
+           
+
+
+        });
+    });
+
+
+
+
+</script>

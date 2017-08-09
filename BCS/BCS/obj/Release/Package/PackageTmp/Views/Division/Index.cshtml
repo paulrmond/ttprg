@@ -1,0 +1,169 @@
+﻿@{
+    ViewBag.Title = "Division";
+}
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    function closemodal(id) {
+        $('#'+id+'').modal('hide');
+    }
+
+    function enableButton() {
+        alert('a');
+        $('#save').prop('disabled', false);
+        $('#save').removeAttr('disabled');
+        $('#save').removeProp('disabled');
+    }
+
+    function editModal(id,code,name) {
+        $('#DivisionIdEdit').val(id);
+        $('#DivisionCodeEdit').val(code);
+        $('#DivisionNameEdit').val(name);
+    }
+
+    function ajaxComplete() {
+        alert("Transaction Complete.");
+        $('#DivisionCodeEdit').val('');
+        $('#DivisionNameEdit').val('');
+        $('#DivisionCode').val('');
+        $('#DivisionName').val('');
+        closemodal('modalAdd');
+        closemodal('modalEdit');
+        $('#EditSave').prop('disabled', false); 
+        $('#AddSave').prop('disabled', false);
+    }
+
+    function ajaxFailed() {
+        alert("Transaction Failed. Please do not leave blank fields.");
+        $('#DivisionCodeEdit').val('');
+        $('#DivisionNameEdit').val('');
+        $('#DivisionCode').val('');
+        $('#DivisionName').val('');
+        closemodal('modalAdd');
+        closemodal('modalEdit')
+    }
+</script>
+
+<!DOCTYPE html>
+
+
+<div class="container modal-content bgColor-White w600px pad0">
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-list"></span> <span class="fs20">DIVISIONS</span></div>
+    <div class="modal-body">
+        <div class="table-responsive">
+            <div class="container bgColor-blk fcWhite pad2">
+                <table class="table-responsive">
+                    <thead>
+                        @using (Ajax.BeginForm("GetList", "Division", new AjaxOptions
+                        {
+                            UpdateTargetId = "roleMatrixPartial",
+                            InsertionMode = InsertionMode.Replace,
+                            HttpMethod = "Post",
+                            //LoadingElementId = "loading"
+                        }))
+                        {
+                            <tr >
+                                <th>
+                                    <input type="text" name="divisionCode" id="divisionCode" />
+                                    <input type="submit" value="Search" />
+                                </th>
+                            </tr>
+                        }
+                    </thead>
+                </table>
+                @*<div id="loading" style="display:none">
+                    <img src="~/Gif/icon_load.gif" />
+                </div>*@
+            </div>
+            <div class="cols-sm-12 br2 hmax300px ovrFlw-Y">
+                <table class="table">
+                    <tbody id="roleMatrixPartial"></tbody>
+                </table>
+            </div>
+        </div>        
+    </div>
+</div>
+
+    
+
+<!-- Modal Add Division-->
+<div class="modal fade" id="modalAdd" role="dialog">
+    <div class="modal-dialog">
+        <div class="bgColor-lb">
+            <div class="container"><span class="field-validation-valid" data-valmsg-for="DivisionCode" data-valmsg-replace="true"></span></div>
+            <div class="container"><span class="field-validation-valid" data-valmsg-for="DivisionName" data-valmsg-replace="true"></span></div>
+        </div>
+        @using (Ajax.BeginForm("Create", "Division", new AjaxOptions
+        {
+            UpdateTargetId = "roleMatrixPartial",
+            HttpMethod = "Post",
+            OnFailure = "ajaxFailed",
+            OnSuccess = "ajaxComplete",
+            //LoadingElementId = "loading",
+            InsertionMode = InsertionMode.Replace
+        }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span>Add Division</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <label for="DivisionCode">Division Code</label>
+                    <input type="text" id="DivisionCode" data-val="true" data-val-required="Division Code is required" class="h25px w99per" name="DivisionCode" placeholder="Division Code" />
+                    <br />
+                    <label for="DivisionName">Division Name</label>
+                    <input type="text" id="DivisionName" data-val="true" data-val-required="Division Name is required" class="h25px w99per" name="DivisionName" placeholder="Division Name" />
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"><input type="submit" id="AddSave" class="btn btn-primary w100px" value="Save" onclick="" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- End Modal Add Division-->
+<!-- Modal Edit Division-->
+<div class="modal fade" id="modalEdit" role="dialog">
+    <div class="modal-dialog">
+        <div class="bgColor-lb">
+            <div class="container"><span class="field-validation-valid" data-valmsg-for="DivisionCodeEdit" data-valmsg-replace="true"></span></div>
+            <div class="container"><span class="field-validation-valid" data-valmsg-for="DivisionNameEdit" data-valmsg-replace="true"></span></div>
+        </div>
+        @using (Ajax.BeginForm("Edit", "Division", new AjaxOptions
+        {
+            UpdateTargetId = "roleMatrixPartial",
+            HttpMethod = "Post",
+            OnFailure = "ajaxFailed",
+            OnSuccess = "ajaxComplete",
+            //LoadingElementId = "loading",
+            InsertionMode = InsertionMode.Replace
+        }))
+        {
+            <input type="text" hidden="hidden" name="DivisionIdEdit" id="DivisionIdEdit" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span>Edit Division</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <label for="DivisionCode">Division Code</label>
+                    <input type="text" id="DivisionCodeEdit" data-val="true" data-val-required="Division Code is required" class="h25px w99per" name="DivisionCodeEdit" placeholder="Division Code" />
+                    <br />
+                    <label for="DivisionName">Division Name</label>
+                    <input type="text" id="DivisionNameEdit" data-val="true" data-val-required="Division Name is required" class="h25px w99per" name="DivisionNameEdit" placeholder="Division Name" />
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"><input type="submit" id="EditSave" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- End Modal Edit Division-->
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

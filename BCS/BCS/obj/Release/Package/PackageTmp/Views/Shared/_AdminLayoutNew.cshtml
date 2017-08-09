@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing and Collection System</title>
+    <link href="~/Content/themes/theme.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.11.0.min.js"></script>
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script> var jq111 = jQuery.noConflict(true);</script>
+
+</head>
+<body class="pad0 mar0">
+    <div class="h100per clearfix">
+        <div class=" menu-backdrop fade70 bgColor-db h590px col-sm-1 shadow txtRight"><span class="rotate fs5vw">ADMINISTRATION</span></div>
+        <div id="menuNav" class="col-sm-1 h590px pad5 txtCenter">
+            <a class="clr br0" href="~/"><img src="@Url.Content("~/images/peza.gif")" width="100" title="Peza Logo"></a>
+            <a class="btn btn-default w100per padlr0" href="~/Account/ViewUser">User</a>
+            <a class="btn btn-default w100per padlr0" href="~/Role/Index">User Role</a>
+            <a class="btn btn-default w100per padlr0" href="~/AdminZone/ViewZone">Zone</a>
+            <a class="btn btn-default w100per padlr0" href="~/AdminZone/ViewZoneGroup">Zone Group</a>
+            <a class="btn btn-default w100per padlr0" href="~/Crypto/Index">Cryptography</a>
+            <a class="btn btn-default w100per padlr0" href="~/RoleAssignmentMatrix/Details" title="Manage Role Assignment">Role Access</a>
+
+            @Html.Partial("_LoginPartial")
+
+        </div>
+       
+        <div class="col-sm-11 pad0">
+
+            <div class="body-content ovrFlw-YAuto h600px">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <footer class="br1-top pad5 fcWhite">
+        <p><b>Billing and Collection System</b> &copy;@DateTime.Now.Year - <span class="fcBlack">Philippine Economic Zone Authority</span></p>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

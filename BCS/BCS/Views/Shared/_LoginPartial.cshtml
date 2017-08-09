@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNet.Identity
+
+<div class="w100per txtRight pad0 padlr5 "><br/><br />
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "txtRight loginLink pad0" }))
+        {
+            @Html.AntiForgeryToken()
+                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage your account", @class = "btn loginLink pad0" })
+                <a href="javascript:document.getElementById('logoutForm').submit()" title="Log-off the system" class="btn bgColor-White w100px loginLink pad0">Log off</a>
+        }
+    }
+    else
+    {
+        @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "btn clr txtRight loginLink pad0" })
+    }
+</div>

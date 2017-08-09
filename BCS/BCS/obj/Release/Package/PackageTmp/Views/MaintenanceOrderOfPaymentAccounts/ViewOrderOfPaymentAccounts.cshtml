@@ -1,0 +1,448 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@using System.Linq
+
+@{
+    ViewBag.Title = "Maintenance Order of Payment Accounts";
+}
+@model BCS.Models.SearchOPAccountsViewModel
+<script>
+    function EditOPAccounts(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue + "g");
+            var elementToPopulate = document.getElementById(childId);
+            if (childId == "OPAccountDescription") {
+                var ret = childValue.replace(/&gt;/g, '>');
+                ret = ret.replace(/&lt;/g, '<');
+                ret = ret.replace(/&amp;/g, '&');
+                elementToPopulate.value = ret;
+            }
+            else {
+                elementToPopulate.value = childValue;
+            }
+        }
+    }
+
+    function Clear(val) {
+        if (val.value == "Cancel") {
+            document.getElementById("AddOPAccountCode").value = "";
+            document.getElementById("AddOPAccountDescription").value = "";
+            document.getElementById("AddOPAccountFee").value = "";
+            document.getElementById("AddDivisionCode").value = "";
+            document.getElementById("AddOPAccountValidity").value = "";
+        }
+    }
+</script>
+
+
+<div class="container modal-content bgColor-White pad0">
+    <!-- Page Title -->
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">NATURE OF PAYMENT ACCOUNTS</span></div>
+    <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <!-- OPAccounts Detail -->
+    <div class="modal-body bgColor-White pad10" id="companyCnt" isValidPostback="@ViewBag.ValidatePostback" CompanySelected="@ViewBag.CompanySelected">
+        <div class="container pad0 br2">
+
+            <table class="w100per pad0">
+                <thead class="container w100per  bgColor-blk fcWhite pad0 text-center fontBld">
+                    <tr class="container w100per fontBld text-center">
+                        <td class="col-sm-1 pad0 ">CODE</td>
+                        <td class="col-sm-3 ">DESCRIPTION</td>
+                        <td class="col-sm-1 ">FEE</td>
+                        <td class="col-sm-2 ">DIVISION CODE</td>
+                        <td class="col-sm-2 ">ACCOUNT VALIDITY</td>
+                        <td class="col-sm-1 "></td>
+                        <td class="col-sm-1 "></td>
+                        <td class="col-sm-1 "></td>
+                    </tr>
+                </thead>
+
+            </table>
+            <div class="container hmax300px ovrFlw-YAuto pad0">
+                <table class="container w100per pad0">
+                    <tbody class="container w100per pad0 ovrFlw-YAuto h300px">
+                        @using (Html.BeginForm("ViewOrderOfPaymentAccounts", "MaintenanceOrderOfPaymentAccounts"))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            if (Model.OPAccountList.Count > 0)
+                            {
+                                foreach (var item in Model.OPAccountList)
+                                {
+                                    <tr id="@Html.DisplayFor(modelItem => item.OPAccountId)" class="container w100per padlr5">
+                                        <td title="OPAccountId" class="col-sm-1 br1Grey cell hidden ovrFlwHide" align="center">@item.OPAccountId</td>
+                                        <td title="OPAccountId1" class="col-sm-1 br1Grey cell hidden ovrFlwHide" align="center">@item.OPAccountId</td>
+                                        <td title="OPAccountCode" class="col-sm-1 br1Grey cell ovrFlwHide" align="center">@item.OPAccountCode</td>
+                                        <td title="OPAccountNGASCode" class="col-sm-2 br1Grey cell ovrFlwHide hidden" align="center">@item.NGASCode</td>
+                                        <td title="OPAccountDescription" class="col-sm-3 br1Grey cell ovrFlwHide" align="center">@item.OPAccountDescription</td>
+                                        <td title="RemoveOPAccountDescription" class="col-sm-3 br1Grey cell hidden ovrFlwHide" align="center">@item.OPAccountDescription</td>
+                                        <td title="OPAccountFee" class="col-sm-1 br1Grey cell ovrFlwHide" align="right">@String.Format("{0:n}", item.OPAccountFee)</td>
+                                        <td title="DivisionCode" class="col-sm-2 br1Grey cell ovrFlwHide" align="center">@item.DivisionCode</td>
+                                        <td title="OPAccountValidity" class="col-sm-2 br1Grey cell ovrFlwHide" align="center">@item.OPAccountValidity</td>
+                                        <td title="AccountTag" class="col-sm-2 br1Grey cell ovrFlwHide hidden" align="center">@item.AccountTag</td>
+                                        @*<td class="col-sm-1 pad5">@Html.ActionLink("SUBITEMS", "ViewOPASubItems", "MaintenanceOrderOfPaymentAccounts", new { OPAId = @item.OPAccountId }, new { @class = "w100per h25px roundedButton grad3", Type = "button" })</td>*@
+                                        <td class="col-sm-1 pad5"></td>
+                                        <td class="col-sm-1 pad5"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditAccountsDetails" class="w100per roundedButton grad3 " title="@Html.DisplayFor(modelItem => item.OPAccountId)" onclick="EditOPAccounts(this.title)" id="@Html.DisplayFor(modelItem => item.OPAccountId)"></td>
+                                        <td class="col-sm-1 pad5"><input type="submit" VALUE="DELETE" data-toggle="modal" data-target="#modalRemove" class="w100per roundedButton grad3 " title="@Html.DisplayFor(modelItem => item.OPAccountId)" onclick="EditOPAccounts(this.title)" id="@Html.DisplayFor(modelItem => item.OPAccountId)"></td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer bgColor-lb w100per pad0">
+        <div class="container w100per fontBld text-center padlr5">
+            <div class="col-sm-7 pad5"></div>
+            <div class="col-sm-2 pad5"></div>
+            <div class="col-sm-1 pad5"><input type="button" class="btn btn-primary w100per h25px clr" value="ADD" data-toggle="modal" data-target="#modalAddAccountsDetails"></div>
+            <div class="col-sm-2 pad5"><input type="button" class="btn btn-primary w100per h25px clr" value="SEARCH ACCOUNTS" data-toggle="modal" data-target="#modalSearchEnterprise"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Search OPAccounts-->
+<div class="modal fade" id="modalSearchEnterprise" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-file"></span><span class="glyphicon glyphicon-search left10px fcBl"></span>Search Nature of Payment Accounts</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                @using (Html.BeginForm("ViewSelectFilter", "MaintenanceOrderOfPaymentAccounts"))
+                {
+                    @Html.AntiForgeryToken();
+                    <div class="container text-center pad0 fontBld">
+                        Select Filter Option
+                        <select class=" panel h25px clr txtCenter" onchange="searchOPAccount(this)" id="SelectFilter" name="SelectFilter">
+                            <option value="All" selected="selected">All</option>
+                            <option value="Search for OPAccount"> --- Search Accounts ---</option>
+                            @foreach (var items in Model.DivisionList)
+                            {
+                                <option value="@items.Code">@items.Name</option>
+                            }
+                        </select>
+                        <input type="submit" value="Search" id="searchOPAccountBtn" />
+                    </div>
+                }
+                <br />
+
+                <div id="searchOPAccountFld" class="container itemHide" hidden="hidden">
+                    <div class="pad5 bgColor-red fontBld fcWhite">
+                        <div class="container">
+                            <div class="col-sm-4 ">Description</div>
+                            @using (Html.BeginForm("ViewOrderOfPaymentAccounts", "MaintenanceOrderOfPaymentAccounts"))
+                            {
+                                @Html.AntiForgeryToken();
+                                <div class="col-sm-6 h25px ">@Html.EditorFor(model => model.SearchInput)</div>
+                                @*<div class="col-sm-3 h25px">
+                                        <select class="w100per h25px" name="FilDivisionCode">
+                                            @foreach (var items in Model.DivisionList)
+                                            {
+                                                <option value="@items.Code">@items.Name</option>
+                                            }
+                                        </select>
+                                    </div>*@
+                                <div class="col-sm-2 txtLeft"><input type="submit" value="Search" /></div>
+                            }
+                            @*<div class="col-sm-2 pad0">  </div>*@
+                        </div>
+                    </div>
+
+                    <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y ">
+                        @foreach (var item in Model.OPAccountList)
+            {
+                using (Html.BeginForm("ViewOrderOfPaymentAccounts", "MaintenanceOrderOfPaymentAccounts"))
+                {
+                                @Html.AntiForgeryToken()
+                                <div>
+                                    <button class="w100per btn-default bgColor-lb" id="@item.OPAccountId" name="@item.OPAccountId" value="@item.OPAccountId">
+                                        <span id="@item.OPAccountId" value="@item.OPAccountId">@item.OPAccountCode</span> |
+                                        <span id="@item.OPAccountId" value="@item.OPAccountId">@item.OPAccountDescription</span> |
+                                        <span id="@item.OPAccountId + 'EntAdd'">@String.Format("{0:n}", @item.OPAccountFee) </span>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Edit OPAccounts Detail -->
+@using (Html.BeginForm("UpdateOPAccount", "MaintenanceOrderOfPaymentAccounts"))
+{
+    @Html.AntiForgeryToken()
+    if (Model.OPAccountList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="OPAccountId1" name="OPAccountId1" />
+    }
+    <div class="modal fade" id="modalEditAccountsDetails" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Edit OPAccounts Detail Content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalEditAccountsDetails" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Edit Details</h4>
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountNGASCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountDescription" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountFee" data-valmsg-replace="true"></span></div>
+                    </div>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Code</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Order of Payment Account Code Required" id="OPAccountCode" name="OPAccountCode"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">NGAS Code</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Order of Payment Account NGAS Code Required" id="OPAccountNGASCode" name="OPAccountNGASCode"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Description</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Order of Payment Account Description Required" id="OPAccountDescription" name="OPAccountDescription"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Fee</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Order of Payment Account Fee Required" data-val-number="*Invalid Number Format(Fee)" id="OPAccountFee" name="OPAccountFee"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 bgColor-lv">Division</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0">
+                            <select id="DivisionCode" name="DivisionCode" class="wmin24em w80per text-center">
+                                <option value="">--</option>
+                                @foreach (var items in Model.DivisionList)
+                                {
+                                    <option value="@items.Code">@items.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 bgColor-lv">Account Validity</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" id="OPAccountValidity" name="OPAccountValidity"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 bgColor-lv">AccountTag</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0">
+                            <select class="wmin24em w80per" id="AccountTag" name="AccountTag">
+                                <option value="">--</option>
+                                <option value="AF">Accountable Form</option>
+                                <option value="VISA">Visa</option>
+                                <option value="PF">Serial Number</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <b>&nbsp;&nbsp; Account Tag Legend</b>
+                <div class="modal-footer">
+                    <div class="col-sm-5"><b>Accountable Form</b>(eg. PEZA FORM 8001...)</div>
+                    <div class="col-sm-4 pad0"><b>Serial Number</b>(LOA, 8112 (INTRAZONE)...)</div>
+                    <div class="col-sm-3"><b>Visa</b>(VISA)</div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Edit OPAccount Detail -->
+<!-- Modal Add OPAccounts Detail -->
+@using (Html.BeginForm("AddOPAccount", "MaintenanceOrderOfPaymentAccounts"))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="modalAddAccountsDetails" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Add OPAccounts Detail Content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddAccountsDetails" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Details</h4>
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountNGASCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountDescription" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountFee" data-valmsg-replace="true"></span></div>
+                    </div>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Code</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Account Code Required" id="AddOPAccountCode" name="OPAccountCode"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">NGAS Code</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Account NGAS Code Required" id="AddOPAccountNGASCode" name="OPAccountNGASCode"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Description</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Account Description Required" id="AddOPAccountDescription" name="OPAccountDescription"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Fee</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Account Fee Required" data-val-number="*Invalid Number Format(Fee)" id="AddOPAccountFee" name="OPAccountFee"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 bgColor-lv">Division</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0">
+                            <select id="AddDivisionCode" name="DivisionCode" class="wmin24em w80per">
+                                <option value="">--</option>
+                                @foreach (var items in Model.DivisionList)
+                                {
+                                    <option value="@items.Code">@items.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 bgColor-lv">Account Validity</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" id="AddOPAccountValidity" name="OPAccountValidity"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 bgColor-lv">AccountTag</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0">
+                            <select class="wmin24em w80per" id="AddAccountTag" name="AddAccountTag">
+                                <option value="" selected="selected">--</option>
+                                <option value="AF">Accountable Form</option>
+                                <option value="VISA">Visa</option>
+                                <option value="PF">Serial Number</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <b>&nbsp;&nbsp; Account Tag Legend</b>
+                <div class="modal-footer">
+                    <div class="col-sm-5"><b>Accountable Form</b>(eg. PEZA FORM 8001...)</div>
+                    <div class="col-sm-4 pad0"><b>Serial Number</b>(LOA, 8112 (INTRAZONE)...)</div>
+                    <div class="col-sm-3"><b>Visa</b>(VISA)</div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="Clear(this)" value="Cancel">Cancel</button></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Add OPAccount Detail -->
+<!-- Modal Remove-->
+@using (Html.BeginForm("RemoveOPAccounts", "MaintenanceOrderOfPaymentAccounts"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.OPAccountList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="OPAccountId" name="OPAccountId" />
+    }
+    <div class="modal fade" id="modalRemove" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalRemoveRental">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-trash icon clr"></span> Remove Accounts</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <h4> Are you sure you want to remove this record?</h4>
+                    <div class="pad20">
+                        <div class="row">
+                            <div class="col-sm-5 br1 bgColor-db fontBld fcWhite">Description</div>
+                            <div class="col-sm-7"><textarea id="RemoveOPAccountDescription" name="RemoveOPAccountDescription" class="w150per text-center bgColor-lgrey" readonly="readonly"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <button type="submit" class="btn btn-primary w100px">Yes</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Remove -->
+<!-- Modal Sub Items OPAccounts Detail -->
+@using (Html.BeginForm("", ""))
+{
+    @Html.AntiForgeryToken()
+    if (Model.OPAccountList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="OPAccountIdForSubItem" name="OPAccountIdForSubItem" />
+    }
+    <div class="modal fade" id="modalSubItemAccountsDetails" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal Sub Items OPAccounts Detail Content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalSubItemAccountsDetails" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Sub Items</h4>
+                    @*<div class="bgColor-lb">
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountCode" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountNGASCode" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountDescription" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="OPAccountFee" data-valmsg-replace="true"></span></div>
+                        </div>*@
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Description</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Order of Payment Account Description Required" id="OPAccountDescription" name="OPAccountDescription"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Fee</div>
+                        <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="wmin24em w80per" data-val="true" data-val-required="*Order of Payment Account Fee Required" data-val-number="*Invalid Number Format(Fee)" id="OPAccountFee" name="OPAccountFee"></div>
+                    </div>
+                </div>
+                @*<b>&nbsp;&nbsp; Account Tag Legend</b>
+                    <div class="modal-footer">
+                        <div class="col-sm-5"><b>Accountable Form</b>(eg. PEZA FORM 8001...)</div>
+                        <div class="col-sm-4 pad0"><b>Serial Number</b>(LOA, 8112 (INTRAZONE)...)</div>
+                        <div class="col-sm-3"><b>Visa</b>(VISA)</div>
+                    </div>*@
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Sub Items OPAccount Detail -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

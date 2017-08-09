@@ -1,0 +1,54 @@
+﻿<!-- Page Initialization -->
+
+@using System.Linq
+
+@{
+    ViewBag.Title = "Billing Status Due On Services";
+}
+@model BCS.Models.SearchIndexViewModel
+@using System.Linq
+
+<div ID="contentDataEntryRental" class="pad0">
+    <!-- Enterprise Detail -->
+    <div class="container modal-content bgColor-White pad0" >
+        <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">DUE ON SERVICES</span></div>
+        <div class="modal-body ">
+            <div class="col-sm-12 padr25 br2 bgColor-blk">
+                <table class="">
+                    <thead class="br1-bot-Blk bgColor-blk fcWhite pad0 text-center fontBld ">
+                        <tr class="container w100per pad0">
+                            <td class="col-sm-1"></td>
+                            <td class="col-sm-4 txtCenter">COMPANY NAME</td>
+                            <td class="col-sm-1"></td>
+                            <td class="col-sm-4 txtLeft">BILLING TYPE</td>
+                            <td class="col-sm-1"></td>
+                            <td class="col-sm-4 pad2 txtLeft">END DATE</td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="col-sm-12 hmax300px ovrFlw-YAuto br2 pad0">
+                <table class="">
+                    <tbody class="">
+                        @if (Model.DueCompanyName != null)
+                        {
+                        for (int x = 0; x <= Model.DueCompanyName.Count - 1; x++)
+                        {
+                                <tr class="container w100per pad0">
+                                    <td class="col-sm-4 br1Grey cell hidden ovrFlwHide" align="center">@Model.DueCompanyName[x]</td>
+                                    <td class="col-sm-4 br1Grey cell ovrFlwHide h34px" align="center">@Model.DueBillingType[x]</td>
+                                    <td class="col-sm-4 br1Grey cell ovrFlwHide h34px" align="center">@Model.DueEndDate[x].ToShortDateString()</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

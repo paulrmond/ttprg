@@ -1,0 +1,102 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 9/4/16
+// Date Modified:
+// Consultant: DCI
+-->
+
+
+@{
+    ViewBag.Title = "End Of Month Processing";
+}
+
+<script>
+    function GenerateEOM() {
+        var progressBar = document.getElementById("progressbar");
+        var month2 = $('#SelectedMonth').val();
+        var year2 = $('#SelectedYear').val();
+        var dat = { month1: month2, year1 : year2 };
+        
+        $.ajax({
+            url: '/EndOfMonthProcessing/GenerateEOM',
+            type: 'POST',
+            data: { newData : JSON.stringify(dat) },
+            dataType: 'json',
+            //processData: false,
+            //contentType: false,
+            beforeSend: function () {
+                progressBar.hidden = false;
+            },
+            success: function (TransactionStatus) {
+                alert(TransactionStatus);
+                progressBar.hidden = true;
+                document.body.style.cursor = 'default';
+            },
+            error: function (err) {
+                alert(err.statusText);
+                progressBar.hidden = true;
+                document.body.style.cursor = 'default';
+            }
+        })
+    }
+
+</script>
+
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<!-- Modal-->
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"><span class="glyphicon glyphicon-book"></span> Aging End of the Month (EOM) Process</h4>
+        </div>
+        <div class="modal-body bgColor-lv txtCenter">
+
+            @{
+                var currentMonth = DateTime.Now.Month;
+                var prevMonth = DateTime.Now.AddMonths(-1).Month;
+                var currentYear = DateTime.Now.Year;
+                var prevYear = DateTime.Now.AddYears(-1).Year;
+
+                <div class="w100per txtCenter">
+                    Select Month:
+                    <select id="SelectedMonth">
+                        <option value="@currentMonth">@currentMonth</option>
+                        <option value="@prevMonth">@prevMonth</option>
+                    </select>
+                </div><br />
+
+                <div class="w100per txtCenter">
+                    Select Year:
+                    <select id="SelectedYear">
+                        <option value="@currentYear">@currentYear</option>
+                        <option value="@prevYear">@prevYear</option>
+                    </select>
+                </div><br /><br />
+            }
+
+            <center>
+                <div class="marAuto w300px semi-square fs10 bgColor-White br1Grey">
+                    <b>END of MONTH PROCESSING</b><br />
+                    This will process month end aging of balances. Transactions for the current month will not be allowed after processing.
+                </div>
+            </center>
+
+            <div id="progressbar" style="position:relative" hidden="hidden">
+                <img src="~/Gif/loading_g.gif" width="540" height="30" />
+                <span id="progressbar-label" style="position:absolute; left:40%">Loading...</span>
+            </div>
+        </div>
+        <div class="modal-footer txtCenter mar0">
+            @*@using (Html.BeginForm("GenerateEOMProcessing", "EndOfMonthProcessing", FormMethod.Post))
+                {*@
+            <input type="submit" onclick="GenerateEOM(), document.body.style.cursor = 'wait';" value="Generate EOM Processing" class="btn btn-primary" />
+            @*}*@
+        </div>
+
+    </div>
+
+</div>
+<!-- End Modal-->
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

@@ -1,0 +1,59 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/28/16
+// Date Modified: 08/31/2016 by ian
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@using BCS.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+
+<!-- Modal Login PEZA Billing and Collection System-->
+@*<div class="modal fade ovrFlwHide" id="modalSearchEnterprise" role="dialog">*@
+    <!-- Modal -->
+@if (!Request.IsAuthenticated)
+{
+    <div class="modal-dialog" id="myModal" role="dialog">
+    
+            <div class="card card-container">
+
+                <img id="profile-img" class="profile-img-card" src="~/images/pezalogonew.png" />
+                <p id="profile-name" class="profile-name-card"></p>
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-signin" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @*<form class="form-signin">*@
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <span id="reauth-email" class="reauth-email"></span>
+                    @*<input type="text" id="inputUser" class="form-control" placeholder="@Html.LabelFor(m => m.UserName)" required autofocus>*@
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @placeholder = "Username", @id = "inputUser" })
+                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger w200per" })
+                    @*<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>*@
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @id = "inputPassword", @placeholder = "Password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    @*<div id="remember" class="checkbox">
+                            <label>
+                                <input type="checkbox" value="remember-me"> Remember me
+                            </label>
+                        </div>*@
+                    <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+                <!-- </form>/form -->
+                }
+                @*<a href="#" class="forgot-password">
+                        Forgot the password?
+                    </a>*@
+            </div><!-- /card-container -->
+        </div>
+
+}
+   @*</div>*@
+
+
+    <!-- End Modal Login PEZA Billing and Collection System-->
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }

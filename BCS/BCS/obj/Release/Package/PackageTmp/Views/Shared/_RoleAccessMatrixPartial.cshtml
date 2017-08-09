@@ -1,0 +1,10 @@
+﻿@model IEnumerable<BCS.Models.RoleAssignmentDetailsViewModel>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <th>@item.UserName</th>
+        <th>@Html.ActionLink(" ", "Edit", new { id = item.Id }, new { @class = "w100per glyphicon glyphicon-pencil", @title = "Click ICON to Edit User Access Matrix" })</th>
+    </tr>
+}
+

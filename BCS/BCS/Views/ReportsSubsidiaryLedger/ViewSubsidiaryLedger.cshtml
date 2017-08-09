@@ -1,0 +1,284 @@
+﻿@model BCS.Models.SearchSubsidiaryLedgerViewModel
+@using Microsoft.AspNet.Identity;
+@using BCS.Models;
+@{
+    ViewBag.Title = "ViewSubsidiaryLedger";
+}
+
+<script>
+
+
+
+    function getComp() {
+        var comp = $('#compName').val();
+        var zone = $('#zoneGroupCode').val();
+
+        if (comp != "" && comp.length > 3) {
+            $.ajax({
+                url: '/ReportsSubsidiaryLedger/CompData',
+                type: 'POST',
+                data: { 'comp': comp, 'zone': zone },
+                dataType: 'json',
+                success: function (a) {
+
+                    $('#companyName1').empty();
+                    //$('#sample').append("<option value=''>Select Zone</option>");
+                    $.each(a, function (key, value) {
+                        $('#companyName1').append($("<option></option>").val(value.CompanyCode + '-' + value.CompanyName).html(value.ZoneName));
+
+                        // $('#companyName1').append('<option value="' + value.Companyid + '~' + value.CompanyName  + '"></option>').html(value.ZoneName);
+
+                    });
+
+
+                },
+                error: function (err) {
+                    //alert(err.responseText);
+                }
+
+            });
+        }
+
+    }
+
+
+
+    function getAddress() {
+        var comp2 = $('#compName').val();
+       // alert(comp2);
+   
+        $.ajax({
+            url: '/ReportsSubsidiaryLedger/GetAddress',
+            type: 'POST',
+            data: { 'comp2': comp2},
+            dataType: 'json',
+            success: function (a) {
+                document.getElementById('compaddr').value = a;
+            },
+            error: function (err) {
+                //alert(err.responseText);
+            }
+        });
+    }
+
+</script>
+
+
+<br />
+@if (User.Identity.IsAuthenticated)
+{
+    ApplicationDbContext context = new ApplicationDbContext();
+    BCS_Context db = new BCS_Context();
+
+    var currentUserId = User.Identity.GetUserId();
+    var currentUserZoneGroup = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+    ViewBag.ZoneCode = db.ZoneGroup.Single(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupCode;
+}
+
+
+<center>
+    @using (Html.BeginForm("SubsidiaryLedger", "ReportsSubsidiaryLedger"))
+    {
+        ApplicationDbContext context1 = new ApplicationDbContext();
+        BCS_Context db1 = new BCS_Context();
+        var currentUserId1 = User.Identity.GetUserId();
+        var username = context1.Users.Where(m => m.Id == currentUserId1).FirstOrDefault().UserName;
+        var hasAccess = db1.RoleAssignmentMatrix.Where(m => m.UserName == username).FirstOrDefault().SubsidiaryLedger;
+        
+        if (hasAccess != null && hasAccess == true)
+        {
+        
+
+        <div class="modal-content w900px">
+            <div class="modal-header text-left">
+                @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+                <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span> Subsidiary Ledger</h4>
+            </div>
+            <div class="modal-body bgColor-lv pad10">
+                <div class="container w100per pad0  bgColor-White semi-square br1db">
+
+                    @*<select class="form-control  w100per">
+                        <option>Select Zone Group</option>
+                        @foreach (var item in Model.ZoneGroupList.Where(s => s.ZoneGroupCode == ViewBag.ZoneCode))
+                        {
+                            <option value="@item.ZoneGroupCode">@item.ZoneGroupName</option>
+                        }
+
+
+                        </select>*@
+                    @if (User.Identity.IsAuthenticated)
+                {
+                    ApplicationDbContext context = new ApplicationDbContext();
+                    BCS_Context db = new BCS_Context();
+
+                    var currentUserId = User.Identity.GetUserId();
+                    var currentUserZoneGroup = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+                    var ZoneName = db.ZoneGroup.Single(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupName;
+
+                    if (ZoneName == "Head Office")
+                    {
+                            <div class="container w100per pad0  bgColor-White semi-square br1db">
+                                <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Zone Group</div></div>
+                                <div class="col-sm-9 pad5">
+                                    <select id="zoneGroupCode" name="zoneGroupCode" class="form-control  w100per" title="Select Zone" onchange="SortComp(this)">
+
+                                        <option value="">-- Select ZoneGroup --</option>
+                                        @foreach (var item in Model.ZoneGroupList)
+                                        {
+                                            <option value="@item.ZoneGroupCode" >@item.ZoneGroupName</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                        }
+
+                        else
+                        {
+                            <input name="zoneGroupCode" value="@context.Users.FirstOrDefault(m => m.Id == currentUserId).ZoneGroup" hidden />
+                        }
+
+                    }
+
+                    <div class="container w100per pad0  bgColor-White semi-square br1db">
+                        <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Billing  Type</div></div>
+                        <div class="col-sm-9 pad5">
+                            <select name="billingtype" class="form-control  w100per" title="Select Billing Type" required>
+
+                                <option value="">-- Select Billing  Type --</option>
+                              
+                                <option value="RENTAL">Rental</option>
+                                <option value="POLERENTAL">Pole Rental</option>
+                                <option value="GARBAGE">Garbage</option>
+                                <option value="WATER">Water</option>
+                                <option value="SEWERAGE">Sewerage</option>
+                                <option value="FRANCHISE">Franchise</option>
+                                <option value="ADMINFEE">Admin Fee</option>
+                                <option value="PASSEDONBILLING">Passed On Billing</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="pad5">
+
+                        <div class="semi-square br1db container w100per pad0  bgColor-White">
+                            <div class="container w100per br1-bot-Blk pad0">
+                                <div class="col-sm-2 pad5 bgColor-lb fontBld">COMPANY</div>
+                                <div class="col-sm-10 pad0">
+                                    <div id="CompanyName" class="col-sm-12 pad0">
+                                        @*<input type="text" name="companyId" value ="@ViewBag.CompanyID" hidden="hidden" />
+                                            @ViewBag.CompanyName*@
+                                        <input type="text" onkeyup="getComp()" oninput="getAddress()" id="compName" name="companyID" list="companyName1" class="w100per h34px" data-val="true" data-val-required="*Company Required" placeholder="Search Company" />
+                                        <datalist id="companyName1">
+                                            <option></option>
+                                        </datalist>
+                                        
+                                    </div>
+                                   
+
+                                        <!-- Trigger the modal Search Enterprise with a button -->
+                                        @*<div id="CompanyName" class="col-sm-1 pad2">
+
+               <button type="button" class="btn btn-primary clr w100per h25px pad2" data-toggle="modal" data-target="#modalSearchEnterprises"><span class="glyphicon glyphicon-search clr" title="Search Enterprise"></span></button>
+            </div>*@
+                                    </div>
+                            </div>
+                            <div class="container w100per pad0">
+                                <div class="col-sm-2 pad5 bgColor-lb fontBld">ADDRESS</div>
+                                <div id="CompanyAddress" class="col-sm-10 pad5">
+                                    <input type="text" name="compaddr" id="compaddr" readonly="readonly" class="w100per h34px" />
+                                </div>
+
+                                <div id="CompIDD" class="col-sm-10 pad5">
+                                    @*<input type="text" name="compidd" id="compidd" readonly="readonly" class="w100per h34px" />*@
+                                </div>
+                               
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-content w700px pad5">
+                        <div class="container w100per pad2">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                COVERAGE
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot ">
+                                <div class="col-sm-3 pad0">From</div>
+                                <div class="col-sm-3 pad0"><input type="text" id="StartDate" name="tdStartDate" class="btn clr br1Grey w100per h20px date-picker" /></div>
+                                <div class="col-sm-3 pad0">To</div>
+                                <div class="col-sm-3 pad0"><input type="text" id="EndDate" name="tdEndDate" class="btn clr br1Grey w100per h20px date-picker" /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer pad10">
+                    <div class="col-sm-7"></div>
+                    <div class="col-sm-3"><button type="submit" class="btn btn-primary w100per" data-dismiss="modal" formtarget="_blank">View Report</button></div>
+                    <div class="col-sm-2"><button type="reset" class="btn btn-primary w100px" data-dismiss="modal">Clear</button></div>
+                </div>
+            </div>
+        </div>
+        }
+    }
+</center>
+
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterprises" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprises" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="pad5 bgColor-red fontBld fcWhite">
+                    <div class="container ovrFlwHide">
+                        <div class="col-sm-3 pad0">Company Name</div>
+
+                        @using (Html.BeginForm("ViewCompanySubsidiary", "ReportsSubsidiaryLedger", FormMethod.Get))
+                        {
+                            @Html.AntiForgeryToken();
+                            <div class="col-sm-7 h25px"><input type="text" name="CompanyName" /></div>
+                            <div class="col-sm-2 pad0"> <input type="submit" class="btn bgColor-lv w100px br0 clr" value="Search" /></div>
+                        }
+                        <div class="col-sm-2 pad0">  </div>
+                    </div>
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+
+                    @foreach (var item in Model.CompanyList)
+                    {
+                        using (Html.BeginForm("ViewCompanySubsidiary", "ReportsSubsidiaryLedger", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="text" hidden="hidden" name="compName" value="@item.CompanyName" />
+
+                            <div>
+                                <button class="w100per btn-default bgColor-lb txtLeft" name="compid" id="@item.CompanyID" value="@item.CompanyID">
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyCode</span> -
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyName</span> |
+                                    <span id="@item.CompanyID + 'EntAdd'">@item.Address</span>
+                                    <span id="@item.CompanyCode" value="@item.CompanyName" />
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+                <div id="companyName" value=""></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                @*<div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="selectEnterprise();">OK</button></div>*@
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->

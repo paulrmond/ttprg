@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing and Collection System</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+
+    <script> var jq111 = jQuery.noConflict(true);</script>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/adminsidebar.css" rel="stylesheet" />
+
+</head>
+<body class="container">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="~/" style="margin-left:15%">
+                        <img src="~/images/pezalogonew.png" width="120" title="Peza" />
+                    </a>
+
+                </li>
+                <li>
+                    <br />
+                </li>
+                <li>
+                    <a href="~/Account/ViewUser">User</a>
+                </li>
+                @if (User.IsInRole("Super User"))
+                {
+                    <li>
+                        <a href="~/Role/Index">User Role</a>
+                    </li>
+                }
+                <li>
+                    <a href="~/AdminZone/ViewZone">Zone</a>
+                </li>
+                <li>
+                    <a href="~/AdminZone/ViewZoneGroup">Zone Group</a>
+                </li>
+                <li>
+                    <a href="~/RoleAssignmentMatrix/Details">Role Access</a>
+                </li>
+                <li>
+                    <a href="~/UserLockOut/UnlockUser">User Lockouts</a>
+                </li>
+                @if (User.IsInRole("Super User"))
+                {
+                    <li>
+                        <a href="~/AdminLockout/UnlockAdmin">Admin Lockouts</a>
+                    </li>
+
+                    <li>
+                        <a href="~/Crypto/Index">Cryptography</a>
+                    </li>
+                }
+                <li>
+                    <a href="~/SystemLogs/SystemlogsView">System Logs</a>
+                </li>                
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+
+        <div class="col-sm-11 pad0">
+            <a href="#menu-toggle" class="btn btn-primary" style="margin-left:-10%;margin-top:5%; width:100px;" id="menu-toggle">Menu</a>
+
+            <div class="body-content">
+                @RenderBody()
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+    <!-- jQuery -->
+
+    <script src="~/Scripts/jquery-1.11.0.min.js"></script>
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

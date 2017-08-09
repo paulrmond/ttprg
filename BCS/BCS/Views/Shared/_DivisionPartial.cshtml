@@ -1,0 +1,30 @@
+﻿
+@model IEnumerable<BCS.Models.Division>
+
+<tr>
+    <th>
+        <button type="button" class="btn btn-primary w100px" data-toggle="modal" data-target="#modalAdd">Add</button>
+    </th>
+</tr>
+<tr>
+    <th><b>Division Code</b></th>
+    <th><b>Division Name</b></th>
+</tr>
+@foreach (var item in Model)
+{
+    
+    <tr>
+        <th hidden="hidden">@item.DivisionId</th>
+        <th>@item.Code</th>
+        <th>@item.Name</th>
+        <th>
+            <button type="button" id="@item.DivisionId" value="" class="h25px clr bgColor-None glyphicon glyphicon-pencil br0 pad0"
+                    onclick="editModal('@item.DivisionId','@item.Code','@item.Name')" data-toggle="modal" data-target="#modalEdit">
+                &nbsp;
+            </button>
+        </th>
+    </tr>
+}
+
+
+

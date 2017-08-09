@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@*@using (Html.BeginForm())
+    {
+        <table id="tbrole">
+            <tr>
+                <td class="c">Enter Role Name To be Created:</td>
+                <td class="c">
+                    @Html.EditorFor(m => m.Name)
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="Create Role" />
+    }*@
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-dialog w700px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span class="glyphicon glyphicon-list"></span> Edit @ViewBag.RoleName</h4>
+                <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container pad0">
+                    <div class="col-sm-6 fontBld txtCenter">Enter new role name:</div>
+                    <div class="col-sm-6 pad0"><input type="text" name="RoleName" /></div>
+                    <input type="text" hidden="hidden" value="@ViewBag.RoleId" name="RoleId" />
+                    @if (ViewBag.CreateStatus == "Failed")
+                    {
+                        <div class="col-sm-6 pad0">Role name required</div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" value="Update Role" class="btn btn-primary" onclick="validateInput()" />
+            </div>
+        </div>
+    </div>
+}

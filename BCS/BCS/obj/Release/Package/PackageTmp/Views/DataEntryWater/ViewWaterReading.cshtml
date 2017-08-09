@@ -1,0 +1,378 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@{
+    ViewBag.Title = "ViewWater";
+}
+@model BCS.Models.SearchWaterViewModel
+@using BCS.Models;
+
+<script>
+    $(window).load(function () {
+        $('#modalWaterMeterReading').modal('show');
+    });
+
+    function submitDetailsForm() {
+        $("#GetWaterReading").submit();
+    }
+    function ShowWaterReading() {
+        $("#modalWaterMeterReading").show;
+    }
+
+    function setIsEdit(isedit) {
+        //alert(isedit);
+        
+        var x = document.getElementById("isEdit");
+       
+        x.value = isedit;
+        
+        //alert(x.value);
+    }
+
+    function AddEditModal(itemID, itemCls) {
+        //document.getElementById("EditCompanyName").value = document.getElementById("CompanyName").innerHTML
+        //alert('a');
+        var p = document.getElementById(itemID).getElementsByClassName(itemCls);
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child id= " + childId + " : Child val= " + childValue)
+            var elementToPopulate = document.getElementById(childId);
+            if (childId == "MonthAverage") {
+                childValue = "";
+            }
+            //alert("find by child id = " + childId);
+            //alert("Element to pop = " + elementToPopulate);
+            elementToPopulate.value = childValue;
+            //alert("Element to pop val = " + elementToPopulate.value);
+        }
+    }
+
+    function ComputeConsumption() {
+        var sub1 = parseFloat(document.getElementById("PreviousReading").value);
+        var sub2 = parseFloat(document.getElementById("PresentReading").value);
+        var sewerageRate = parseFloat(document.getElementById("SewerageRate").value);
+
+        var ans = (sub2 - sub1).toFixed(4);
+
+        document.getElementById("Sewerage").value = ((sub2 - sub1).toFixed(4) * sewerageRate).toFixed(4);
+        document.getElementById("ans").value = ans
+        document.getElementById("MonthAverage").value = "";
+    }
+
+
+    //new loop for Getting Monthly Average
+    function MonthlyAverage() {
+        //new loop for Getting Monthly Average
+        var tbl = document.getElementById("WaterReadingTable2");
+        var lastrow = tbl.rows.length - 1;
+
+       // var lastrow = tbl.rows.length;
+        var numrow = tbl.rows.length;
+        var coutcell = tbl.rows[lastrow].cells.length - 1;
+        var count = $('#WaterReadingTable2 tr').length;
+       // alert(count);
+
+        if (count >= 3) {
+            //var month1prev = tbl.rows[lastrow].cells[1].innerText;
+            //var month1curr = tbl.rows[lastrow].cells[2].innerText;
+            //var month1tot = parseInt(month1curr) - parseInt(month1prev);
+
+            //var month2prev = tbl.rows[lastrow - 1].cells[1].innerText;
+            //var month2curr = tbl.rows[lastrow - 1].cells[2].innerText;
+            //var month2tot = parseInt(month2curr) - parseInt(month2prev);
+
+            //var month3prev = tbl.rows[lastrow - 2].cells[1].innerText;
+            //var month3curr = tbl.rows[lastrow - 2].cells[2].innerText;
+            //var month3tot = parseInt(month3curr) - parseInt(month3prev);
+
+            var month1prev = tbl.rows[1].cells[1].innerText;
+          
+            var month1curr = tbl.rows[1].cells[2].innerText;
+           
+            var month1tot = parseInt(month1curr) - parseInt(month1prev);
+
+
+
+            var month2prev = tbl.rows[2].cells[1].innerText;
+            var month2curr = tbl.rows[2].cells[2].innerText;
+            var month2tot = parseInt(month2curr) - parseInt(month2prev);
+
+            var month3prev = tbl.rows[3].cells[1].innerText;
+            var month3curr = tbl.rows[3].cells[2].innerText;
+            var month3tot = parseInt(month3curr) - parseInt(month3prev);
+
+
+
+            var monthave = (month1tot + month2tot + month3tot) / 3;
+            var previousReading = document.getElementById("PreviousReading").value;
+            var sewerageRate = parseFloat(document.getElementById("SewerageRate").value);
+
+            document.getElementById("Sewerage").value = ((monthave).toFixed(4) * sewerageRate).toFixed(4);
+            document.getElementById("ans").value = (monthave).toFixed(4);
+            document.getElementById("PresentReading").value = previousReading;
+            document.getElementById("MonthAverage").value = (monthave).toFixed(4);
+        }
+    }
+
+    function cleartxt() {
+        $('#PresentReading').val('');
+        $('#ans').val('');
+        $('#Sewerage').val('');
+        $('#MonthAverage').val('');
+    }
+</script>
+<input type="text" hidden="hidden" id="SewerageRate" name="SewerageRate" value="@ViewBag.SewerageRate" />
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+
+<!-- Page Title -->
+<div class="container modal-content bgColor-White pad0" style="margin-top:-10px;">
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-tint"></span> <span class="fs20">WATER</span></div>
+    <div class="modal-body">
+        <!-- Enterprise Detail -->
+        <div class="container br1 w100per br2 pad0">
+            <div class="container w100per br1-bot-Blk pad0">
+                <div class="col-sm-2 pad5 bgColor-lb fontBld">COMPANY</div>
+                @if (Model.Companies.Count == 1)
+                {
+                    <div class="col-sm-10 pad5">@Model.Companies[0].CompanyName</div>
+                }
+
+            </div>
+            <div class="container w100per pad0">
+                <div class="col-sm-2 pad5 bgColor-lb fontBld">ADDRESS</div>
+                @if (Model.Companies.Count == 1)
+                {
+                    <div class="col-sm-10 pad5">@Model.Companies[0].Address</div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<!-- Modal Water Meter Reading content-->
+<div class="container modal-content  pad0">
+    <div class="modal-header bgColor-lv">
+        <table CLASS="w100per">
+            <tr>
+                <td>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-tint"></span>
+                        <span class="glyphicon glyphicon-dashboard left10px"></span> Water Meter Readings for <span class="glyphicon glyphicon-dashboard"></span>
+                        <b>@Model.WaterMeterAssignments[0].MeterNumber</b>
+                    </h4>
+                </td>
+                <td CLASS="pad20"></td>
+                @if (ViewBag.IsValidRole == true)
+            {
+                    <td CLASS="w150px pad5"><input type="button" VALUE="New Reading" class="btn btn-primary w100per" id="inputWarning" data-toggle="modal" data-target="#modalNewWaterReading" onclick="setIsEdit('add'),cleartxt()"></td>
+                }
+                @*<td class="w150px pad5">@Html.ActionLink("View Report", "WaterReadingAlphaListReport", "DataEntryWater", new { reportType = "WaterReadingAlphaList" }, new { @class = "btn btn-primary w100per", Type = "button", Target = "_blank" })</td>*@
+                <td class="w100px pad5">@Html.ActionLink("BACK", "ViewWaterAssignment", new { @CompanyID = Model.Companies[0].CompanyID }, new { @class = "btn btn-primary w100per" })</td>
+                @*<td class="w100px pad5">@Html.ActionLink("View Periodic Consumption", "PeriodicConsumptionReport", "DataEntryWater", new { companyId = Model.Companies[0].CompanyID }, new { @class = "btn btn-primary w100per", Type = "button", Target = "_blank" })</td>*@
+                @*<td CLASS="w10per pad20"><input type="button" VALUE="View Reading List" class="btnH-lg w100per" id="inputWarning"></td>
+                <TD CLASS="w10per pad20"><input type="button" VALUE="View Reading Report" class="btnH-lg w100per" id="inputWarning"></TD>*@
+            </tr>
+            </table>
+
+</div>
+    <div class="modal-body pad10">
+        <DIV CLASS="br2 pad0 bgColor-White">
+            <div class="container pad0 mar0">
+                <TABLE CLASS="w100per" id="WaterReadingTable">
+                    <THEAD class="bgColor-blk fcWhite">
+                        <TR>
+                            <TH CLASS="w200px"><CENTER>Period</CENTER></TH>
+                            <TH CLASS="w200px"><CENTER>Previous Reading</CENTER></TH>
+                            <TH CLASS="w200px"><CENTER>Present Reading</CENTER></TH>
+                            <TH CLASS="w200px"><CENTER>Consumption</CENTER></TH>
+                            <TH CLASS="w100px"><CENTER>Sewerage</CENTER></TH>
+                            <TH CLASS=""><CENTER></CENTER></TH>
+                            <TH CLASS=""><CENTER></CENTER></TH>
+                        </TR>
+                    </THEAD>
+                </TABLE>
+               </div>
+                <div class="container ovrFlw-Y" style="max-height: 120px;">
+                    <table id="WaterReadingTable2">
+                        <tbody>
+
+                            @if (Model.Companies.Count == 1 && Model.WaterMeterReadings.Count >= 1)
+                            {
+                                foreach (var item in Model.WaterMeterReadings)
+                                {
+                                    //ApplicationDbContext context = new ApplicationDbContext();
+                                    //var userid = User.Identity.GetUserId();
+                                    //string ZoneGroup = context.Users.SingleOrDefault(m => m.Id == userid).ZoneGroup;
+                                    decimal i = Convert.ToDecimal(item.PresentReading) - Convert.ToDecimal(item.PreviousReading);
+                                    i = Math.Round(i, 4);
+                                    BCS_Context db = new BCS_Context();
+                                    var startDate = db.BillingPeriod.Single(m => m.BillingPeriodId == item.BillingPeriod).DateFrom.ToShortDateString();
+                                    var endDate = db.BillingPeriod.Single(m => m.BillingPeriodId == item.BillingPeriod).DateTo.ToShortDateString();
+                                    var status = db.BillingPeriod.Single(m => m.BillingPeriodId == item.BillingPeriod).Finalized;
+                                    var periodDate = startDate + " - " + endDate;
+                                    var sewerageRate = @ViewBag.SewerageRate;
+                                    var sewerageRate1 = ViewBag.SewerageRate;
+                                    decimal sewerageFee = Math.Round(i * sewerageRate, 2);
+                                    decimal presentReading = item.PresentReading;
+                                    presentReading = item.UseThreeMonthsAverage == true ? presentReading = item.PreviousReading : presentReading = item.PresentReading;
+                                    //if (item.UseThreeMonthsAverage == true)
+                                    //{
+                                    //    presentReading = i;
+                                    //}
+
+                                    <tr id="@item.WaterMeterReadingId">
+                                        <td title="BillingPeriodDate" CLASS="w200px br1Grey pad0 cell h34px txtCenter editreading">@periodDate</td>
+                                        <td title="PreviousReading" CLASS="w200px br1Grey pad0 cell h34px txtCenter editreading">@item.PreviousReading</td>
+                                        <td title="PresentReading" CLASS="w200px br1Grey pad0 cell h34px txtCenter editreading">@presentReading</td>
+                                        <td title="ans" class="w200px br1Grey pad0 cell h34px txtCenter editreading">@i</td>
+                                        <td title="Sewerage" class="w200px br1Grey pad0 cell h34px txtCenter editreading">@sewerageFee</td>
+                                        @*<td CLASS="w200px br1Grey pad0 cell h34px txtCenter"></td>*@
+                                        <td title="remarks" class="editreading" hidden="hidden">@item.remarks</td>
+                                        <td title="meterid" class="editreading" hidden="hidden">@item.WaterMeterReadingId</td>
+                                        <td title="BillingPeriod" class="editreading" hidden="hidden">@item.BillingPeriod</td>
+
+                                        @if (ViewBag.IsValidRole == true && status.ToUpper() != "YES")
+                                        {
+                                            <td><input type="button" VALUE="MODIFY" class="roundedButton grad3 w100per" id="@item.WaterMeterReadingId" data-toggle="modal" data-target="#modalNewWaterReading" onclick="AddEditModal(this.id, 'editreading'), setIsEdit('edit')"></td>
+                                            @*<td><input type="button" VALUE="DELETE" class="w100per" id="inputWarning" data-toggle="modal" data-target="#modalRemoveWaterMeterReading"></td>*@
+                                        }
+                                        else
+                                        {
+                                            <td><input type="button" VALUE="FINALIZED" disabled="disabled" class="roundedButton grad3 w100per" id="@item.WaterMeterReadingId"></td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+             
+            </div>
+    </div>
+
+    <div class="modal-footer pad10 bgColor-lb">
+  
+    </div>
+</div>
+
+
+
+<!-- End Modal Water Meter Reading -->
+<!-- Modal  New Water Reading-->
+@using (Html.BeginForm("AddMeterReading", "DataEntryWater"))
+{
+    @*@Html.ValidationSummary(true)*@
+    @Html.AntiForgeryToken()
+    <input type="text" name="isEdit" id="isEdit" hidden="hidden" />
+    <input type="text" name="meterid" id="meterid" hidden="hidden" />
+    <input type="text" name="BillingPeriodDate" id="BillingPeriodDate" hidden="hidden" />
+    <div class="modal fade" id="modalNewWaterReading" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal  New Water Reading Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingPeriod" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="PreviousReading" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="PresentReading" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ans" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalNewWaterReading" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-tint"></span><span class="glyphicon glyphicon-dashboard left10px"></span> New Water Reading </h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="pad5 bgColor-red fcWhite fontBld">
+                        <div class="container text-center">
+                            Meter Reading Details
+                        </div>
+                    </div>
+                    <div class="pad5 bgColor-White fontBld fs11 br1">
+                        <div class="container pad5 br1-bot bgColor-llb">
+                            <div class="col-sm-4 pad0">For the period of</div>
+                            <div class="col-sm-8 pad0">
+                                <select class="w100per h25px" data-val="true" data-val-required="Billing period is required" name="BillingPeriod" id="BillingPeriod">
+                                    <option value="">Select Billing Period</option>
+                                    @if (Model.BillingPeriods.Count > 0)
+                                    {
+                                        foreach (var item in Model.BillingPeriods)
+                                        {
+                                            <option value="@item.BillingPeriodId">@item.DateFrom.ToShortDateString() - @item.DateTo.ToShortDateString()</option>
+                                        }
+                                    }
+                                </select>
+                                @*@Html.ValidationMessage("BillingPeriod")*@
+                            </div>
+                        </div>
+                        <div class="container pad5 br1-bot bgColor-lv">
+                            <div class="col-sm-3 pad0">Previous Reading</div>
+                            <div class="col-sm-3 pad0">
+
+                                @{
+                                    var LastReading = "";
+                                    if (Model.WaterMeterReadings.Count > 0)
+                                    {
+                                        //LastReading = Model.WaterMeterReadings[Model.WaterMeterReadings.Count - 1].PresentReading.ToString();
+                                        // LastReading = Model.WaterMeterReadings[Model.WaterMeterReadings.Count - (Model.WaterMeterReadings.Count - 1)].PresentReading.ToString();
+                                        LastReading = Model.WaterMeterReadings.Select(x => x.PresentReading).First().ToString();
+                                    }
+                                }
+                                <input class="w100per" data-val="true" data-val-required="Previous reading is required" autocomplete="off" data-val-number="Invalid previous reading format" name="PreviousReading" onkeyup="ComputeConsumption()" id="PreviousReading" value="@LastReading" />
+                                @*@Html.ValidationMessage("PreviousReading")*@
+                            </div>
+                            <div class="col-sm-3 pad0">Present Reading</div>
+                            <div class="col-sm-3 pad0">
+                                <input class="w100per" data-val="true" data-val-required="Present reading is required" autocomplete="off" data-val-number="Invalid present reading format" name="PresentReading" onkeyup="ComputeConsumption()" id="PresentReading" />
+                                @*@Html.ValidationMessage("PresentReading")*@
+                            </div>
+                        </div>
+                        <div class="container pad5 br1-bot bgColor-llb">
+                            <div class="col-sm-3 pad0"></div>
+                            <div class="col-sm-3 pad0"></div>
+                            <div class="col-sm-3 pad0">Consumption</div>
+                            <div class="col-sm-3 pad0"><input class="w100per" onkeypress="ComputeConsumption()" id="ans" readonly="readonly" name="ans" data-val="true" data-val-range-min="0" data-val-range="Must be non negative number" data-val-required="Consumption is required" data-val-number="Invalid present reading format" /></div>
+                        </div>
+                        <div class="container pad5 br1-bot bgColor-llb">
+                            <div class="col-sm-3 pad0"></div>
+                            <div class="col-sm-3 pad0"></div>
+                            <div class="col-sm-3 pad0">Sewerage Fee</div>
+                            <div class="col-sm-3 pad0"><input class="w100per" id="Sewerage" readonly="readonly" name="Sewerage" data-val="true" data-val-range-min="0" data-val-range="Must be non negative number" data-val-required="Consumption is required" data-val-number="Invalid present reading format" /></div>
+                        </div>
+                        <div class="container pad5 br1-bot bgColor-lv">
+                            <div class="col-sm-5 pad0"></div>
+                            <div class="col-sm-4 pad0"><button type="button" class="w100per" onclick="MonthlyAverage()">Get 3-Month Average</button></div>
+                            <div class="col-sm-3 pad0"><input readonly="readonly" class="w100per" id="MonthAverage" name="MonthAverage" /></div>
+                        </div>
+                        <div class="container pad5 br1-bot bgColor-llb">
+                            <div class="col-sm-5 pad0 txtRight">Remarks</div>
+                            <div class="col-sm-7 pad0 txtRight"><textarea class="w100per h100px" name="remarks" id="remarks"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    @if (Model.Companies.Count > 0)
+                    {
+                        <input type="text" hidden="hidden" value="@Model.WaterMeterAssignments[0].MeterNumber" name="MeterNumber" />
+                        <input type="text" hidden="hidden" value="@Model.Companies[0].CompanyID" name="CompanyId" />
+                    }
+                    <div class="col-sm-4"><button type="submit" class="btn btn-primary w100px">OK</button></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+                                    }
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}
+<!-- End Modal New Water Reading-->

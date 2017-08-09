@@ -1,0 +1,71 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/28/16
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@using BCS.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+
+@if(Request.IsAuthenticated)
+{ 
+<!-- Modal Login PEZA Billing and Collection System-->
+@*<div class="modal fade ovrFlwHide" id="modalSearchEnterprise" role="dialog">*@
+<div class="modal-dialog">
+
+    <!-- Modal Login PEZA Billing and Collection System Content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+            <h4 class="modal-title"><span class="glyphicon glyphicon-log-in"></span> Log-in PEZA Billing and Collection System</h4>
+        </div>
+
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-body bgColor-lv">
+                <div CLASS="container">
+                    <div class="col-sm-8">
+                        <DIV CLASS="pad5">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                <br />
+                                <div class="container">@Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })</div>
+                                <div class="container">
+                                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger w200per" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <br />
+                                <div class="container">@Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })</div>
+                                <div class="container">
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </DIV>
+                    </div>
+                    <div class="col-sm-4 left10px"><br /><img src="~/images/peza.gif" width="170" /></div>
+                </div>
+            </div>
+                <div class="modal-footer">
+                    <DIV CLASS="col-sm-2 text-right"><input type="submit" value="Login" CLASS="W100px btn btn-primary"></DIV>
+                    @*<DIV CLASS="col-sm-2 "><input type="submit" value="Clear" CLASS="W100px btn btn-primary"></DIV>*@
+                    <DIV CLASS="col-sm-2 text-right"><input type="submit" value="Cancel" CLASS="W100px btn btn-primary" data-dismiss="modal" data-target="#modalSearchEnterprise"></DIV>
+                </div>
+        }
+    </div>
+
+</div>
+@*</div>*@
+<!-- End Modal Login PEZA Billing and Collection System-->
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

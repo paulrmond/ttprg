@@ -1,0 +1,71 @@
+﻿@model BCS.Models.SearchMainOrderOfPaymentViewModel
+<div class="container ovrFlw-Y hmax300px pad0" companyCnt="">
+    <table class="container w100per pad0">
+        <thead class="container">
+            <tr class="container bgColor-blk fcWhite w100per text-center fontBld fs11">
+                <td class="col-sm-1 pad0">OP/Ref No.</td>
+                <td class="col-sm-1 pad0 hidden">Ref No.</td>
+                <td class="col-sm-1 pad0">Date</td>
+                <td class="col-sm-2 pad0">Company</td>
+                <td class="col-sm-2 pad0">Address</td>
+                <td class="col-sm-2 pad0">Total</td>
+                <td class="col-sm-1 pad0">Zone</td>
+                <td class="col-sm-1 pad0">OR No.</td>
+                <td class="col-sm-1 pad0"> </td>
+                <td class="col-sm-1 pad0"> </td>
+                @*<td class="col-sm-1 pad0"> </td>*@
+            </tr>
+        </thead>
+
+        <tbody>
+            @using (Html.BeginForm("DisplayOrderOfPayment", "BillingPayments"))
+            {
+                // @Html.AntiForgeryToken()
+                if (Model.OrderOfPaymentList.Count > 0)
+                {
+                    <input type="text" id="OPDId" hidden="hidden" name="OPDId" />
+                }
+                for (int z = 0; z <= Model.CompanyName.Count - 1; z++)
+                {
+                    <tr class="container w100per text-center fontBld pad0" id="@Model.OrderOfPaymentList[z].OrderOfPaymentId">
+                        <td title="OPId" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].OrderOfPaymentId</td>
+                        @*<td title="OPId2" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].OrderOfPaymentId</td>*@
+                        <td title="OrderOfPaymentId" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].OrderOfPaymentId</td>
+                        <td title="EditCompanyId" class="col-sm-1 br1Grey pad0 cell ovrFlwHide hidden" align="center">@Model.OrderOfPaymentList[z].CompanyId</td>
+                        <td title="RemoveCompanyId" class="col-sm-1 br1Grey pad0 cell ovrFlw-YAut hidden" align="center">@Model.OrderOfPaymentList[z].CompanyId</td>
+                        <td title="RefNo" class="col-sm-1 br1Grey pad0 cell ovrFlwHide" align="center">@Model.OrderOfPaymentList[z].ReferenceNo</td>
+                        <td title="OPDate" class="col-sm-1 br1Grey pad0 cell ovrFlwHide" align="center">@Model.OrderOfPaymentList[z].OPDate.Value.ToShortDateString()</td>
+                        <td title="compcomp" class="col-sm-2 br1Grey pad0 cell ovrFlw-YAuto" align="center">@Model.CompanyName[z]</td>
+                        <td title="RemoveCompanyName" class="col-sm-2 br1Grey pad0 cell ovrFlw-YAuto hidden" align="center">@Model.CompanyName[z]</td>
+                        <td title="Address" class="col-sm-2 br1Grey pad0 cell ovrFlw-YAuto" align="center">@Model.Address[z]</td>
+                        @foreach (var OrderOfPaymentDetail in Model.OrderOfPaymentDetailList)
+                    {
+                            <td title="OPDId" class="col-sm-1 br1Grey pad0 cell ovrFlw-YAuto hidden" align="center">@OrderOfPaymentDetail.OrderOfPaymentDetailId</td>
+                        }
+                        <td class="col-sm-2 br1Grey pad0 ovrFlwHide" align="right">@String.Format("{0:n}", Model.OrderOfPaymentList[z].TotalAmount) </td>
+                        <td class="col-sm-1 pad2 br1Grey pad0 ovrFlwHide" align="center">@Model.ZoneName[z]</td>
+                        <td class="col-sm-1 pad2 br1Grey pad0 ovrFlwHide" align="center">@Model.OrderOfPaymentList[z].ORNumber</td>
+                        <td class="col-sm-1 pad5 ovrFlwHide">@Html.ActionLink("Details", "DisplayOrderOfPaymentDetail", "BillingPayments", new { CompanyId = @Model.OrderOfPaymentList[z].CompanyId, opid1 = @Model.OrderOfPaymentList[z].OrderOfPaymentId }, new { @class = "actLink grad3 w100per h25px", Type = "button" })</td>
+                        @if (Model.OrderOfPaymentList[z].PaymentStatus == "PAID")
+                    {
+                            <td class="col-sm-1 pad2 ovrFlwHide"><input type="submit" disabled="disabled" VALUE="EDIT" class=" w100per h25px fontBld" onclick="EditOP(this.title)"></td>
+                        }
+                        else
+                        {
+                            <td class="col-sm-1 pad2 ovrFlwHide"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditOP" class="roundedButton grad3 w100per h25px fontBld" title="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)" onclick="EditOP(this.title)" id="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)"></td>
+                        }
+                        @if (Model.OrderOfPaymentList[z].PaymentStatus == "PAID")
+                    {
+                            <td class="col-sm-1 pad2 ovrFlwHide hidden"><input type="submit" VALUE="DELETE" disabled="disabled" data-toggle="modal" data-target="#modalRemove" class=" w100per h25px fontBld" title="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)" onclick="EditOP(this.title)" id="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)"></td>
+                        }
+                        else
+                        {
+                            <td class="col-sm-1 pad2 ovrFlwHide hidden"><input type="submit" VALUE="DELETE" data-toggle="modal" data-target="#modalRemove" class="roundedButton grad3 w100per h25px fontBld" title="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)" onclick="EditOP(this.title)" id="@Html.DisplayFor(modelItem => @Model.OrderOfPaymentList[z].OrderOfPaymentId)"></td>
+                        }
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "User Lockout";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@using BCS.Models
+<!DOCTYPE html>
+
+<CENTER>
+    <H2 CLASS="fcWhite">All Locked Users</H2>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span></h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <center>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody id="roleMatrixPartial">
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Group</th>
+                                    <th></th>
+                                </tr>
+
+                                @foreach (var item in @ViewBag.Users)
+                                {
+                                    BCS_Context db = new BCS_Context();
+                                    string zonegroupcode = @item.ZoneGroup;
+                                    var zonegroup = db.ZoneGroup.FirstOrDefault(m => m.ZoneGroupCode == zonegroupcode).ZoneGroupName;
+                                    <tr>
+                                        <th>@item.UserName</th>
+                                        <th>@zonegroup</th>
+                                        <th>
+                                            @Html.ActionLink("UNLOCK", "UnlockAdminPost", new { userid = @item.Id },
+                                                            new
+                                                            {
+                                                                @class = "btn btn-default clr br1Grey h20px bgColor-lgrey",
+                                                                @onclick = "return confirm('Are you sure you want to unlock this user?')"
+                                                            })
+                                        </th>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </center>
+            </div>
+        </div>
+    </div>
+</CENTER>

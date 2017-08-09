@@ -1,0 +1,402 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consultant: DCI
+-->
+
+@{
+    ViewBag.Title = "Data Entry - Pole Rentals";
+}
+@model BCS.Models.SearchPoleInformationViewModel
+@using BCS.Models;
+<script>
+    function EditPole(item, clsName, isEdit) {
+        var p = document.getElementById(item).getElementsByClassName(clsName);
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+
+            if (childId == "Amount") {
+                //alert("Inside Amount: " + childId);
+                document.getElementById('FakeAmount').value = childValue.toLocaleString("en-US");
+                var a = childValue.split(',').join('');
+                var amountElement = document.getElementsByName('Amount');
+                amountElement.value = a;
+                //alert(amountElement.value);
+            }
+            var elementToPopulate = document.getElementById(childId);
+
+            if (childId == "billingMonths") {
+                setbillmonths(childValue);
+            } else {
+                elementToPopulate.value = childValue;
+            }
+
+            if (isEdit == 'True') {
+                document.getElementById('isEdit').value = isEdit;
+            }
+
+        }
+    }
+    function resetModal() {
+        $("select.resetItem").each(function () {
+            $(this).prop('selectedIndex', 0);
+        });
+        $("input.resetItem").each(function () {
+            $(this).val('');
+        });
+        $("input.billingMonths").attr('checked', false);
+    }
+
+
+</script>
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<!-- Page Title -->
+<div class="container modal-content bgColor-White pad0">
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-record"></span> <span class="fs20">POLE RENTAL</span></div>
+    <div class="modal-body">
+        <!-- Enterprise Detail -->
+        <table class="w100per br2 pad0">
+            <tr class=" br1-bot-Blk">
+                <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">COMPANY</td>
+                <td id="CompanyName" class="col-sm-9 pad5 h25px">
+                    @if (ViewBag.CompanySelected == "OK")
+                    {
+                        @Html.DisplayFor(m => m.CompanyList[0].CompanyName)
+
+                    }
+                </td>
+                <td class="col-sm-1 fontBld pad2">
+                    <!-- Trigger the modal Search Enterprise with a button -->
+                    <CENTER class="pad0"><button type="button" id="searchEnterpriseButton" class="btn-default bgColor-cgrey btn-sm w100per" data-toggle="modal" data-target="#modalSearchEnterprise"><span class="glyphicon glyphicon-search"></span> Search</button></CENTER>
+                </td>
+            </tr>
+            <tr class=" br1-bot-Blk">
+                <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">ADDRESS</td>
+                <td id="CompanyAddress" class="col-sm-10 h25px pad5" colspan="2">
+                    @if (ViewBag.CompanySelected == "OK")
+                    {
+                        @Html.DisplayFor(m => m.CompanyList[0].Address)
+                    }
+                </td>
+            </tr>
+            <tr class=" br1-bot-Blk">
+                <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">ZONE</td>
+                <td id="CompanyAddress" class="col-sm-10 h25px pad5" colspan="2">
+                    @if (ViewBag.CompanySelected == "OK")
+                    {
+                        BCS_Context db = new BCS_Context();
+                        var zonecode = @Model.CompanyList[0].ZoneCode;
+                        var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                        <span>@zonename</span>
+                    }
+                </td>
+            </tr>
+        </table>
+        <br />
+        <!-- Rental Datails Table -->
+        @using (Html.BeginForm("DisplayPoleRentalList", "DataEntryPoleRental"))
+        {
+            @Html.AntiForgeryToken()
+            if (Model.PoleInformationList.Count > 0)
+            {
+                <input type="text" id="PoleInformationId" hidden="hidden" name="PoleInformationId" />
+                <input type="text" id="CompanyId" hidden="hidden" name="CompanyId">
+            }
+            if (Model.CompanyList.Count == 1)
+            {
+                if (Model != null)
+                {
+                    <div class="container w100per br2 pad0" id="companyCnt" isValidPostback="@ViewBag.ValidatePostback" CompanySelected="@ViewBag.CompanySelected">
+                        <!-- Pole Rental Datails Table -->
+                        <div class="container w100per pad0">
+                            <div class="container bgColor-blk fcWhite w100per text-center fontBld fs11">
+                                <div class="col-sm-2 pad0">Amount</div>
+                                <div class="col-sm-3 pad0">Bill Mode</div>
+                                <div class="col-sm-3 pad0">Start Date</div>
+                                <div class="col-sm-3 pad0">End Date</div>
+                                <div class="col-sm-1 pad0"></div>
+                            </div>
+                            <div class="w100per hmax100px ovrFlw-YAuto">
+                                @foreach (var PoleInformation in Model.PoleInformationList)
+                                {
+                                    var amt = string.Format("{0:n}", PoleInformation.Amount);
+                                    <div class="container w100per text-center fontBld pad0" id="@PoleInformation.PoleInformationId">
+                                        <div class="col-sm-1 br1Grey pad0 cell pezaph h25px" hidden="hidden" title="ID">@PoleInformation.PoleInformationId</div>
+                                        <div hidden="hidden" title="PoleInformationId">@PoleInformation.PoleInformationId</div>
+                                        <div hidden="hidden" title="CompanyId">@PoleInformation.CompanyId</div>
+                                        <div hidden="hidden" title="CompId">@PoleInformation.CompanyId</div>
+                                        <div hidden="hidden" title="billingMonths">@PoleInformation.BillingMonths</div>
+                                        <div title="Amount" class="col-sm-2 br1Grey pad0 cell pezaph h34px ovrFlwHide">@amt</div>
+                                        @*<div title="FakeAmount" class="col-sm-2 br1Grey pad0 cell h25px ovrFlwHide">@PoleInformation.Amount</div>*@
+                                        <div title="BillMode" class="col-sm-3 br1Grey pad0 cell pezaph h34px ovrFlwHide">@PoleInformation.BillMode</div>
+                                        <div title="billingMonths" class="col-sm-3 br1Grey pad0 cell pezaph h34px ovrFlwHide" hidden>@PoleInformation.BillingMonths</div>
+                                        <div title="StartDate" class="col-sm-3 br1Grey pad0 cell pezaph h34px ovrFlwHide">@PoleInformation.StartDate.ToShortDateString()</div>
+                                        <div title="EndDate" class="col-sm-3 br1Grey pad0 cell pezaph h34px ovrFlwHide">@PoleInformation.EndDate.ToShortDateString()</div>
+                                        <div title="DueOn" hidden="hidden" class="col-sm-1 br1Grey pad0 cell pezaph h34px ovrFlwHide">@PoleInformation.DueOn</div>
+                                        @if (ViewBag.IsValidRole == true)
+                                        {
+                                            <div class="col-sm-1 h34px pad5"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalAdd" class="roundedButton grad3 w100per h25px" title="@Html.DisplayFor(modelItem => PoleInformation.PoleInformationId)" onclick="EditPole(this.id, 'pezaph', 'True')" id="@Html.DisplayFor(modelItem => PoleInformation.PoleInformationId)"></div>
+                                            @*<div class="col-sm-1 pad0"><input type="submit" VALUE="DELETE" class="w100per h25px" title="@Html.DisplayFor(modelItem => PoleInformation.PoleInformationId)" onclick="EditPole(this.title)" name="@Html.DisplayFor(modelItem => PoleInformation.PoleInformationId)" id="@Html.DisplayFor(modelItem => PoleInformation.PoleInformationId)"></div>*@
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </div>
+    <div class="modal-footer pad0 bgColor-lb mar0 pad10">
+        <div class="container w100per text-center">
+            <div class="col-sm-9 pad0"></div>
+            <div class="col-sm-1 pad5">
+                @if (ViewBag.IsValidRole == true)
+                {
+                    if (ViewBag.CompanySelected == "OK")
+                    {
+                        <input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalAdd" class="w100per btn btn-primary h25px pad0 isDisabled" id="inputWarning" disabled="disabled">
+                    }
+                }
+            </div>
+            <div class="col-sm-2 pad5">@Html.ActionLink("View Report", "PoleRentalReport", "DataEntryPoleRental", new { reportType = "PoleRentalAlphaList" }, new { @class = "btn btn-primary w100per h25px", Type = "button", Target = "_blank" })</div>
+        </div>
+    </div>
+</div>
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterprise" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container pad5 bgColor-red fontBld fcWhite w100per">
+                    <div class="col-sm-3 padlr5">Company Name</div>
+                    @using (Html.BeginForm("ViewPoleRentals", "DataEntryPoleRental"))
+                    {
+                        @Html.AntiForgeryToken();
+                        <div class="col-sm-7 pad0">@Html.EditorFor(model => model.SearchInput, new { htmlAttributes = new { id = "searchCompany", @class = "form-control h25px w100per", @onkeyup = "fourCharVal()", @placeholder = "Enter atleast 3 characters" } })</div>
+                        <div class="col-sm-2 padlr5"> <input id="searchBtn" type="submit" class="form-control bgColor-lv br0 clr w100per h25px" value="Search" disabled="disabled" /></div>
+                    }
+                </div>
+
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+                    @foreach (var item in Model.CompanyList)
+                    {
+                        BCS.Models.BCS_Context db = new BCS.Models.BCS_Context();
+                        var zonecode = item.ZoneCode;
+                        var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                        using (Html.BeginForm("ViewPoleRentals", "DataEntryPoleRental"))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div>
+                                <button class="w100per btn-default txtLeft bgColor-lb" id="@item.CompanyID" name="@item.CompanyID" value="@item.CompanyID">
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyCode</span> -
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyName</span> |
+                                    <span id="@item.CompanyID + 'EntAdd'">@zonename</span>
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+                <div id="companyName" value=""></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                @*<div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="selectEnterprise();">OK</button></div>*@
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Add Pole Rental-->
+@using (Html.BeginForm("AddPoleRental", "DataEntryPoleRental"))
+{
+    @*@Html.ValidationSummary(true)*@
+    @Html.AntiForgeryToken()
+    <form>
+        <div class="modal fade" id="modalAdd" role="dialog">
+            <div class="modal-dialog">
+                <input type="text" hidden="hidden" name="isEdit" id="isEdit" value="" />
+                <input type="text" hidden="hidden" id="ID" name="ID" />
+                <input type="text" hidden="hidden" id="CompId" name="CompId" />
+                <!-- Modal Add Pole Rental Content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="bgColor-lb">
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="Amount" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="StartDate" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="EndDate" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="BillMode" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="DueOn" data-valmsg-replace="true"></span></div>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Add Pole Rentals</h4>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <div class="row">
+                            <div class="col-sm-3">Company</div>
+                            @if (Model.CompanyList.Count > 0)
+                            {
+                                <div class="col-sm-7 clr"><input type="text" disabled="disabled" VALUE="@Model.CompanyList[0].CompanyName" name="@Model.CompanyList[0].CompanyName" class="w100per" id="inputWarning"></div>
+                                <input type="text" hidden="hidden" name="CompanyID" value="@Model.CompanyList[0].CompanyID" />
+                            }
+                            else
+                            {
+                                <div class="col-sm-7 clr"><input type="text" disabled="disabled" VALUE="Company Name" class="w100per" id="inputWarning"></div>
+                            }
+
+                            <div class="col-sm-1 clr">
+                            </div>
+                            <div class="col-sm-1 clr">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">Amount</div>
+                            <div class="col-sm-7 pad0">
+                                <input type="text" VALUE="" class="w100per resetItem" id="FakeAmount" name="FakeAmount"
+                                       onkeyup="formatNumber(event.keyCode, this.id, 'Amount')" />
+                            </div>
+
+                            <div class="col-sm-7 pad0">
+                                <input type="text" style="visibility:hidden;position:absolute" data-val="true" data-val-required="Amount is required"
+                                       data-val-number="Invalid amount format" class="w100per resetItem" id="Amount"
+                                       name="Amount" onkeyup="formatNumber(event.keyCode, this.id)" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">Start Date</div>
+                            <div class="col-sm-3 pad0">
+                                <div id="" class="input-append date">
+                                    <input type="text" data-val="true" data-val-required="Start date is required" data-val-date="Invalid date format" class="w100px date-picker resetItem" id="StartDate" name="StartDate" />
+                                    <span class="add-on glyphicon glyphicon-calendar"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">End Date</div>
+                            <div class="col-sm-3 pad0">
+                                <div id="datetimepicker1" class="input-append date">
+                                    <input type="text" data-val="true" data-val-required="End date is required" data-val-date="Invalid date format" class="w100px date-picker resetItem" id="EndDate" name="EndDate" />
+                                    <span class="add-on glyphicon glyphicon-calendar"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">Bill Mode</div>
+                            <div class="col-sm-3 pad0">
+                                <select class="w100per h25px resetItem" data-val="true" data-val-required="Billing mode is required" id="BillMode" name="BillMode" onchange="setBillMode(this)">
+                                    <option value="" selected="selected">Select Billing Mode</option>
+                                    <option value="Annual">Annual</option>
+                                    <option value="Bi-Annual">Bi-Annual</option>
+                                    <option value="Irregular">Irregular</option>
+                                    <option value="Monthly">Monthly</option>
+                                    <option value="Quarterly">Quarterly</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2 pad0 txtRight">Due on</div>
+                            <div class="col-sm-2 pad0">
+                                <select class="w150px h25px resetItem" data-val="true" data-val-required="Due on is required" id="DueOn" name="DueOn">
+                                    <option value="" selected="selected">Select Due on</option>
+                                    <option value="1">1st</option>
+                                    <option value="2">2nd</option>
+                                    <option value="3">3rd</option>
+                                    <option value="4">4th</option>
+                                    <option value="5">5th</option>
+                                    <option value="6">6th</option>
+                                    <option value="7">7th</option>
+                                    <option value="8">8th</option>
+                                    <option value="9">9th</option>
+                                    <option value="10">10th</option>
+                                    <option value="11">11th</option>
+                                    <option value="12">12th</option>
+                                    <option value="13">13th</option>
+                                    <option value="14">14th</option>
+                                    <option value="15">15th</option>
+                                    <option value="16">16th</option>
+                                    <option value="17">17th</option>
+                                    <option value="18">18th</option>
+                                    <option value="19">19th</option>
+                                    <option value="20">20th</option>
+                                    <option value="21">21st</option>
+                                    <option value="22">22nd</option>
+                                    <option value="23">23rd</option>
+                                    <option value="24">24th</option>
+                                    <option value="25">25th</option>
+                                    <option value="26">26th</option>
+                                    <option value="27">27th</option>
+                                    <option value="28">28th</option>
+                                    <option value="29">29th</option>
+                                    <option value="30">30th</option>
+                                    <option value="31">31th</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row pad10">
+                            <div class="container w100per br1Grey bgColor-red fcWhite">
+                                <center>
+                                    <b>Billing Month</b>
+                                    <button type="button" class="dropbtn btn bgColor-red clr toggleDisable" value="no" selectItem="monthsAdd">
+                                        <span class="glyphicon glyphicon-edit fcWhite clr"></span>
+                                    </button>
+                                </center>
+                            </div>
+                            <div class="container pad5 w100per bgColor-White br1Grey ovrFlw-YAuto h100per">
+                                <div class="container pad0 text-center">
+                                    <div class="col-sm-6 pad0">
+                                        <input type='checkbox' name="billingMonths" bm="1" title='January' value='1' id="January" class="billingMonths 1" onclick="" /><label for="January" class="text-center fontBld ">Jan</label>
+                                        <input type='checkbox' name="billingMonths" bm="2" title='February' value='2' id="February" class="billingMonths 2" onclick="" /><label for="February" class="text-center fontBld fcWhite">Feb</label>
+                                        <input type='checkbox' name="billingMonths" bm="3" title='March' value='3' id="March" class="billingMonths 3" onclick="" /><label for="March" class="text-center fontBld fcWhite">May</label>
+                                    </div>
+                                    <div class="col-sm-6 pad0">
+                                        <input type='checkbox' name="billingMonths" bm="4" title='April' value='4' id="April" class="billingMonths 4" onclick="" /><label for="April" class="text-center fontBld fcWhite">Apr</label>
+                                        <input type='checkbox' name="billingMonths" bm="5" title='May' value='5' id="May" class="billingMonths 5" onclick="" /><label for="May" class="text-center fontBld fcWhite">May</label>
+                                        <input type='checkbox' name="billingMonths" bm="6" title='June' value='6' id="June" class="billingMonths 6" onclick="" /><label for="June" class="text-center fontBld fcWhite">Jun</label>
+                                    </div>
+                                </div>
+                                <div class="container pad0 text-center">
+                                    <div class="col-sm-6 pad0">
+                                        <input type='checkbox' name="billingMonths" bm="7" title='July' value='7' id="July" class="billingMonths 7" onclick="" /><label for="July" class="text-center fontBld fcWhite">Jul</label>
+                                        <input type='checkbox' name="billingMonths" bm="8" title='August' value='8' id="August" class="billingMonths 8" onclick="" /><label for="August" class="text-center fontBld fcWhite">Aug</label>
+                                        <input type='checkbox' name="billingMonths" bm="9" title='September' value='9' id="September" class="billingMonths 9" onclick="" /><label for="September" class="text-center fontBld fcWhite">Sep</label>
+                                    </div>
+                                    <div class="col-sm-6 pad0">
+                                        <input type='checkbox' name="billingMonths" bm="10" title='October' value='10' id="October" class="billingMonths 10" onclick="" /><label for="October" class="text-center fontBld fcWhite">Oct</label>
+                                        <input type='checkbox' name="billingMonths" bm="11" title='November' value='11' id="November" class="billingMonths 11" onclick="" /><label for="November" class="text-center fontBld fcWhite">Nov</label>
+                                        <input type='checkbox' name="billingMonths" bm="12" title='December' value='12' id="December" class="billingMonths 12" onclick="" /><label for="December" class="text-center fontBld fcWhite">Dec</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-sm-6 pad0">
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="submit" class="btn btn-primary w100px" value="Save" />
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="reset" class="btn btn-primary w100px" data-dismiss="modal" data-target="#modalAddRental" onclick="resetmodal()">Cancel</button>
+                                <input id="resetModal" hidden="hidden" type="reset">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}
+

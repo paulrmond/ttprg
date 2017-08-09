@@ -1,0 +1,540 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 06/28/16
+// Modified By: P. Balena
+// Date Modified: 08/09/16
+// Consultant(s): DCI
+-->
+@model IEnumerable<BCS.Models.BillingPeriod>
+
+@{
+    ViewBag.Title = "ViewGenerate";
+}
+
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    function enableMe() {
+        $('#searchBtn').prop('disabled', false);
+    }
+
+    function generatedstatus(status) {
+        var x = document.getElementById("isgenerated");
+        x.value = status;
+    }
+
+    function selectBillingGeneration(val) {
+        if (val == "PerCompany") {
+            var x = document.getElementById("searchFields");
+            var y = document.getElementById("SelectedCompanyId");
+            var z = document.getElementById("searchFieldsEnterprise");
+            var f = document.getElementById("searchFieldsBillingType");
+            var fx = document.getElementById("searchFieldsAdminFee");
+            fx.hidden = true;
+            f.hidden = true;
+            y.value = "";
+            x.hidden = false;
+            z.hidden = true;
+        }
+        else if (val == "PerEnterprise") {
+            var x = document.getElementById("searchFieldsEnterprise");
+            var y = document.getElementById("SelectedCompanyId");
+            var z = document.getElementById("searchFields");
+            var f = document.getElementById("searchFieldsBillingType");
+            var fx = document.getElementById("searchFieldsAdminFee");
+            fx.hidden = true;
+            f.hidden = true;
+            y.value = "";
+            x.hidden = false;
+            z.hidden = true;
+        }
+        else if (val == "PerBillingType") {
+            var x = document.getElementById("searchFieldsEnterprise");
+            var y = document.getElementById("SelectedCompanyId");
+            var z = document.getElementById("searchFields");
+            var f = document.getElementById("searchFieldsBillingType");
+            var fx = document.getElementById("searchFieldsAdminFee");
+            fx.hidden = true;
+            f.hidden = false;
+            y.value = "";
+            x.hidden = true;
+            z.hidden = true;
+        }
+        else if (val == "PerAdminFee") {
+            var x = document.getElementById("searchFieldsEnterprise");
+            var y = document.getElementById("SelectedCompanyId");
+            var z = document.getElementById("searchFields");
+            var f = document.getElementById("searchFieldsBillingType");
+            var fx = document.getElementById("searchFieldsAdminFee");
+            fx.hidden = false;
+            f.hidden = true;
+            y.value = "";
+            x.hidden = true;
+            z.hidden = true;
+        }
+        else {
+            var x = document.getElementById("searchFields");
+            var y = document.getElementById("SelectedCompanyId");
+            y.value = "Select company";
+            x.hidden = true;
+        }
+    }
+
+    function enableProgressbar() {
+        var progressbar = document.getElementById("progressbar");
+        progressbar.hidden = false;
+    }
+
+    function closeModal(id, value, type) {
+
+        //document.getElementById("modalSearchEnterpriseBilling").modal('hide')
+        if (type == 'Company') {
+            $('#modalSearchEnterpriseBilling').modal('hide');
+            var selectedCompany = document.getElementById("SelectedCompanyId");
+            var generatePerCompany = document.getElementById("generatePerCompanyId");
+            selectedCompany.value = value;
+            generatePerCompany.value = id;
+        } else if (type == 'Enterprises') {
+            var val = $('#EnterpriseType').val();
+            //alert(val + " : " + type);
+            $('#modalSearchEnterpriseBilling1').modal('hide');
+            var selectedCompany = document.getElementById("SelectedCompanyId1");
+            var generatePerCompany = document.getElementById("generatePerCompanyId");
+            selectedCompany.value = val;
+            generatePerCompany.value = val;
+        }
+        else if (type == 'BillingType') {
+            var val = $('#SelectBillingType').val();
+            //alert(val + " : " + type);
+            $('#modalSearchEnterpriseBilling2').modal('hide');
+            var selectedCompany = document.getElementById("SelectedCompanyId2");
+            var generatePerCompany = document.getElementById("generatePerCompanyId");
+            selectedCompany.value = val;
+            generatePerCompany.value = val;
+        }
+        else if (type == 'AdminFee') {
+            var val = $('#SelectAdminFee').val();
+            //alert(val + " : " + type);
+            $('#modalSearchEnterpriseBilling3').modal('hide');
+            var selectedCompany = document.getElementById("SelectedCompanyId3");
+            var generatePerCompany = document.getElementById("generatePerCompanyId");
+            selectedCompany.value = val;
+            generatePerCompany.value = val;
+        }
+
+    }
+
+    function EditBilling(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        //alert(p);
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + " =" + childValue);
+            if (childId != "") {
+                var elementToPopulate = document.getElementById(childId);
+                elementToPopulate.value = childValue
+            }
+        }
+    }
+
+    function checkElements() {
+        var generateType = document.getElementById("TypeOfBillingGenerate");
+        var billDate = document.getElementById("BillDate");
+        var dueDate = document.getElementById("DueDate");
+
+        if (generateType.value !== "" && billDate.value !== "" && dueDate.value !== "") {
+            enableProgressbar();
+            document.body.style.cursor = 'wait';
+        }
+    }
+</script>
+
+<div ID="contentBillingGeneration" class="container modal-content bgColor-White pad0">
+    <!-- Page Title -->
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-list"></span> <span class="fs20">BILLING LIST</span></div>
+    <input type="text" hidden="hidden" value="@ViewBag.BillingStatus" ToggleBillingStatus="@ViewBag.Toggled" BillingStatus="@ViewBag.BillingStatus" id="BillingStatus" />
+    <!-- Enterprise Detail -->
+    <div class="modal-body bgColor-White pad10">
+        <!-- Trigger the modal Search Enterprise with a button -->
+        @*<CENTER class="pad10"><button type="button" id="searchEnterpriseButton" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalSearchEnterprise">Search Enterprise</button></CENTER>*@
+
+        <!-- Rental Datails Table -->
+        <div class="container br1 w100per br2 pad0">
+            <div class="container w100perpad0 text-center pad0">
+                <table class="container w100per ">
+                    <thead class="bgColor-blk w100per pad5 fcWhite">
+                        <tr class="container w100per text-center fontBld fs11">
+                            <th class="col-sm-1 pad0 txtCenter">Reference No.</th>
+                            <th class="col-sm-2 pad0 txtCenter">Period</th>
+                            <th class="col-sm-2 pad0 txtCenter">Coverage</th>
+                            <th class="col-sm-2 pad0 txtCenter">Billing date</th>
+                            <th class="col-sm-2 pad0 txtCenter">Date Due</th>
+                            <th class="col-sm-1 pad0 txtCenter">Generated</th>
+                            <th class="col-sm-1 pad0 txtCenter">Finalize</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody class="container w100per ovrFlw-YAuto h150px pad0">
+                        @if (Model != null)
+                        {
+                            foreach (var billingperiod in Model)
+                            {
+                                var billingdate = "";
+                                var duedate = "";
+                                if (billingperiod.BillingDate.HasValue)
+                                {
+                                    billingdate = billingperiod.BillingDate.Value.ToShortDateString();
+                                }
+
+                                if (billingperiod.DueDate.HasValue)
+                                {
+                                    duedate = billingperiod.DueDate.Value.ToShortDateString();
+                                }
+                                <tr class=" container w100per" id="@billingperiod.BillingPeriodId">
+                                    <td title="PeriodId" class="col-sm-1 br1Grey pad0 cell txtCenter">@billingperiod.BillingPeriodId</td>
+                                    <td title="PeriodText" class="col-sm-2 br1Grey pad0 cell txtCenter">@billingperiod.PeriodText</td>
+                                    <td class="col-sm-2 br1Grey pad0 cell txtCenter">@billingperiod.DateFrom.ToShortDateString() - @billingperiod.DateTo.ToShortDateString()</td>
+                                    <td title="BillDate" class="col-sm-2 br1Grey pad0 cell txtCenter">@billingdate</td>
+                                    <td title="DueDate" class="col-sm-2 br1Grey pad0 cell txtCenter">@duedate</td>
+                                    <td class="col-sm-1 br1Grey pad0 cell txtCenter">@billingperiod.Generated</td>
+                                    <td class="col-sm-1 br1Grey pad0 cell txtCenter">@billingperiod.Finalized</td>
+                                    <td title="CoverageFrom" class="col-sm-1 br1Grey pad0 cell hide">@billingperiod.DateFrom.ToShortDateString()</td>
+                                    <td title="CoverageTo" class="col-sm-1 br1Grey pad0 cell hide">@billingperiod.DateTo.ToShortDateString()</td>
+
+                                    @if (ViewBag.IsValidRole == true)
+                                    {
+                                        if (billingperiod.Generated.ToLower() == "no")
+                                        {
+                                            <td class="col w100px  padlr5"><input type="button" value="Generate" class="mar0 roundedButton grad3 h25px w100px" data-toggle="modal" id="@billingperiod.BillingPeriodId" isgen="@billingperiod.Generated" data-target="#modalBillingStatement" onclick="EditBilling(this.id), generatedstatus(this.isgen)" /></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="col w100px padlr5"><input type="button" value="Re-Generate" class="mar0 roundedButton grad3 h25px w100px" data-toggle="modal" id="@billingperiod.BillingPeriodId" data-target="#modalBillingStatement" onclick="EditBilling(this.id), generatedstatus(this.isgen)" /></td>
+                                            if (billingperiod.Finalized.ToLower() == "yes")
+                                            {
+                                                <td class="col w100px padlr5">
+                                                    @Html.ActionLink("Finalized", "Finalize", "BillingGenerate", new { @id = billingperiod.BillingPeriodId }, new { @class = "actLink grad3 pad10 w100px" })
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="col w100px pad0">
+                                                    @Html.ActionLink("Finalize", "Finalize", "BillingGenerate", new { @id = billingperiod.BillingPeriodId }, new { @class = "actLink grad3 pad10 w100px" })
+                                                </td>
+                                            }
+                                        }
+                                    }
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Billing Statement-->
+@using (Html.BeginForm("ViewGenerate", "BillingGenerate"))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="text" hidden="hidden" id="PeriodId" name="PeriodId" />
+    <input type="text" id="isgenerated" name="isgenerated" hidden="hidden" />
+    <input type="text" id="generatePerCompanyId" name="generatePerCompanyId" hidden="hidden" />
+
+    <div class="modal fade" id="modalBillingStatement" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Billing Statement Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span> Generate Billing</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container">
+                        <div class="row text-center fontBld btn-primary">GENERATE ALL</div>
+                        <div class="row text-center fontBld bgColor-White br1Grey pad5">
+                            <div class="container text-center">
+                                <label>Select Type of Billing Generation</label>
+                                <select name="TypeOfBillingGenerate" data-val="true" data-val-required="Field required" id="TypeOfBillingGenerate" onclick="selectBillingGeneration(this.value)" placeholder="Select Type of Billing Generation" class="w100per">
+                                    <option selected="selected" value=""></option>
+                                    <option value="All">All</option>
+                                    <option value="PerCompany">Per Company</option>
+                                    <option value="PerEnterprise">Per Enterprise</option>
+                                    <option value="PerBillingType">Per Billing Type</option>
+                                    <option value="PerAdminFee">Per Admin Fee Enterprise</option>
+                                </select>
+                            </div>
+
+                            <div class="container text-center" id="searchFields" hidden="hidden">
+                                <span class="field-validation-valid" data-valmsg-for="TypeOfBillingGenerate" data-valmsg-replace="true"></span>
+                                <div class="col-sm-4 padlr5">
+                                    <button type="button" id="searchEnterpriseButton" class="h34px btn-primary btn-sm" data-toggle="modal" data-target="#modalSearchEnterpriseBilling">Search Company</button>
+                                </div>
+                                <div class="col-sm-8"><input type="text" name="SelectedCompanyId" id="SelectedCompanyId" data-val="true" data-val-required="Field required" disabled="disabled" value="Select company" class="h34px w100per" /><span class="field-validation-valid" data-valmsg-for="SelectedCompanyId" data-valmsg-replace="true"></span></div>
+                            </div>
+
+                            <div class="container text-center" id="searchFieldsEnterprise" hidden="hidden">
+                                <span class="field-validation-valid" data-valmsg-for="TypeOfBillingGenerate" data-valmsg-replace="true"></span>
+                                <div class="col-sm-4 padlr5">
+                                    <button type="button" id="searchEnterpriseButton" class="h34px btn-primary btn-sm" data-toggle="modal" data-target="#modalSearchEnterpriseBilling1">Search Enterprise</button>
+                                </div>
+                                <div class="col-sm-8"><input type="text" name="SelectedCompanyId" id="SelectedCompanyId1" data-val="true" data-val-required="Field required" disabled="disabled" value="Select Enterprise" class="h34px w100per" /><span class="field-validation-valid" data-valmsg-for="SelectedCompanyId" data-valmsg-replace="true"></span></div>
+                            </div>
+
+                            <div class="container text-center" id="searchFieldsBillingType" hidden="hidden">
+                                <span class="field-validation-valid" data-valmsg-for="TypeOfBillingGenerate" data-valmsg-replace="true"></span>
+                                <div class="col-sm-4 padlr5">
+                                    <button type="button" id="searchEnterpriseButton" class="h34px btn-primary btn-sm" data-toggle="modal" data-target="#modalSearchEnterpriseBilling2">Search BillingType</button>
+                                </div>
+                                <div class="col-sm-8"><input type="text" name="SelectedCompanyId" id="SelectedCompanyId2" data-val="true" data-val-required="Field required" disabled="disabled" value="Select Billing Type" class="h34px w100per" /><span class="field-validation-valid" data-valmsg-for="SelectedCompanyId" data-valmsg-replace="true"></span></div>
+                            </div>
+
+                            <div class="container text-center" id="searchFieldsAdminFee" hidden="hidden">
+                                <span class="field-validation-valid" data-valmsg-for="TypeOfBillingGenerate" data-valmsg-replace="true"></span>
+                                <div class="col-sm-4 padlr5">
+                                    <button type="button" id="searchEnterpriseButton" class="h34px btn-primary btn-sm" data-toggle="modal" data-target="#modalSearchEnterpriseBilling3">Search Admin Fee Enterprise</button>
+                                </div>
+                                <div class="col-sm-8"><input type="text" name="SelectedCompanyId" id="SelectedCompanyId3" data-val="true" data-val-required="Field required" disabled="disabled" value="Select Admin Fee Enterprise" class="h34px w100per" /><span class="field-validation-valid" data-valmsg-for="SelectedCompanyId" data-valmsg-replace="true"></span></div>
+                            </div>
+
+                        </div>
+                    </div><br />
+
+                    <div class="container">
+                        <div class="row text-center fontBld btn-primary">FOR THE PERIOD</div>
+                        <div class="row text-center fontBld bgColor-White br1Grey pad5">
+
+                            <div class="col-sm-6 pad0 text-center">
+                                <center>
+                                    <input type="text" disabled="disabled" id="PeriodText" name="PeriodText" class="w100per" />
+                                </center>
+                            </div>
+                        </div>
+                    </div><br />
+
+                    <div class="container">
+                        <div class="row text-center fontBld btn-primary">FX Rate</div>
+                        <div class="row text-center fontBld bgColor-White br1Grey pad5">
+
+                            <div class="col-sm-6 pad0 text-center">
+                                <center>
+                                    <input type="text" id="FxRate" name="FxRate" class="w100per" />
+                                </center>
+                            </div>
+                        </div>
+                    </div><br />
+
+                    <div class="container">
+                        <div class="row text-center fontBld btn-primary">COVERAGE</div>
+                        <div class="row text-center fontBld bgColor-White br1Grey pad5">
+
+                            <div class="col-sm-6 pad0">From <input class="w200px h25px" readonly="readonly" data-val="true" data-val-required="Field required" data-val-date="Invalid format" id="CoverageFrom" name="CoverageFrom" /><span class="glyphicon glyphicon-calendar"></span></div>
+                            <span class="field-validation-valid" data-valmsg-for="CoverageFrom" data-valmsg-replace="true"></span>
+                            <div class="col-sm-6 pad0">To<input class="w200px h25px" data-val="true" readonly="readonly" data-val-required="Field required" data-val-date="Invalid format" id="CoverageTo" name="CoverageTo" /><span class="glyphicon glyphicon-calendar"></span></div>
+                            <span class="field-validation-valid" data-valmsg-for="CoverageTo" data-valmsg-replace="true"></span>
+                        </div>
+                    </div><br />
+                    <div class="container">
+                        <div class="col-sm-6 pad0">
+                            <div class="">
+
+                                <div class="row text-center fontBld btn-primary">BILL DATE</div>
+                                <div class="row text-center fontBld bgColor-White br1Grey pad5">
+
+                                    <input class="w200px h25px date-picker" data-val="true" data-val-required="Field required" data-val-date="Invalid format" id="BillDate" name="BillDate" /><span class="glyphicon glyphicon-calendar"></span>
+
+                                    <span class="field-validation-valid" data-valmsg-for="BillDate" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 pad0"></div>
+                        <div class="col-sm-5 pad0">
+                            <div class="">
+
+                                <div class="row text-center fontBld btn-primary">DUE DATE</div>
+                                <div class="row text-center fontBld bgColor-White br1Grey pad5">
+
+                                    <input class="w200px h25px date-picker" data-val="true" data-val-required="Field required" data-val-date="Invalid format" id="DueDate" name="DueDate" /><span class="glyphicon glyphicon-calendar"></span>
+
+                                    <span class="field-validation-valid" data-valmsg-for="DueDate" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="progressbar" style="position:relative" hidden="hidden">
+                    <img src="~/Gif/loading_g.gif" width="540" height="20" />
+                    <span id="progressbar-label" style="position:absolute; left:40%">Processing...</span>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-3"><input type="submit" class="btn btn-primary w100px" onclick="checkElements()" value="Generate" /></div>
+                        <div class="col-sm-3"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Billing Statement-->
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterpriseBilling" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container bgColor-red fontBld fcWhite w100per pad5">
+
+                    <div class="col-sm-3 padlr5">Company Name</div>
+
+                    @using (Ajax.BeginForm("GetCompanies", "BillingGenerate", new AjaxOptions { UpdateTargetId = "divCompanies", InsertionMode = InsertionMode.Replace, OnFailure = "error", OnSuccess = "enableMe()" }))
+                    {
+                        <div class="col-sm-6 padlr5">
+                            <input type="text" name="CompanyName" id="CompanyName" class="w100per" />
+
+                        </div>
+                        <div class="col-sm-2 padlr5">
+                            <input id="searchBtn" type="submit" class="bgColor-lv br0 semi-square clr h25px w100per" value="Search" onclick="enableMe()" />
+
+                        </div>
+                    }
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y" id="divCompanies">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterpriseBilling1" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container bgColor-red fontBld fcWhite w100per pad5">
+                    @{
+                        BCS.Models.BCS_Context db = new BCS.Models.BCS_Context();
+                        var list = db.Company.Select(m => m.EnterpriseType).Distinct().ToList();
+
+                        <select id="EnterpriseType" class="bgColor-lv br0 semi-square clr h25px w100per">
+                            @foreach (var item in list)
+                            {
+                                <option value="@item.ToString()">@item.ToString()</option>
+                            }
+                        </select>                        
+                    }
+                </div>
+
+                <div class="container bgColor-red fontBld fcWhite w100per pad5">
+                    <input id="searchBtn" type="button" class="bgColor-lv br0 semi-square clr h25px w100per" value="Search" onclick="closeModal(this.value,this.value,'Enterprises'),enableMe()" />
+                </div>
+
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y" id="divCompanies">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterpriseBilling2" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container bgColor-red fontBld fcWhite w100per pad5">
+                    <select id="SelectBillingType" class="bgColor-lv br0 semi-square clr h25px w100per">
+                        <option value="RENTAL">RENTAL</option>
+                        <option value="POLE">POLE</option>
+                        <option value="FRANCHISE">FRANCHISE</option>
+                        <option value="PASSED ON BILLING">PASSED ON BILLING</option>
+                        <option value="ADMIN FEE">ADMIN FEE</option>
+                        <option value="WATER">WATER</option>
+                        <option value="GARBAGE">GARBAGE</option>
+                    </select>
+                </div>
+                <div class="container bgColor-red fontBld fcWhite w100per pad5">
+                    <input id="searchBtn" type="button" class="bgColor-lv br0 semi-square clr h25px w100per" value="Search" onclick="closeModal(this.value,this.value,'BillingType'),enableMe()" />
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y" id="divCompanies">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" onclick="closeModal(this.value,this.value,'BillingType'),enableMe()">OK</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterpriseBilling3" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Admin Fee</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container bgColor-red fontBld fcWhite w100per pad5">
+                    <select id="SelectAdminFee" class="bgColor-lv br0 semi-square clr h25px w100per">
+                        <option value="IT">IT</option>
+                        <option value="SEZ">SEZ</option>
+                        <option value="OTHERS">OTHERS</option>
+                    </select>
+                </div>
+                <div class="container bgColor-red fontBld fcWhite w100per pad5">
+                    <input id="searchBtn" type="button" class="bgColor-lv br0 semi-square clr h25px w100per" value="Search" onclick="closeModal(this.value,this.value,'AdminFee'),enableMe()" />
+
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,11 @@
+﻿@model IEnumerable<BCS.Models.Company>
+
+<div>
+    @foreach (var item in Model)
+    {
+        <button class="btn w100per btn-default bgColor-lb" id="@item.CompanyID" name="" value="@item.CompanyName" onclick="closeModal(this.id,this.value,'Company')">
+            <span id="" value="">@item.CompanyID</span> | <span id="">@item.CompanyName</span>
+        </button>
+    }
+
+</div>

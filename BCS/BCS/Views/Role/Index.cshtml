@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<center class="fcWhite"><h2>Available Roles For Application</h2></center>
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span class="glyphicon glyphicon-list"></span> Role List</h4>
+            </div>
+            <div class="modal-body bgColor-lv hmax300px ovrFlw-YAuto">
+                <center>
+                    <div class="table-responsive">
+                        <table class="table-condensed">
+                            <thead class="table-bordered">
+                                <tr>
+                                    <th colspan="2">Role Name</th>
+                                </tr>
+                            </thead>
+                            @foreach (var item in Model)
+                            {
+                                <tbody class="table-bordered hmax300px ovrFlw-YAuto">
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@Html.ActionLink("Edit Role", "Edit", new { roleId = @item.Id,roleName = @item.Name }, new { @class = "btn btn-default" })</td>
+                                    </tr>
+                                </tbody>
+
+                            }
+                           
+                        </table>
+                    </div>
+                </center>
+
+                    @*<div class="container pad0 br1">
+                        <div class="container pad0 bgColor-blk fcWhite fontBld txtCenter">Role Name</div>
+                        <div class="container pad0 bgColor-White txtCenter br1">
+                            @foreach (var item in Model)
+                            {
+                                <div class="container pad0 br1-bot">@item.Name @Html.ActionLink("Edit Role", "Edit", new { roleId = @item.Id }, new { @class = "btn btn-default" })</div>
+                            }
+                        </div>
+                    </div>
+                </div>*@           
+        </div>
+
+            <div class="modal-footer">
+                @Html.ActionLink("Create Role", "Create", "Role", new { @class = "btn btn-primary" })
+            </div>
+            
+    </div>
+      
+  </div>

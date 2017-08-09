@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "ViewSystemLogs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@model BCS.Models.SearchReportsCollectionModels
+<center><h2 class="fcWhite">System Logs</h2></center>
+
+<div class="modal-content">
+    <div class="modal-header">
+
+        <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> System Logs Information</h4>
+    </div><!--end of modal header-->
+    <div class="modal-body  bgColor-lv ovrFlw-Y h300px">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.systemlogslist)
+                    {
+                        <tr>
+                            <td>@item.timestamp.ToString("dd MMM yyyy")</td>
+                            <td>@item.timestamp.ToString("HH:mm:ss")</td>
+                            <td>@item.UserName</td>
+                            <td>@item.remarks</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div><!--end of table responsive-->
+    </div><!--end of modal body-->
+    <div class="modal-footer">
+
+
+    </div><!--end of modal footer-->
+
+</div><!--end of modal content-->

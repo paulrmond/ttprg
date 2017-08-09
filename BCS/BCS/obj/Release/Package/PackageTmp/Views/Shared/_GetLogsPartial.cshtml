@@ -1,0 +1,63 @@
+﻿@model IEnumerable<BCS.Models.systemlogs>
+
+
+<div class="col-sm-12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="hidden">
+                    @Html.DisplayNameFor(model => model.ZoneGroupCode)
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Message
+                </th>
+
+                <th>
+                    Date & Time
+                </th>
+                <th>
+                    Accessed
+                </th>
+                <th>
+                    Level
+                </th>
+
+
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<div class="container ovrFlw-Y h300px">
+    <table class="table table-responsive">
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="hidden">
+                        @Html.DisplayFor(modelItem => item.ZoneGroupCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td width="150px" style="word-break:break-word">
+                        @Html.DisplayFor(modelItem => item.remarks)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.timestamp)
+                    </td>
+                    <td width="150px" style="word-break:break-word">
+                        @Html.DisplayFor(modelItem => item.AreaAccessed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.loglevel)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

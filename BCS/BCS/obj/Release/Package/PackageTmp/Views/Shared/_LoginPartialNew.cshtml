@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNet.Identity
+@using BCS.Models;
+<ul class="nav navbar-nav navbar-right">
+
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @style = "margin:0px;" }))
+        {
+            @Html.AntiForgeryToken()
+
+        }
+        if (User.IsInRole("System Administrator") || User.IsInRole("Super User"))
+        {
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog" style="color:#999">  </span>  Admin<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="~/Account/ViewUser" title="Manage Users (Add/Edit Account)">User</a></li>
+                    @if (User.IsInRole("Super User"))
+                    {
+                        <li><a href="~/Role/Index" title="Manage User's Task in the system">User Role</a></li>
+                    }
+                    <li><a href="~/AdminZone/ViewZone" title="Manage Zone (Add/Edit Zone)">Zone</a></li>
+                    @if (User.IsInRole("System Administrator") || User.IsInRole("Super User"))
+                    {
+                        <li><a href="~/AdminZone/ViewZoneGroup" title="Manage Zone Group (Add/Edit Zone Clustering)">Zone Group</a></li>
+                    }
+                    <li><a href="~/RoleAssignmentMatrix/Details" title="Manage Role Assignment">Role Access</a></li>
+                    <li><a href="~/UserLockOut/UnlockUser" title="User Lockout">User Lockout</a></li>
+                    @if (User.IsInRole("Super User"))
+                    {
+                        <li><a href="~/AdminLockout/UnlockAdmin" title="Admin Lockout">Admin Lockout</a></li>
+                    }
+                    <li>
+                        <a href="~/SystemLogs/SystemlogsView">System Logs</a>
+                    </li>
+                    <li>
+                        @if (User.IsInRole("Super User"))
+                    {
+                            <a href="~/Crypto/Index">Cryptography</a>
+                        }
+                    </li>
+                </ul>
+            </li>
+
+            <li><a href="~/PDF/FAQ/FAQ.pdf" target="_blank"><span class=" glyphicon glyphicon-book" style="color:#999"></span> FAQ</a></li>
+            @*<li><a href="~/Account/Login"><span class="glyphicon glyphicon-log-in"></span>Login</a></li>*@
+        }
+
+        ApplicationDbContext context = new ApplicationDbContext();
+        BCS_Context db = new BCS_Context();
+
+        @*<li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-th-list"></span> Billing Status<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="~/BillingStatus/ViewDueOnServices">Due On Services</a></li>
+                <li><a href="~/BillingStatus/ViewUnpaidCompany">Unpaid Billing</a></li>
+                <li><a href="~/BillingStatus/ViewDelinquent">Delinquent</a></li>                
+            </ul>
+        </li>*@
+
+        var currentUserId = User.Identity.GetUserId();
+        var currentUserDivision = context.Users.SingleOrDefault(m => m.Id == currentUserId).Division;
+        <li><a href=""> <span style="color:#999"><img src="~/images/tree3.png" /></span> @currentUserDivision</a></li>
+        <li><a href="~/Manage/Index"><span class="glyphicon glyphicon-user" style="color:#999"></span> @User.Identity.GetUserName()</a></li>
+
+
+        <li><a href="javascript:document.getElementById('logoutForm').submit()" style="color:#999"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+    }
+    else
+    {
+        <li><a href="~/Account/Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+    }
+
+</ul>
+@if (Request.RawUrl.Contains("/Account/Login"))
+{
+    <ul class="nav navbar-nav">
+        <li><a><b class="fcWhite fs18 logo">Billing and Collection System</b></a></li>
+    </ul>
+}

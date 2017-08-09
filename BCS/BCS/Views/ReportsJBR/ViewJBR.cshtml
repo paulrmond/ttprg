@@ -1,0 +1,94 @@
+﻿@model BCS.Models.SearchReportsBillingStatementModels
+@using Microsoft.AspNet.Identity;
+@using BCS.Models;
+@{
+    ViewBag.Title = "ViewJBR";
+}
+<!-- Modal Search Enterprise-->
+@*<div class="modal fade" id="modalSearchEnterprise" role="dialog">*@
+<div class="modal-dialog">
+@using (Html.BeginForm("ViewJBRReports", "ReportsJBR"))
+{
+
+    if (User.Identity.IsAuthenticated)
+    {
+        ApplicationDbContext context = new ApplicationDbContext();
+        BCS_Context db = new BCS_Context();
+
+        var currentUserId = User.Identity.GetUserId();
+        var currentUserZoneGroup = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+        ViewBag.ZoneCode = db.ZoneGroup.Single(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupCode;
+        ViewBag.IsGenerated = "YES";
+        var username = context.Users.Where(m => m.Id == currentUserId).FirstOrDefault().UserName;
+        var hasAccess = db.RoleAssignmentMatrix.Where(m => m.UserName == username).FirstOrDefault().Collection;
+
+        if (hasAccess != null && hasAccess == true)
+        {
+        
+
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+            <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span> Journal of Bills Rendered</h4>
+        </div>
+        <div class="modal-body bgColor-lv">
+            <!--<div class="pad10 bgColor-White h100px br1Grey ovrFlw-YAuto">
+                <span class="glyphicon glyphicon-dashboard"></span> <b>TIPS:</b>
+                <ol>
+                    <li>Select filter option by ticking <b>Checkbox</b></li>
+                    <li>Select a period by clicking the <b>select a period</b> button and press <b>View</b> button. </li>
+                    <li>Click <b>Cancel</b> or <b>X</b> button or outside the pop-up screen to exite pop-up screen</li>
+                </ol>
+            </div>
+            <br />-->
+            <div class="row mar0">
+                <div class="col-sm-4"><input type="radio" class="radio-inline" name="JBRCategory" id="JBRCategory" value="All" required/> All</div>
+                <div class="col-sm-4"><input type="radio" class="radio-inline" name="JBRCategory" id="JBRCategory" value="VAT" required/> VAT</div>
+                <div class="col-sm-4"><input type="radio" class="radio-inline" name="JBRCategory" id="JBRCategory" value="watersewarage" required/> Water/Sewerage</div>
+            </div><br />
+            <div class="container w100per pad0  bgColor-White semi-square br1db">
+                <div class="col-sm-4 pad5"><div class="form-control bgColor-lb fontBld" >Select a Period</div></div>
+                <div class="col-sm-8 pad5">
+                    <select id="BillingPeriod" name="BillingPeriod" class="form-control  w100per" title="Select Zone" required>
+                        <option value="" selected>Select Billing Period</option>
+                        @foreach (var item in Model.BillingPeriodList.OrderByDescending(m => m.BillingPeriodId).Where(m => m.groupCode == ViewBag.ZoneCode && m.Generated == ViewBag.IsGenerated))
+                        {
+                            <option value="@item.BillingPeriodId">@item.DateFrom.ToString("dd MMM yyyy") - @item.DateTo.ToString("dd MMM yyyy")</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="row">
+                <div class="col-sm-6"></div>
+                <div class="col-sm-3"><button type="submit" class="btn btn-primary w100px" data-dismiss="modal" formtarget="_blank">View</button></div>
+                <div class="col-sm-3"><button type="reset" class="btn btn-primary w100px" data-dismiss="modal" onclick="Clear();">Clear</button></div>
+            </div>
+        </div>
+    </div>
+        }
+    }
+}
+</div>
+
+
+
+@*</div>*@
+<!-- End Modal Search Enterprise-->
+
+<script>
+
+    function Clear() {
+        clearRadioGroup("JBRCategory");
+     
+    }
+
+    function clearRadioGroup(GroupName) {
+        var ele = document.getElementsByName(GroupName);
+        for (var i = 0; i < ele.length; i++)
+            ele[i].checked = false;
+    }
+
+</script>

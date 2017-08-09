@@ -1,0 +1,588 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Modified by:
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+
+@using System.Linq
+
+@{
+    ViewBag.Title = "Maintenance Company";
+}
+@model BCS.Models.SearchCompany
+<script>
+    // --- 10/04/2016 --- //
+    function zoneCode(val) {
+        if (val.value != null) {
+            var AddsubStr;
+            var EditsubStr;
+            var lastSeries;
+            AddsubStr = document.getElementById("AddZoneCode").value;
+            AddsubStr = AddsubStr.substring(0, 3);
+            EditsubStr = document.getElementById("ZoneCode").value;
+            EditsubStr = EditsubStr.substring(0, 3);
+            lastSeries = Math.floor((Math.random() * 99999) + 1);
+            document.getElementById("AddCompanyCode").value = AddsubStr + lastSeries;
+            document.getElementById("CompanyCode").value = EditsubStr + lastSeries;
+        }
+    }
+
+    function Clear(val) {
+        if (val.value == "Cancel") {
+            document.getElementById("CompanyCode").value = "";
+            document.getElementById("AddCompanyCode").value = "";
+            document.getElementById("AddCompanyName").value = "";
+            document.getElementById("AddPhase").value = "";
+            document.getElementById("AddAddress").value = "";
+            document.getElementById("AddOwnershipType").value = "";
+            document.getElementById("AddVatable").value = "";
+            document.getElementById("AddZoneCode").value = "";
+            document.getElementById("AddStatus").value = "";
+            document.getElementById("AddEnterpriseType").value = "";
+            document.getElementById("AddSendEmail").value = "";
+            document.getElementById("AddEmailAddress").value = "";
+            document.getElementById("AddDateOfRegistration").value = "";
+        }
+    }
+
+    function EditCompany(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].getAttribute("name");
+            var childValue = p[i].innerHTML;
+            var elementToPopulate = document.getElementById(childId);
+            if (childId == "CompanyName") {
+                var ret = childValue.replace(/&gt;/g, '>');
+                ret = ret.replace(/&lt;/g, '<');
+                ret = ret.replace(/&amp;/g, '&');
+                elementToPopulate.value = ret;
+            }
+            else {
+                elementToPopulate.value = childValue;
+            }
+        }
+    }
+
+</script>
+
+<div ID="contentDataEntryRental" class="pad0">
+    <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <!-- Enterprise Detail -->
+    <div class="container modal-content bgColor-White pad0" id="companyCnt" companyCnt="@Model.CompanyList.Count" SelectedCompany="@ViewBag.SelectedCompany">
+        <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">COMPANY</span></div>
+        <div class="modal-body ">
+            <div class="col-sm-12 padr25 br2 bgColor-blk">
+                <div class="container w100per text-center fontBld fs11">
+                    <div class="col-sm-1 pad0 txtColorWhite">CODE</div>
+                    <div class="col-sm-2 pad0 txtColorWhite">COMPANY NAME</div>
+                    <div class="col-sm-1 pad0 txtColorWhite">PHASE</div>
+                    <div class="col-sm-1 pad0 txtColorWhite">STATUS</div>
+                    <div class="col-sm-2 pad0 txtColorWhite">ADDRESS</div>
+                    <div class="col-sm-2 pad0 txtColorWhite">ENTERPRISE TYPE</div>
+                    <div class="col-sm-2 pad0 txtColorWhite">ZONE</div>
+                    <div class="col-sm-1 pad0"></div>
+                </div>
+            </div>
+            <div class="col-sm-12 hmax300px ovrFlw-YAuto br2 pad0">
+                @using (Html.BeginForm("ViewCompany", "MaintenanceCompany"))
+                {
+                    @Html.AntiForgeryToken()
+                    if (Model.CompanyList.Count >= 1)
+                    {
+                        if (Model != null)
+                        {
+                            foreach (var CompanyList in Model.CompanyList)
+                            {
+                                <div class="container w100per text-center fontBld" id="@Html.DisplayFor(modelItem => CompanyList.CompanyID)">
+                                    <div name="CompanyID" class="col-sm-1 br1Grey cell hidden ovrFlwHide" align="center">@CompanyList.CompanyID</div>
+                                    <div class="col-sm-1 br1Grey cell hidden ovr" align="center" name="ZoneCode">@CompanyList.ZoneCode</div>
+                                    <div name="CompanyCode" class="col-sm-1 br1Grey cell ovrFlwHide h48px" align="center" title="@CompanyList.CompanyCode">@CompanyList.CompanyCode</div>
+                                    <div name="CompanyName" class="col-sm-2 br1Grey cell ovrFlw-YAuto h48px" align="center" title="@CompanyList.CompanyName">@CompanyList.CompanyName</div>
+                                    <div name="Phase" class="col-sm-1 br1Grey cell ovrFlwHide h48px" align="center">@CompanyList.Phase</div>
+                                    <div name="Status" class="col-sm-1 br1Grey cell ovrFlwHide h48px" align="center">@CompanyList.Status</div>
+                                    <div name="EditOwnershipType" class="col-sm-1 br1Grey cell ovrFlw-YAuto hidden" align="center">@CompanyList.OwnershipType</div>
+                                    <div name="Address" class="col-sm-2 br1Grey cell  ovrFlw-YAuto h48px" align="center" title="@CompanyList.Address">@CompanyList.Address</div>
+                                    <div name="Vatable" class="col-sm-2 br1Grey cell ovrFlw-YAuto hidden" align="center">@CompanyList.VatableItems</div>
+                                    <div name="EnterpriseType" class="col-sm-2 br1Grey cell ovrFlw-YAuto h48px" align="center">@CompanyList.EnterpriseType</div>
+                                    <div name="SendEmail" class="col-sm-2 br1Grey cell ovrFlw-YAuto hidden" align="center">@CompanyList.SendEmail</div>
+                                    <div name="EmailAddress" class="col-sm-2 br1Grey cell ovrFlw-YAuto hidden" align="center">@CompanyList.PrimaryEmailAddress</div>
+                                    <div name="SecondaryEmailAddress" class="col-sm-2 br1Grey cell ovrFlw-YAuto hidden" align="center">@CompanyList.SecondaryEmailAddress</div>
+                                    <div name="EditDateOfRegistration" class="col-sm-2 br1Grey cell ovrFlw-YAuto hidden" align="center">@CompanyList.DateOfRegistration.Value.ToShortDateString()</div>
+                                    <div name="Zone" class="col-sm-2 br1Grey cell ovrFlw-YAuto h48px" align="center">@Model.ZoneList.FirstOrDefault(x => x.ZoneCode == CompanyList.ZoneCode).ZoneName</div>
+                                    <div class="col-sm-1 h48px pad5 br1Grey"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditCompanyDetails" title="@Html.DisplayFor(modelItem => CompanyList.CompanyID)" onclick="EditCompany(this.title)" id="@Html.DisplayFor(modelItem => CompanyList.CompanyID)" class="w100per roundedButton grad3 h34px" /></div>
+                                </div>
+                            }
+                        }
+                    }
+                }
+
+            </div>
+        </div>
+
+
+
+        <div class="modal-footer mar0 bgColor-lb w100per pad0">
+            <div class="container w100per fontBld text-center padlr5">
+                <div class="col-sm-7 pad5"></div>
+                <div class="col-sm-2 pad5">@Html.ActionLink("ALPHALIST REPORT", "CompanyReport", "MaintenanceCompany", new { reportType = "CompanyAlphaList" }, new { @class = "btn btn-primary w100per", Type = "button", Target = "_blank" })</div>
+                <div class="col-sm-2 pad5"><input type="button" class="btn btn-primary w100per h25px clr" value="SEARCH COMPANY" data-toggle="modal" data-target="#modalSearchEnterprise1" onclick="searchCompany(this)"></div>
+                <div class="col-sm-1 pad5"><input type="button" class="btn btn-primary w100per h25px clr " value="ADD" data-toggle="modal" data-target="#modalAddCompanyDetails"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterprise1" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise1" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-file"></span><span class="glyphicon glyphicon-search left10px fcBl"></span> Search Company Information</h4>
+            </div>
+            <div class="modal-footer bgColor-lv pad10 mar0 semi-squarebot">
+                @using (Html.BeginForm("ViewSelectFilter", "MaintenanceCompany"))
+                {
+                    @Html.AntiForgeryToken();
+                    <div class="container text-center pad10 fontBld">
+                        Select Filter Option
+                        <select class=" panel h25px clr" onchange="searchCompany(this)" id="SelectFilter" name="SelectFilter">
+                            <option value="All" selected="selected">All</option>
+                            <option value="Service Enterprise">Service Enterprise</option>
+                            <option value="Logistics">Logistics</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Regional Warehouse">Regional Warehouse</option>
+                            <option value="Export Enterprise">Export Enterprise</option>
+                            <option value="Domestic Market">Domestic Market</option>
+                            <option value="IT Enterprise">IT Enterprise</option>
+                            <option value="Facilities Enterprise">Facilities Enterprise</option>
+                            <option value="Tourism Enterprise">Tourism Enterprise</option>
+                            <option value="Agro-Industrial">Agro-Industrial</option>
+                            <option value="Developer Enterprise">Developer Enterprise</option>
+                            <option value="Free Trade">Free Trade</option>
+                            <option value="Medical Tourism">Medical Tourism</option>
+                            <option value="PEZA Employees/Tenants">PEZA Employees/Tenants</option>
+                            <option value="Unknown">Unknown</option>
+                        </select>
+                        <input type="submit" value="Filter" id="searchCompanyBtn" />
+                    </div>
+                }
+                <div id="searchCompanyFl" class="container">
+                    <div id="searchCompanyDiv" class="container pad5 bgColor-red fontBld fcWhite w100per">
+                        <div class="col-sm-3 padlr5">Company Name</div>
+                        @using (Html.BeginForm("ViewCompany", "MaintenanceCompany"))
+                        {
+                            @Html.AntiForgeryToken();
+                            <div class="col-sm-7 pad0">@Html.EditorFor(model => model.SearchInput, new { htmlAttributes = new { id = "searchCompany", @class = "form-control h25px w100per", @onkeyup = "fourCharVal()", @placeholder = "Enter atleast 3 characters" } })</div>
+                            <div class="col-sm-2 padlr5"> <input id="searchBtn" type="submit" class="bgColor-lv br0 clr w100per h25px semi-square" onclick="searchCompanyMain(this)" value="Search" disabled="disabled" /></div>
+                        }
+                    </div>
+                    <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+                        @foreach (var item in Model.CompanyList)
+            {
+                using (Html.BeginForm("ViewCompany", "MaintenanceCompany"))
+                {
+                                @Html.AntiForgeryToken()
+                                <div>
+                                    <button class="w100per btn-default txtLeft bgColor-lb" id="@item.CompanyID" name="@item.CompanyID" value="@item.CompanyID">
+                                        <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyCode</span> -
+                                        <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyName</span> |
+                                        <span id="@item.CompanyID + 'EntAdd'">@Model.ZoneList.FirstOrDefault(x => x.ZoneCode == item.ZoneCode).ZoneName</span>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Edit Company Detail -->
+@using (Html.BeginForm("UpdateCompany", "MaintenanceCompany"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.CompanyList.Count > 0)
+    {
+        <input type="text" hidden="hidden" name="CompanyID" id="CompanyID" />
+    }
+    <div class="modal fade" id="modalEditCompanyDetails" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal Edit Company Detail Content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="CompanyCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="CompanyName" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Phase" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Address" data-valmsg-replace="true"></span></div>
+
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="EditOwnershipType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Vatable" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Status" data-valmsg-replace="true"></span></div>
+
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="EnterpriseType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="SendEmail" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="EditDateOfRegistration" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalEditCompanyDetails" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Edit Company Details</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Code</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="The Company code is required" disabled="disabled" class="w90per" id="CompanyCode" name="CompanyCode"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Company</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="The Company name is required" class="w90per" id="CompanyName" name="CompanyName"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Phase</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" maxlength="10" data-val="true" data-val-required="The Phase is required" class="w90per" id="Phase" name="Phase"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Address</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="The Address is required" class="w90per" id="Address" name="Address"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 h25px bgColor-lv">Ownership Type</div>
+                        <div class="col-sm-8 h25px">
+                            <select id="EditOwnershipType" name="EditOwnershipType" data-val="true" data-val-required="The OwnershipType is required" class="w100per panel h25px clr">
+                                <option value="" selected="selected">--</option>
+                                <option>Individual</option>
+                                <option>Corporate</option>
+                                <option>Government</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Vatable</div>
+                        <div class="col-sm-8">
+                            <div class="hmax75px w100per ovrFlw-YAuto wmin24em">
+                                <select id="Vatable" name="Vatable" data-val="true" data-val-required="The Vatable is required" class="w100per panel h25px clr">
+                                    <option value="" selected="selected">--</option>
+                                    <option value="YES">YES</option>
+                                    <option value="NO">NO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Zone Name</div>
+                        <div class="col-sm-8">
+                            <div class="hmax75px w100per ovrFlw-YAuto wmin24em">
+                                <select id="ZoneCode" name="ZoneCode" data-val="true" data-val-required="The Zone Code is required" class="w100per panel h25px clr" onchange="zoneCode(this)">
+                                    <option value="" selected="selected">--</option>
+                                    @foreach (var item in Model.ZoneList)
+                                    {
+                                        <option value="@item.ZoneCode">@item.ZoneName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Status</div>
+                        <div class="col-sm-8">
+                            <select class="w100per panel h25px clr" id="Status" name="Status" data-val="true" data-val-required="The Status is required">
+                                <option value="Active" selected="selected">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Enterprise Type</div>
+                        <div class="col-sm-8">
+                            <select class="w100per panel h25px clr" id="EnterpriseType" name="EnterpriseType" data-val="true" data-val-required="The Enterprise Type is required">
+                                <option value="">--</option>
+                                <option value="Service Enterprise">Service Enterprise</option>
+                                <option value="Logistics">Logistics</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Regional Warehouse">Regional Warehouse</option>
+                                <option value="Export Enterprise">Export Enterprise</option>
+                                <option value="Domestic Market">Domestic Market</option>
+                                <option value="IT Enterprise">IT Enterprise</option>
+                                <option value="Facilities Enterprise">Facilities Enterprise</option>
+                                <option value="Tourism Enterprise">Tourism Enterprise</option>
+                                <option value="Agro-Industrial">Agro-Industrial</option>
+                                <option value="Developer Enterprise">Developer Enterprise</option>
+                                <option value="Free Trade">Free Trade</option>
+                                <option value="Medical Tourism">Medical Tourism</option>
+                                <option value="PEZA Employees/Tenants">PEZA Employees/Tenants</option>
+                                <option value="Unknown">Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Send Email</div>
+                        <div class="col-sm-8">
+                            <div class="hmax75px w100per ovrFlw-YAuto wmin24em">
+                                <select id="SendEmail" name="SendEmail" data-val="true" data-val-required="The Send Email Option is required" class="w100per panel h25px clr" onchange="sendEmail(this)">
+                                    <option value="">--</option>
+                                    <option value="YES">YES</option>
+                                    <option value="NO">NO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="EditsendEmailFld" class="fontBld br1Grey ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Primary Email</div>
+                        <div class="col-sm-8 h25px ovrFlwHide "><input type="text" class="w100per" id="EmailAddress" name="EmailAddress"></div>
+                    </div>
+                    <div id="EditsendSecondEmailFld" class="fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Secondary Email</div>
+                        <div class="col-sm-8 h25px ovrFlwHide"><input type="text" class="w100per" id="SecondaryEmailAddress" name="SecondaryEmailAddress"></div>
+                    </div>
+                    <div class="container fontBld br1Grey h50px pad0">
+                        <div class="col-sm-4 h25px bgColor-lv">Date of Registration</div>
+                        <div class="col-sm-8 h25px"><input type="text" data-val="true" data-val-required="The Date of Registration is required" class="w100per breadcrumb date-picker" id="EditDateOfRegistration" name="EditDateOfRegistration"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="Clear(this)" value="Cancel">Cancel</button></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Edit Company Detail -->
+<!-- Modal Add Company Detail -->
+@using (Html.BeginForm("ViewCompany", "MaintenanceCompany"))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="modalAddCompanyDetails" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Add Company Detail Content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="bgColor-lb">
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="CompanyCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="CompanyName" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Phase" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Address" data-valmsg-replace="true"></span></div>
+
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="OwnershipType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Vatable" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="ZoneCode" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="Status" data-valmsg-replace="true"></span></div>
+
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="EnterpriseType" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="SendEmail" data-valmsg-replace="true"></span></div>
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="DateOfRegistration" data-valmsg-replace="true"></span></div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddCompanyDetails" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Company Details</h4>
+                </div>
+                <div class="modal-body bgColor-lv ">
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Code</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="The Company code is required" class="w90per bgColor-lgrey" readonly="readonly" id="AddCompanyCode" name="CompanyCode"></div>
+                        <div class="col-sm-9 h25px col-sm-push-1 hidden"><input type="text" class="w90per" id="LastSeries" name="LastSeries"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Company</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="The Company name is required" class="w90per" id="AddCompanyName" name="CompanyName"></div>
+
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Phase</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" maxlength="10" data-val="true" data-val-required="The Phase is required" class="w90per" id="AddPhase" name="Phase"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-3 h25px bgColor-lv">Address</div>
+                        <div class="col-sm-9 h25px col-sm-push-1"><input type="text" data-val="true" data-val-required="The Address is required" class="w90per" id="AddAddress" name="Address"></div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Ownership Type</div>
+                        <div class="col-sm-8 h25px">
+                            <select id="AddOwnershipType" name="OwnershipType" class="w100per panel h25px clr" data-val="true" data-val-required="The OwnershipType is required">
+                                <option selected="selected">--</option>
+                                <option>Individual</option>
+                                <option>Corporate</option>
+                                <option>Government</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Vatable</div>
+                        <div class="col-sm-8">
+                            <div class="hmax75px w100per ovrFlw-YAuto wmin24em">
+                                <select id="AddVatable" name="Vatable" class="w100per panel h25px clr" data-val="true" data-val-required="The Vatable is required">
+                                    <option value="" selected="selected">--</option>
+                                    <option value="YES">YES</option>
+                                    <option value="NO">NO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Zone Name</div>
+                        <div class="col-sm-8">
+                            <div class="hmax75px w100per ovrFlw-YAuto wmin24em">
+                                <select id="AddZoneCode" name="ZoneCode" class="w100per panel h25px clr " onchange="zoneCode(this)" data-val="true" data-val-required="The Zone Code is required">
+                                    <option value="" selected="selected">--</option>
+                                    @foreach (var item in Model.ZoneList)
+                                    {
+                                        <option value="@item.ZoneCode">@item.ZoneName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<div class="container fontBld br1Grey pad0 hidden">
+                            <div class="col-sm-4 bgColor-lv">WithHolding</div>
+                            <div class="col-sm-8">
+                                <div class="hmax75px w100per ovrFlw-YAuto wmin24em">
+                                    @if (Model.Category.Count >= 1)
+                                    {
+                                        foreach (var item in Model.Category)
+                                        {
+                                            <div class="h25px bgColor-White br1-bot">
+                                                <div class="col-sm-9 br1Grey pad0 h25px ovrFlwHide text-center fontBld" id="Category" name="Category">@item</div>
+                                                <div class="col-sm-3 br1Grey pad0 h25px ovrFlwHide text-center">
+                                                    <input type="checkbox" value="@item" id="WithHolding" name="WithHolding" title="@item" />
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    @if (Model.Category.Count == 0)
+                                    {
+                                        foreach (var item in Model.Category)
+                                        {
+                                            <div class="h25px bgColor-White br1-bot">
+                                                <div class="col-sm-9 br1Grey pad0 h25px ovrFlwHide text-center fontBld" id="Category" name="Category">WithHolding</div>
+                                                <div class="col-sm-3 br1Grey pad0 h25px ovrFlwHide text-center">
+                                                    <input type="checkbox" value="" id="WithHolding" name="WithHolding" title="" />
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>*@
+
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Status</div>
+                        <div class="col-sm-8">
+                            <select class="w100per panel h25px clr" id="AddStatus" name="Status" data-val="true" data-val-required="The Status is required">
+                                <option value="" selected="selected">--</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Enterprise Type</div>
+                        <div class="col-sm-8">
+                            <select class="w100per panel h25px clr" id="AddEnterpriseType" name="EnterpriseType" data-val="true" data-val-required="The Enterprise Type is required">
+                                <option value="" selected="selected">--</option>
+                                <option value="Service Enterprise">Service Enterprise</option>
+                                <option value="Logistics">Logistics</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Regional Warehouse">Regional Warehouse</option>
+                                <option value="Export Enterprise">Export Enterprise</option>
+                                <option value="Domestic Market">Domestic Market</option>
+                                <option value="IT Enterprise">IT Enterprise</option>
+                                <option value="Facilities Enterprise">Facilities Enterprise</option>
+                                <option value="Tourism Enterprise">Tourism Enterprise</option>
+                                <option value="Agro-Industrial">Agro-Industrial</option>
+                                <option value="Developer Enterprise">Developer Enterprise</option>
+                                <option value="Free Trade">Free Trade</option>
+                                <option value="Medical Tourism">Medical Tourism</option>
+                                <option value="PEZA Employees/Tenants">PEZA Employees/Tenants</option>
+                                <option value="Unknown">Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="container fontBld br1Grey pad0">
+                        <div class="col-sm-4 bgColor-lv">Send Email</div>
+                        <div class="col-sm-8">
+                            <div class="hmax75px w100per ovrFlw-YAuto wmin24em">
+                                <select id="AddSendEmail" name="SendEmail" class="w100per panel h25px clr" onchange="sendEmail(this)" data-val="true" data-val-required="The Send Email Option is required">
+                                    <option value="NO" selected="selected">--</option>
+                                    <option value="YES">YES</option>
+                                    <option value="NO">NO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sendEmailFld" class="container  fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Primary Email</div>
+                        <div class="col-sm-8 h25px "><input type="text" class="w100per bgColor-lgrey" id="AddEmailAddress" readonly="readonly" name="AddEmailAddress"></div>
+                    </div>
+
+                    <div id="sendSecondEmailFld" class="container  fontBld br1Grey pad0 ovrFlwHide">
+                        <div class="col-sm-4 h25px bgColor-lv">Secondary Email</div>
+                        <div class="col-sm-8 h25px "><input type="text" class="w100per bgColor-lgrey" id="AddSecondaryEmailAddress" readonly="readonly" name="AddSecondaryEmailAddress"></div>
+                    </div>
+
+                    <div class="container fontBld br1Grey h50px pad0">
+                        <div class="col-sm-4 h25px bgColor-lv">Date of Registration</div>
+                        <div class="col-sm-8 h25px"><input type="text" class="w100per breadcrumb date-picker" id="AddDateOfRegistration" name="DateOfRegistration" data-val="true" data-val-required="The Date of Registration is required"></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="Clear(this)" value="Cancel">Cancel</button></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Add Company Detail -->
+<!-- Modal Preview Alpha List-->
+<div class="modal fade" id="modalReviewAlphaList" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalReviewAlphaList">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-list-alt icon clr"></span> Alpha List</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <h4>Preview and print Alpha List now</h4>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <button type="button" class="btn btn-primary w100px" data-dismiss="modal">Yes</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-primary w100px" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Preview Alpha List -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

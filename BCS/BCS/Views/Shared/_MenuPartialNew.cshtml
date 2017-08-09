@@ -1,0 +1,134 @@
+﻿@using BCS.Models;
+@using Microsoft.AspNet.Identity;
+@using Microsoft.AspNet.Identity.Owin;
+@using Microsoft.Owin.Security;
+@using Microsoft.AspNet.Identity.EntityFramework;
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header bgColor-White w100per">
+            <div class="col-sm-8 txtCent pad0">
+                <div class="col-sm-1 txtCent pad0 h100per">
+                    <a class="clr br0" href="~/" title="Return to Home Page"><img src="../images/pezalogo.jpg"></a>
+                </div>
+                <div class="col-sm-11 pad0">
+                    <div id="pezaNameTop" class="container pad0 logo fcBl fs2vw ovrFlwHide">Philippine Economic Zone Authority @*<img src="../images/pezalogonew.png" width="70" alt="Peza Logo">*@</div>
+                    @if (User.Identity.IsAuthenticated) //GET THE CURRENT USER GROUP AND DISPLAY IN HEADER.
+                    {
+                        try
+                        {
+                            //ZONE GROUP
+                            ApplicationDbContext context = new ApplicationDbContext();
+                            BCS_Context db = new BCS_Context();
+
+                            var currentUserId = User.Identity.GetUserId();
+                            var currentUserZoneGroup = context.Users.FirstOrDefault(m => m.Id == currentUserId).ZoneGroup;
+                            var currentUserDivision = context.Users.FirstOrDefault(m => m.Id == currentUserId).Division;
+                            var ZoneName = db.ZoneGroup.FirstOrDefault(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupName;
+                            <div id="pezaNameBottom" class="container pad0">@ZoneName</div>
+                        }
+                        catch (Exception)
+                        {
+                                FormsAuthentication.SignOut();
+                                Session.Abandon();
+                                
+                                Response.Redirect(Request.RawUrl);
+                        }
+
+                    }
+                </div>
+            </div>
+                
+
+
+
+
+            @*<div class="col-sm-4 pad0 txtRight">
+                    @Html.Partial("_LoginPartial")
+                </div>*@
+        </div>
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!-- <a class="navbar-brand" href="#">WebSiteName</a>-->
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <ul class="nav navbar-nav">
+                    @{
+                        //ROLE ASSIGNMENT MATRIX
+                        BCS_Context db = new BCS_Context();
+                        var username = User.Identity.GetUserName();
+                        RoleAssignmentMatrix roleAssignmentMatrix = db.RoleAssignmentMatrix.FirstOrDefault(m => m.UserName == username);
+                        bool? isValidAdmin = roleAssignmentMatrix.Administrative == null || roleAssignmentMatrix.Administrative == false ? false : true;
+                        bool? isValidHO = roleAssignmentMatrix.HO == null || roleAssignmentMatrix.HO == false ? false : true;
+                    }
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Data Entry<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="~/DataEntryRental/ViewRentals">Rental</a></li>
+                            <li><a href="~/DataEntryPoleRental/ViewPoleRentals">Pole Rental</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="~/DataEntryGarbage/ViewGarbage">Garbage</a></li>
+                            <li><a href="~/DataEntryWater/ViewWater">Water</a></li>
+                            <li><a href="~/DataEntryFranchise/ViewFranchise">Franchise</a></li>
+
+                            @if (isValidAdmin == true || username.ToUpper() == "SU")
+                            {
+                                <li><a href="~/DataEntryAdminFee/ViewAdminFee">Admin Fee</a></li>
+                            }
+
+                            <li><a href="~/DataEntryPassedOnBilling/ViewPassedOnBilling">Passed On Billing</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Billing<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="~/BillingGenerate/ViewGenerate">Generate</a></li>
+                            <li><a href="~/BillingPayments/ViewPayments">Order Of Payment</a></li>
+                            @if (isValidHO == true || username.ToUpper() == "SU")
+                            {
+                                <li><a href="~/HOBatchUpdate/HOBatchUpdate">HO Batch Update</a></li>
+                            }
+                            <li><a href="~/EndOfMonthProcessing/GenerateEOMProcessing">EOM Processing</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Report<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="~/ReportsJBR/ViewJBR">JBR</a></li>
+                            <li><a href="~/ReportsBillingStatement/ViewBillingStatement">Billing Statement</a></li>
+                            <li><a href="~/ReportsEmail/ViewReportsEmail">Email</a></li>
+                            <li><a href="~/ReportsSubsidiaryLedger/ViewSubsidiaryLedger">Subsidiary Ledger</a></li>
+                            <li><a href="~/ReportsMonthlyAging/ViewMonthlyAging">Monthly Aging</a></li>
+                            <li><a href="~/ReportsCollection/ViewCollection">Collection</a></li>
+                           
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Maintenance<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="~/MaintenanceCompany/ViewCompany">Company</a></li>
+                            <li><a href="~/MaintenanceBillingAndCollectionRates/ViewBillingAndCollectionRates">Rates</a></li>
+                            <li><a href="~/MaintenanceSubsidiaryLedger/ViewSubsidiaryLedger">Subsidiary Ledger</a></li>
+                            <li><a href="~/MaintenancePeriodTable/ViewPeriodTable">Period Table</a></li>
+                            <li><a href="~/Division/Index">Division</a></li>
+                            @*<li><a href="~/MaintenanceVAT/ViewVAT">VAT</a></li>*@
+                            <li><a href="~/MaintenanceOrderOfPaymentAccounts/ViewOrderOfPaymentAccounts">Nature of Payment Accounts</a></li>
+                            <li><a href="~/UploadAssessment/Upload">Upload EPAMS Assessment</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+                        }
+            @Html.Partial("_LoginPartialNew")
+
+        </div>
+    </div>
+</nav>

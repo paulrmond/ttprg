@@ -1,0 +1,331 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consultant: DCI
+-->
+
+@{
+    ViewBag.Title = "ViewAdvance";
+}
+<div ID="searchField" class="container">
+    <center><H2 CLASS="fcWhite">ADVANCES</H2></center>
+    <div class="container bgColor-White">
+        <p></p>
+        <div CLASS="floatLeft w100per pad5">
+            <div CLASS="br2">
+                <table CLASS="zeroSpace w100per txtSize12px">
+                    <tr class="br1-bot">
+                        <td class="w20per pad5 bgColor-lb">
+                            <B>COMPANY</B>
+                        </td>
+                        <td class="w80per pad5">
+                            Pilipinas Express Logistics
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w20per pad5 bgColor-lb">
+                            <B>ADDRESS</B>
+                        </td>
+                        <td class="w80per pad5">
+                            Mactan, Philippines
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- Trigger the modal Search Enterprise with a button -->
+        <center class="pad10"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Search Enterprise</button></center>
+    </div>
+</div>
+<div class="container">
+    <p></p>
+    <ul class="nav nav-tabs">
+        <li class="active"><a class="fcBlack bgColor-lgrey" data-toggle="tab" href="#home">Water</a></li>
+        <li><a class="fcBlack bgColor-lgrey" data-toggle="tab" href="#menu1">Sewerage</a></li>
+        <li><a class="fcBlack bgColor-lgrey" data-toggle="tab" href="#menu2">Land, SFB & OS</a></li>
+        <li><a class="fcBlack bgColor-lgrey" data-toggle="tab" href="#menu3">Garbage</a></li>
+        <li><a class="fcBlack bgColor-lgrey" data-toggle="tab" href="#menu3">Assessment</a></li>
+        <li><a class="fcBlack bgColor-lgrey" data-toggle="tab" href="#menu3">Franchise Fee</a></li>
+        <li><a class="fcBlack bgColor-lgrey" data-toggle="tab" href="#menu3">Dorm Rental</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <DIV CLASS="bgColor-White">
+                <DIV CLASS="floatLeft pad20 bgColor-White">
+                    <DIV CLASS="br2 pad5">
+                        <TABLE CLASS="zeroSpace w100per txtSize12px">
+                            <THEAD>
+                                <TR>
+                                    <TH CLASS="w100px"><CENTER>Meter No</CENTER></TH>
+                                    <TH CLASS="w300px"><CENTER>Origin</CENTER></TH>
+                                    <TH CLASS="w200px"><CENTER>Original Balance</CENTER></TH>
+                                    <TH><CENTER>Balance After Last Biling Finalization</CENTER></TH>
+                                    <TH><CENTER>Balance as of Date</CENTER></TH>
+                                    <TH><CENTER>History</CENTER></TH>
+                                    <TH><CENTER>Deffered</CENTER></TH>
+                                    <TH><CENTER>Deffer/ Active</CENTER></TH>
+                                    <TH><CENTER>Transfer</CENTER></TH>
+                            </THEAD>
+                            <tbody>
+                                <tr>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <TD class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></TD>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="HISTORY" data-toggle="modal" data-target="#modalAdvancesHistory"></td>
+                                    <td class="br1Grey"><input type="checkbox" VALUE="MODIFY" id="toggle1ChkBx" class="w100per" checked="checked" disabled="disabled"></td>
+                                    <td class=""><input type="button" class="w100per" id="toggle1" value="ACTIVE" onclick="toggleActiveDiffer(this.id)"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="TRANSFER" data-toggle="modal" data-target="#modalTransferAdvances"></td>
+                                </tr>
+                                <tr>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <TD class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></TD>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="HISTORY" data-toggle="modal" data-target="#modalAdvancesHistory"></td>
+                                    <td class="br1Grey"><input type="checkbox" VALUE="MODIFY" id="toggle2ChkBx" class="w100per" checked="checked" disabled="disabled"></td>
+                                    <td class=""><input type="button" class="w100per" id="toggle2" value="ACTIVE" onclick="toggleActiveDiffer(this.id)"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="TRANSFER" data-toggle="modal" data-target="#modalTransferAdvances"></td>
+                                </tr>
+                                <tr>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <TD class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></TD>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="HISTORY" data-toggle="modal" data-target="#modalAdvancesHistory"></td>
+                                    <td class="br1Grey"><input type="checkbox" VALUE="MODIFY" id="toggle3ChkBx" class="w100per" checked="checked" disabled="disabled"></td>
+                                    <td class=""><input type="button" class="w100per" id="toggle3" value="ACTIVE" onclick="toggleActiveDiffer(this.id)"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="TRANSFER" data-toggle="modal" data-target="#modalTransferAdvances"></td>
+                                </tr>
+                                <tr>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <TD class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></TD>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class="br1Grey"><input type="text" class="w100per br0" id="inputWarning"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="HISTORY" data-toggle="modal" data-target="#modalAdvancesHistory"></td>
+                                    <td class="br1Grey"><input type="checkbox" VALUE="MODIFY" id="toggle4ChkBx" class="w100per" checked="checked" disabled="disabled"></td>
+                                    <td class=""><input type="button" class="w100per" id="toggle4" value="ACTIVE" onclick="toggleActiveDiffer(this.id)"></td>
+                                    <td class=""><input type="button" class="w100per" id="inputWarning" value="TRANSFER" data-toggle="modal" data-target="#modalTransferAdvances"></td>
+                                </tr>
+                            </tbody>
+                        </TABLE>
+                        <table CLASS="w100per">
+                            <tr>
+                                <td CLASS="pad10"></td>
+                                <td CLASS="w10per pad10"><input type="button" VALUE="REFRESH" class="btnH-lg w100per" id="inputWarning"></td>
+                                <td CLASS="w10per pad10"><input type="button" VALUE="ADD NEW" class="btnH-lg w100per" id="inputWarning"></td>
+                            </tr>
+                        </table>
+                    </DIV>
+                </DIV>
+            </DIV>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <h3>Menu 1</h3>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+        <div id="menu2" class="tab-pane fade">
+            <h3>Menu 2</h3>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+        </div>
+        <div id="menu3" class="tab-pane fade">
+            <h3>Menu 3</h3>
+            <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterprise" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <!--<div class="pad10 bgColor-White h100px br1Grey ovrFlw-YAuto">
+                    <span class="glyphicon glyphicon-dashboard"></span> <b>TIPS:</b>
+                    <ol>
+                        <li>Enter search sequence in the textfield then click <b>Search</b> button. <br /></li>
+                        <li>Select an enterprise and press <b>ok</b> button. </li>
+                        <li>Click <b>Cancel</b> or <b>X</b> button or outside the pop-up screen to exite pop-up screen</li>
+                    </ol>
+                </div>
+                <br />-->
+                <div class="pad5 btn-primary fontBld">
+                    <div class="container">
+                        <div class="col-sm-3 pad0">Company Name</div>
+                        <div class="col-sm-7 br1Grey bgColor-White h25px"> </div>
+                        <div class="col-sm-2 pad0"> <button type="button" class="h25px w100per">Search</button></div>
+                    </div>
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">OK</button></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+
+<!-- Modal Advances History-->
+<div class="modal fade" id="modalAdvancesHistory" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal Modify Water Meter content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open clr"></span> ADVANCES HISTORY <b>#</b></h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-4 txtCenter fontBld">BILLING</div>
+                        <div class="col-sm-4 txtCenter fontBld">ACCOUNT</div>
+                        <div class="col-sm-4 txtCenter fontBld">AMOUNT DEDUCTED</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                        <div class="col-sm-4 h25px br1Grey bgColor-White"></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-3 h25px pad0 txtRight">Original Amount</div>
+                        <div class="col-sm-3 h25px pad0 br1Grey bgColor-White"></div>
+                        <div class="col-sm-3 h25px pad0 txtRight">Total Deducted</div>
+                        <div class="col-sm-3 h25px pad0 br1Grey bgColor-White"></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-3 h25px pad0 txtRight"></div>
+                        <div class="col-sm-3 h25px pad0 txtRight"></div>
+                        <div class="col-sm-3 h25px pad0 txtRight">Remaining Amount</div>
+                        <div class="col-sm-3 h25px pad0 br1Grey bgColor-White"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <button type="button" class="btn btn-primary w100px" data-dismiss="modal">Save</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Advances History -->
+
+<!-- Modal Transfer Advances-->
+<div class="modal fade" id="modalTransferAdvances" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal Transfer Advances Content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-transfer"></span> Transfer <span id="transType"></span> Advances To</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <!--<div class="pad10 bgColor-White h100px br1Grey ovrFlw-YAuto">
+                    <span class="glyphicon glyphicon-dashboard"></span> <b>TIPS:</b>
+                    <ol>
+                        <li>Enter search sequence in the textfield then click <b>Search</b> button. <br /></li>
+                        <li>Select an enterprise and press <b>ok</b> button. </li>
+                        <li>Click <b>Cancel</b> or <b>X</b> button or outside the pop-up screen to exite pop-up screen</li>
+                    </ol>
+                </div>
+                <br />-->
+                <div class="pad5 btn-primary fontBld">
+                    <div class="container">
+                        <div class="col-sm-3 pad0">Company Name</div>
+                        <div class="col-sm-7 br1Grey bgColor-White h25px"> </div>
+                        <div class="col-sm-2 pad0"> <button type="button" class="h25px w100per">Search</button></div>
+                    </div>
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">OK</button></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Transfer Advances-->
+
+<!-- Modal Toggle Active / Differ-->
+<div class="modal fade" id="modalToggleActiveDiffer" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal Toggle Active / Differ Content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-transfer"></span> Toggle <span id="toggleFrom"></span> <span id="toggleTo"></span></h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <!--<div class="pad10 bgColor-White h100px br1Grey ovrFlw-YAuto">
+                    <span class="glyphicon glyphicon-dashboard"></span> <b>TIPS:</b>
+                    <ol>
+                        <li>Enter search sequence in the textfield then click <b>Search</b> button. <br /></li>
+                        <li>Select an enterprise and press <b>ok</b> button. </li>
+                        <li>Click <b>Cancel</b> or <b>X</b> button or outside the pop-up screen to exite pop-up screen</li>
+                    </ol>
+                </div>
+                <br />-->
+                <div class="pad5 btn-primary fontBld">
+                    <div class="container">
+                        <div class="col-sm-3 pad0">Company Name</div>
+                        <div class="col-sm-7 br1Grey bgColor-White h25px"> </div>
+                        <div class="col-sm-2 pad0"> <button type="button" class="h25px w100per">Search</button></div>
+                    </div>
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">OK</button></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Toggle Active / Differ-->

@@ -1,0 +1,723 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consultant: DCI
+-->
+@{
+    ViewBag.Title = "ViewDiplomatDetail";
+}
+@model BCS.Models.SearchMainOrderOfPaymentViewModel
+
+<script>
+    function EditDiplomat(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+        }
+    }
+
+    // --- 10/20/2016 --- //
+    function AutoCompute(val) {
+        if (val.value != null) {
+            var AccountT;
+            var QuantiT;
+            var Start;
+            var EndT;
+            var EditEndT;
+            AccountT = document.getElementById("JVAccountTag").value;
+            QuantiT = document.getElementById("Quantity").value;
+            Start = document.getElementById("Start").value;
+            EditStart = document.getElementById("EditStart").value;
+            if (AccountT == "AF") {
+                QuantiT = QuantiT * 25;
+                EndT = parseInt(Start) + parseInt(QuantiT);
+                EndT = EndT - 1;
+                EditEndT = parseInt(EditStart) + parseInt(QuantiT);
+                EditEndT = EditEndT - 1;
+            }
+            document.getElementById("End").value = EndT;
+            document.getElementById("EditEnd").value = EditEndT;
+        }
+    }
+    // ----------------- //
+
+    // --- 10/21/2016 --- //
+    function AutoHide(val) {
+        if (document.getElementById("Form").value = "Forms")
+        {
+            document.getElementById("hideStart").hidden = false;
+            document.getElementById("hideEnd").hidden = false;
+            document.getElementById("hideSN1").hidden = true;
+            document.getElementById("hideSN2").hidden = true;
+            document.getElementById("hideSN3").hidden = true;
+            document.getElementById("hideSN4").hidden = true;
+            document.getElementById("hideSN5").hidden = true;
+            document.getElementById("hideSN6").hidden = true;
+            document.getElementById("hideSN7").hidden = true;
+            document.getElementById("hideSN8").hidden = true;
+            document.getElementById("hideSN9").hidden = true;
+            document.getElementById("hideSN10").hidden = true;
+            document.getElementById("hideSN11").hidden = true;
+            document.getElementById("hideSN12").hidden = true;
+            document.getElementById("hideSN13").hidden = true;
+            document.getElementById("hideSN14").hidden = true;
+            document.getElementById("hideSN15").hidden = true;
+
+            document.getElementById("hideEditStart").hidden = false;
+            document.getElementById("hideEditEnd").hidden = false;
+            document.getElementById("hideEditSN1").hidden = true;
+            document.getElementById("hideEditSN2").hidden = true;
+            document.getElementById("hideEditSN3").hidden = true;
+            document.getElementById("hideEditSN4").hidden = true;
+            document.getElementById("hideEditSN5").hidden = true;
+            document.getElementById("hideEditSN6").hidden = true;
+            document.getElementById("hideEditSN7").hidden = true;
+            document.getElementById("hideEditSN8").hidden = true;
+            document.getElementById("hideEditSN9").hidden = true;
+            document.getElementById("hideEditSN10").hidden = true;
+            document.getElementById("hideEditSN11").hidden = true;
+            document.getElementById("hideEditSN12").hidden = true;
+            document.getElementById("hideEditSN13").hidden = true;
+            document.getElementById("hideEditSN14").hidden = true;
+            document.getElementById("hideEditSN15").hidden = true;
+        }
+    }
+
+    function AutoHide2(val) {
+            document.getElementById("hideStart").hidden = true;
+            document.getElementById("hideEnd").hidden = true;
+
+            document.getElementById("hideSN1").hidden = false;
+            document.getElementById("hideSN2").hidden = false;
+            document.getElementById("hideSN3").hidden = false;
+            document.getElementById("hideSN4").hidden = false;
+            document.getElementById("hideSN5").hidden = false;
+            document.getElementById("hideSN6").hidden = false;
+            document.getElementById("hideSN7").hidden = false;
+            document.getElementById("hideSN8").hidden = false;
+            document.getElementById("hideSN9").hidden = false;
+            document.getElementById("hideSN10").hidden = false;
+            document.getElementById("hideSN11").hidden = false;
+            document.getElementById("hideSN12").hidden = false;
+            document.getElementById("hideSN13").hidden = false;
+            document.getElementById("hideSN14").hidden = false;
+            document.getElementById("hideSN15").hidden = false;
+
+            document.getElementById("hideEditStart").hidden = true;
+            document.getElementById("hideEditEnd").hidden = true;
+
+            document.getElementById("hideEditSN1").hidden = false;
+            document.getElementById("hideEditSN2").hidden = false;
+            document.getElementById("hideEditSN3").hidden = false;
+            document.getElementById("hideEditSN4").hidden = false;
+            document.getElementById("hideEditSN5").hidden = false;
+            document.getElementById("hideEditSN6").hidden = false;
+            document.getElementById("hideEditSN7").hidden = false;
+            document.getElementById("hideEditSN8").hidden = false;
+            document.getElementById("hideEditSN9").hidden = false;
+            document.getElementById("hideEditSN10").hidden = false;
+            document.getElementById("hideEditSN11").hidden = false;
+            document.getElementById("hideEditSN12").hidden = false;
+            document.getElementById("hideEditSN13").hidden = false;
+            document.getElementById("hideEditSN14").hidden = false;
+            document.getElementById("hideEditSN15").hidden = false;
+    }
+    // ----------------- //
+</script>
+
+<div ID="contentDataEntryRental" class="container modal-content bgColor-lb pad0">
+    <!-- Page Title -->
+    <div class="container pad10 fs18 fontBld"><span class="glyphicon glyphicon-inbox"></span> <span class="fs20">ORDER OF PAYMENT</span></div>
+    @if (Model.OrderOfPaymentDetailList.Select(x => x).ToString() != null)
+    {
+        var accountids = Model.OrderOfPaymentDetailList[0].OPAccountId;
+        <div class="container pad10 fs18 fontBld"><span class="fs20">DESCRIPTION: @Model.OPAccountList.FirstOrDefault(x => x.OPAccountId == accountids).OPAccountDescription.ToString() </span></div>
+    }
+    <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <input type="text" hidden="hidden" value="@ViewBag.Accountable" Accountable="@ViewBag.Accountable" id="Accountable" />
+    @if (Model.OrderOfPaymentDetailList.Select(x => x).Last().AccountTag == "AF" || Model.OrderOfPaymentDetailList.Select(x => x).Last().AccountTag == "BN" || Model.OrderOfPaymentDetailList.Select(x => x).Last().AccountTag == "PS" || Model.OrderOfPaymentDetailList.Select(x => x).Last().AccountTag == "VISA" || Model.OrderOfPaymentDetailList.Select(x => x).Last().AccountTag == "PF")
+    {
+        <input type="text" hidden="hidden" id="JVAccountTag" name="JVAccountTag" JVAccountTag="@Model.OrderOfPaymentDetailList.Select(x => x).Last().AccountTag.ToString()" value="@Model.OrderOfPaymentDetailList.Select(x => x).Last().AccountTag.ToString()" />
+        <input type="text" hidden="hidden" id="Quantity" name="Quantity" value="@Model.OrderOfPaymentDetailList.Select(x => x).Last().Quantity.ToString()" />
+    }
+
+    <div class="modal-body pad10">
+        <ul class="nav nav-tabs">
+            <li id="hideVisa" class="active"><a class="fcBlack bgColor-dgrey w150px" data-toggle="tab" href="#Visa">Visa</a></li>
+            <li id="hideForm" class="active"><a class="fcBlack bgColor-dgrey w150px" data-toggle="tab" href="#Form">Form</a></li>
+            <li id="hideSerial"><a class="fcBlack bgColor-dgrey w150px" data-toggle="tab" href="#Serial">Serial Number</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="Visa" class="tab-pane fade in active">
+                <!-- Order of Payment Datails Table -->
+                <div class="container w100per br2 pad0 bgColor-White" id="companyCnt" companyCnt="@Model.OPAccountList.Count" CompanySelected="@ViewBag.CompanySelected">
+                    <div class="w100per pad5">
+                        <div class="container w100per text-center fontBld fs11">
+                            <div class="col-sm-2 pad0">Given Name</div>
+                            <div class="col-sm-2 pad0">Middle Name</div>
+                            <div class="col-sm-2 pad0">SurName</div>
+                            <div class="col-sm-2 pad0">Position</div>
+                            <div class="col-sm-2 pad0">Nationality</div>
+                            <div class="col-sm-1 pad0"> </div>
+                            <div class="col-sm-1 pad0"> </div>
+                        </div>
+                        <div class="w100per ovrFlw-YAuto h200px" id="companyCnt" companyCnt="">
+                            @using (Html.BeginForm("DisplayDiplomatDetails", "BillingPayments"))
+                            {
+                                @Html.AntiForgeryToken()
+                                if (Model.OrderOfPaymentDetailList.Count > 0)
+                                {
+                                    <input type="text" hidden="hidden" id="DeleteDetail" name="DeleteDetail" />
+                                    <input type="text" hidden="hidden" id="DeleteOPD" name="DeleteOPD" />
+                                    <input type="text" hidden="hidden" id="OPId" name="OPId" value="@Model.OrderOfPaymentList[0].OrderOfPaymentId" />
+                                }
+                                if (Model != null)
+                                {
+                                    foreach (var Detail in Model.DetailList)
+                                    {
+                                        foreach (var OPD in Model.OrderOfPaymentDetailList)
+                                        {
+                                            <div class="container w100per text-center fontBld" id="'Visa'+@Detail.OPDetailId">
+                                                <div title="EditOrderOfPaymentDetailId" class="cell col-sm-2 br1Grey pad0 h50px ovrFlwHide hidden" align="center">@OPD.OrderOfPaymentDetailId</div>
+                                                <div title="DeleteOPD" class="cell col-sm-2 br1Grey pad0 h50px ovrFlwHide hidden" align="center">@OPD.OrderOfPaymentDetailId</div>
+                                                <div title="DeleteDetail" class="col-sm-2 br1Grey pad0 cell h50px ovrFlwHide hidden" align="center">@Detail.OPDetailId</div>
+                                                <div title="EditDetail" class="col-sm-2 br1Grey pad0 cell h50px ovrFlwHide hidden" align="center">@Detail.OPDetailId</div>
+                                                <div class="col-sm-2 br1Grey pad0 h50px ovrFlwHide hidden" align="center">@Detail.OPDetailId</div>
+                                                <div title="EditGivenName" class="cell col-sm-2 br1Grey pad0 cell h50px ovrFlwHide" align="center">@Detail.GivenName</div>
+                                                <div title="EditMiddleName" class="cell col-sm-2 br1Grey pad0 cell h50px ovrFlwHide" align="center">@Detail.MiddleName</div>
+                                                <div title="EditSurName" class="col-sm-2 br1Grey pad0 cell h50px ovrFlwHide" align="center">@Detail.SurName</div>
+                                                <div title="EditVisaName" class="col-sm-2 br1Grey pad0 cell h50px ovrFlwHide" align="center">@Detail.VisaName</div>
+                                                <div title="EditNationality" class="col-sm-2 br1Grey pad0 cell h50px ovrFlwHide" align="center">@Detail.Nationality</div>
+                                                <div class="col-sm-1 pad0"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditDiplomat" class="w100per h48px fontBld" title="'Visa'+@Html.DisplayFor(modelItem => Detail.OPDetailId)" id="@Html.DisplayFor(modelItem => Detail.OPDetailId)" onclick="EditDiplomat(this.title)"></div>
+                                                <div class="col-sm-1 pad0"><input type="submit" VALUE="DELETE" class="w100per h48px fontBld" title="'Visa'+@Html.DisplayFor(modelItem => Detail.OPDetailId)" id="@Html.DisplayFor(modelItem => Detail.OPDetailId)" onclick="EditDiplomat(this.title)"></div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                        <br />
+
+                        <div class="container w100per text-center">
+                            <div class="col-sm-6 pad5"></div>
+                            @if (Model.OrderOfPaymentList[0].PaymentStatus == "PAID")
+                            {
+                                <div class="col-sm-2 pad5"><input type="button" VALUE="ADD" disabled="disabled" data-toggle="modal" data-target="#modalAddDiplomat" class="w100per btn bgColor-lgrey h25px pad0" id="inputWarning"></div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-2 pad5"><input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalAddDiplomat" class="w100per btn btn-primary h25px pad0" id="inputWarning"></div>
+                            }
+                            @if (Model.OrderOfPaymentList.Count > 0 && Model.OrderOfPaymentDetailList.Count > 0)
+                            {
+                                <div class="col-sm-2 pad5">@Html.ActionLink("BACK", "BackOrderOfPaymentDetail", "BillingPayments", new { CompanyId = @Model.OrderOfPaymentDetailList[0].CompanyId, opid1 = Model.OrderOfPaymentList[0].OrderOfPaymentId }, new { @class = "w100per btn btn-primary h25px pad12", Type = "button" })</div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-2 pad5"><input type="button" VALUE="BACK" class="w100per btn btn-primary h25px pad0"></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="Form" class="tab-pane in active" onclick="AutoHide(this)">
+
+                <!-- Order of Payment Datails Table -->
+                <div class="container w100per br2 pad0 bgColor-White" id="companyCnt2" companyCnt="@Model.OPAccountList.Count" CompanySelected="@ViewBag.CompanySelected">
+                    <div class="w100per pad5">
+                        <div class="container w100per text-center fontBld fs11">
+                            <div class="col-sm-5 pad0">Start</div>
+                            <div class="col-sm-5 pad0">End</div>
+                            <div class="col-sm-1 pad0"> </div>
+                        </div>
+                        <div class="w100per ovrFlw-YAuto h200px" id="companyCnt" companyCnt="">
+                            @using (Html.BeginForm("DisplayDiplomatDetails", "BillingPayments"))
+                            {
+                                @Html.AntiForgeryToken()
+                                if (Model.OrderOfPaymentDetailList.Count > 0)
+                                {
+                                    <input type="text" hidden="hidden" id="DeleteDetailForm" name="DeleteDetail" />
+                                    <input type="text" hidden="hidden" id="DeleteOPDForm" name="DeleteOPD" />
+                                    <input type="text" hidden="hidden" id="OPId" name="OPId" value="@Model.OrderOfPaymentList[0].OrderOfPaymentId" />
+                                }
+                                if (Model != null)
+                                {
+                                    foreach (var Detail in Model.DetailList)
+                                    {
+                                        foreach (var OPD in Model.OrderOfPaymentDetailList)
+                                        {
+                                            <div class="container w100per text-center fontBld" id="'Form'+@Detail.OPDetailId">
+                                                <div title="EditOrderOfPaymentDetailId" class="cell col-sm-2 br1Grey pad0 h50px ovrFlwHide hidden" align="center">@OPD.OrderOfPaymentDetailId</div>
+                                                <div title="DeleteOPDForm" class="cell col-sm-2 br1Grey pad0 h50px ovrFlwHide hidden" align="center">@OPD.OrderOfPaymentDetailId</div>
+                                                <div title="DeleteDetailForm" class="col-sm-2 br1Grey pad0 cell h50px ovrFlwHide hidden" align="center">@Detail.OPDetailId</div>
+                                                <div title="EditDetail" class="col-sm-2 br1Grey pad0 cell h50px ovrFlwHide hidden" align="center">@Detail.OPDetailId</div>
+
+                                                <div title="EditStart" class="col-sm-5 br1Grey pad0 cell h50px ovrFlwHide" align="center">@Detail.OPStart</div>
+                                                <div title="EditEnd" class="col-sm-5 br1Grey pad0 cell h50px ovrFlwHide" align="center">@Detail.OPEnd</div>
+                                                <div class="col-sm-1 pad0"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditDiplomat" class="w100per h48px fontBld" title="'Form'+@Html.DisplayFor(modelItem => Detail.OPDetailId)" id="@Html.DisplayFor(modelItem => Detail.OPDetailId)" onclick="EditDiplomat(this.title)"></div>
+                                                <div class="col-sm-1 pad0"><input type="submit" VALUE="DELETE" class="w100per h48px fontBld" title="'Form'+@Html.DisplayFor(modelItem => Detail.OPDetailId)" id="@Html.DisplayFor(modelItem => Detail.OPDetailId)" onclick="EditDiplomat(this.title)"></div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="container w100per text-center bgColor-White">
+                        <br />
+                        <div class="col-sm-6 pad5"></div>
+                        @if (Model.OrderOfPaymentList[0].PaymentStatus == "PAID")
+                        {
+                            <div class="col-sm-2 pad5"><input type="button" VALUE="ADD" disabled="disabled" data-toggle="modal" data-target="#modalAddDiplomat" class="w100per btn bgColor-lgrey h25px pad0" id="inputWarning"></div>
+                        }
+                        else
+                        {
+                            <div class="col-sm-2 pad5"><input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalAddDiplomat" class="w100per btn btn-primary h25px pad0" id="inputWarning"></div>
+                        }
+                        @if (Model.OrderOfPaymentList.Count > 0 && Model.OrderOfPaymentDetailList.Count > 0)
+                        {
+                            <div class="col-sm-2 pad5">@Html.ActionLink("BACK", "BackOrderOfPaymentDetail", "BillingPayments", new { CompanyId = @Model.OrderOfPaymentDetailList[0].CompanyId, opid1 = Model.OrderOfPaymentList[0].OrderOfPaymentId }, new { @class = "w100per btn btn-primary h25px pad12", Type = "button" })</div>
+                        }
+                        else
+                        {
+                            <div class="col-sm-2 pad5"><input type="button" VALUE="BACK" class="w100per btn btn-primary h25px pad0"></div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="Serial" class="tab-pane fade in active" onclick="AutoHide2(this)">
+
+                <!-- Order of Payment Datails Table -->
+                <div class="container w100per bgColor-White pad10" id="companyCnt3" companyCnt="@Model.OPAccountList.Count" CompanySelected="@ViewBag.CompanySelected">
+
+                    @*<div class="container  ovrFlw-XAuto pad0 br1">*@
+                    <div class="w100per">
+                        <table class="w2500px pad5 br2">
+                            <thead class="text-center fontBld fs11 ">
+                                <tr>
+                                    <td class="w150px pad0">SN:1</td>
+                                    <td class="w150px pad0">SN:2</td>
+                                    <td class="w150px pad0">SN:3</td>
+                                    <td class="w150px pad0">SN:4</td>
+                                    <td class="w150px pad0">SN:5</td>
+                                    <td class="w150px pad0">SN:6</td>
+                                    <td class="w150px pad0">SN:7</td>
+                                    <td class="w150px pad0">SN:8</td>
+                                    <td class="w150px pad0">SN:9</td>
+                                    <td class="w150px pad0">SN:10</td>
+                                    <td class="w150px pad0">SN:11</td>
+                                    <td class="w150px pad0">SN:12</td>
+                                    <td class="w150px pad0">SN:13</td>
+                                    <td class="w150px pad0">SN:14</td>
+                                    <td class="w150px pad0">SN:15</td>
+                                    <td class="w150px pad0"></td>
+                                    <td class="w150px pad0"></td>
+                                    <td class="w150px pad0"></td>
+                                    @*<td class="w150px pad0"></td>*@
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
+                    <div class="w100per ovrFlw-YAuto h200px">
+                        <table class="w2500px pad5 br2">
+                            <tbody id="companyCnt" companyCnt="">
+                                @using (Html.BeginForm("DisplayDiplomatDetails", "BillingPayments"))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    if (Model.OrderOfPaymentDetailList.Count > 0)
+                                    {
+                                        <input type="text" id="DeleteDetailSerial" name="DeleteDetail" class="hidden" />
+                                        <input type="text" id="DeleteOPDSerial" name="DeleteOPD" class="hidden" />
+                                        <input type="text" hidden="hidden" id="OPId" name="OPId" class="hidden" value="@Model.OrderOfPaymentList[0].OrderOfPaymentId" />
+                                    }
+                                    if (Model != null)
+                                    {
+                                        foreach (var Detail in Model.DetailList)
+                                        {
+                                            foreach (var OPD in Model.OrderOfPaymentDetailList)
+                                            {
+                                                <tr class=" text-center fontBld" id="'Serial'+@Detail.OPDetailId">
+                                                    <td title="EditOrderOfPaymentDetailId" class="br1Grey cell hidden">@OPD.OrderOfPaymentDetailId</td>
+                                                    <td title="DeleteOPDSerial" class="br1Grey cell hidden">@OPD.OrderOfPaymentDetailId</td>
+                                                    <td title="DeleteDetailSerial" class="br1Grey cell hidden">@Detail.OPDetailId</td>
+                                                    <td title="EditDetail" class="br1Grey cell hidden">@Detail.OPDetailId</td>
+                                                    <td title="EditSN1" class="br1Grey w150px pad0 cell">@Detail.SN1</td>
+                                                    <td title="EditSN2" class="br1Grey w150px pad0 cell">@Detail.SN2</td>
+                                                    <td title="EditSN3" class="br1Grey w150px pad0 cell">@Detail.SN3</td>
+                                                    <td title="EditSN4" class="br1Grey w150px pad0 cell">@Detail.SN4</td>
+                                                    <td title="EditSN5" class="br1Grey w150px pad0 cell">@Detail.SN5</td>
+                                                    <td title="EditSN6" class="br1Grey w150px pad0 cell">@Detail.SN6</td>
+                                                    <td title="EditSN7" class="br1Grey w150px pad0 cell">@Detail.SN7</td>
+                                                    <td title="EditSN8" class="br1Grey w150px pad0 cell">@Detail.SN8</td>
+                                                    <td title="EditSN9" class="br1Grey w150px pad0 cell">@Detail.SN9</td>
+                                                    <td title="EditSN10" class="br1Grey w150px pad0 cell">@Detail.SN10</td>
+                                                    <td title="EditSN11" class="br1Grey w150px pad0 cell">@Detail.SN11</td>
+                                                    <td title="EditSN12" class="br1Grey w150px pad0 cell">@Detail.SN12</td>
+                                                    <td title="EditSN13" class="br1Grey w150px pad0 cell">@Detail.SN13</td>
+                                                    <td title="EditSN14" class="br1Grey w150px pad0 cell">@Detail.SN14</td>
+                                                    <td title="EditSN15" class="br1Grey w150px pad0 cell">@Detail.SN15</td>
+                                                    <td class="br1Grey"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditDiplomat" class="w100per h48px fontBld" title="'Serial'+@Html.DisplayFor(modelItem => Detail.OPDetailId)" id="@Html.DisplayFor(modelItem => Detail.OPDetailId)" onclick="EditDiplomat(this.title)"></td>
+                                                    <td class="br1Grey"><input type="submit" VALUE="DELETE" class="w100per h48px fontBld" title="'Serial'+@Html.DisplayFor(modelItem => Detail.OPDetailId)" id="@Html.DisplayFor(modelItem => Detail.OPDetailId)" onclick="EditDiplomat(this.title)"></td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="container txtRight w100per text-center bg pad10">
+                    @if (Model.OrderOfPaymentList[0].PaymentStatus == "PAID")
+                    {
+                        <span class="pad5"><input type="button" disabled="disabled"  VALUE="ADD" data-toggle="modal" data-target="#modalAddDiplomat" class="w150px btn btn-primary h25px pad0" id="inputWarning"></span>
+                    }
+                    else
+                    {
+                        <span class="pad5"><input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalAddDiplomat" class="w150px btn btn-primary h25px pad0" id="inputWarning"></span>
+                    }
+                        @if (Model.OrderOfPaymentList.Count > 0 && Model.OrderOfPaymentDetailList.Count > 0)
+                        {
+                            <span class="pad5">@Html.ActionLink("BACK", "BackOrderOfPaymentDetail", "BillingPayments", new { CompanyId = @Model.OrderOfPaymentDetailList[0].CompanyId, opid1 = Model.OrderOfPaymentList[0].OrderOfPaymentId }, new { @class = "w150px btn btn-primary h25px pad12", Type = "button" })</span>
+                        }
+                        else
+                        {
+                            <span class="pad5"><input type="button" VALUE="BACK" class="w150px btn btn-primary h25px pad0"></span>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div ID="contentDataEntryRental" class="">
+
+    <!-- Modal Edit Visa View Detail Content -->
+    @using (Html.BeginForm("UpdateDiplomatDetail", "BillingPayments"))
+    {
+        @Html.AntiForgeryToken()
+        if (Model.OrderOfPaymentDetailList.Count > 0)
+        {
+            <input type="text" hidden="hidden" id="EditDetail" name="EditDetail" />
+        }
+        if (Model.OrderOfPaymentList.Count > 0)
+        {
+            <input type="text" hidden="hidden" id="EditOrderOfPaymentId" name="EditOrderOfPaymentId" value="@Model.OrderOfPaymentList[0].OrderOfPaymentId" />
+        }
+        <div class="modal fade" id="modalEditDiplomat" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal Edit Visa View Detail Content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" data-target="#modalEditDiplomat" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span>Edit Other Detail</h4>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <div class="container fontBld br1Grey pad0 hidden">
+                            <div class="col-sm-3 h25px bgColor-lv">OPDId</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w100per" id="EditOrderOfPaymentDetailId" name="EditOrderOfPaymentDetailId"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditGivenName">
+                            <div class="col-sm-3 h25px bgColor-lv">Given Name</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditGivenName" name="EditGivenName"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditMiddleName">
+                            <div class="col-sm-3 h25px bgColor-lv">Middle Name</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditMiddleName" name="EditMiddleName"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSurName">
+                            <div class="col-sm-3 h25px bgColor-lv">SurName</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditSurName" name="EditSurName"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditVisaName">
+                            <div class="col-sm-3 h25px bgColor-lv">Position</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditVisaName" name="EditVisaName"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditNationality">
+                            <div class="col-sm-3 h25px bgColor-lv">Nationality</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditNationality" name="EditNationality"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 hidden" id="hideEditDescription">
+                            <div class="col-sm-3 h25px bgColor-lv">Description</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditDescription" name="EditDescription"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditStart">
+                            <div class="col-sm-3 h25px bgColor-lv">Start</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditStart" name="EditStart" onkeyup="AutoCompute(this)"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditEnd">
+                            <div class="col-sm-3 h25px bgColor-lv">End</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditEnd" name="EditEnd"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 hidden" id="hideEditPending">
+                            <div class="col-sm-3 h25px bgColor-lv">Pending</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="EditPending" name="EditPending"></div>
+                        </div>
+                        @* SERIAL START HERE *@
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN1">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:1</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN1" name="EditSN1"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN2">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:2</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN2" name="EditSN2"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN3">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:3</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN3" name="EditSN3"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN4">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:4</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN4" name="EditSN4"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN5">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:5</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN5" name="EditSN5"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN6">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:6</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN6" name="EditSN6"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN7">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:7</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN7" name="EditSN7"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN8">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:8</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN8" name="EditSN8"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN9">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:9</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN9" name="EditSN9"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN10">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:10</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN10" name="EditSN10"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN11">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:11</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN11" name="EditSN11"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN12">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:12</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN12" name="EditSN12"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN13">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:13</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN13" name="EditSN13"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN14">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:14</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN14" name="EditSN14"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEditSN15">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:15</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="EditSN15" name="EditSN15"></div>
+                        </div>
+                        @* SERIAL END HERE *@
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                        <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+    <!-- Modal Add Visa View Detail Content-->
+    @using (Html.BeginForm("AddDiplomat", "BillingPayments"))
+    {
+        @Html.AntiForgeryToken()
+        if (Model.OrderOfPaymentDetailList.Count > 0)
+        {
+            <input type="text" hidden="hidden" id="OrderOfPaymentDetailId" name="OrderOfPaymentDetailId" value="@Model.OrderOfPaymentDetailList[0].OrderOfPaymentDetailId" />
+        }
+        if (Model.OrderOfPaymentList.Count > 0)
+        {
+            <input type="text" hidden="hidden" id="OrderOfPaymentId" name="OrderOfPaymentId" value="@Model.OrderOfPaymentList[0].OrderOfPaymentId" />
+        }
+        <div class="modal fade" id="modalAddDiplomat" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal Add Visa View Detail Content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" data-target="#modalAddDiplomat" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span>Add Other Detail</h4>
+                        <div class="bgColor-lb">
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="GivenName" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="MiddleName" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid fcRed" data-valmsg-for="SurName" data-valmsg-replace="true"></span></div>
+                        </div>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideGivenName">
+                            <div class="col-sm-3 h25px bgColor-lv">Given Name</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="GivenName" name="GivenName" data-val="true" data-val-required="*GivenName Required"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideMiddleName">
+                            <div class="col-sm-3 h25px bgColor-lv">Middle Name</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="MiddleName" name="MiddleName" data-val="true" data-val-required="*MiddleName Required"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSurName">
+                            <div class="col-sm-3 h25px bgColor-lv">SurName</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="SurName" name="SurName" data-val="true" data-val-required="*SurName Required"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideVisaName">
+                            <div class="col-sm-3 h25px bgColor-lv">Position</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="VisaName" name="VisaName"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideNationality">
+                            <div class="col-sm-3 h25px bgColor-lv">Nationality</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="Nationality" name="Nationality"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 hidden" id="hideDescription">
+                            <div class="col-sm-3 h25px bgColor-lv">Description</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="Description" name="Description"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideStart">
+                            <div class="col-sm-3 h25px bgColor-lv">Start</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="Start" name="Start" onkeyup="AutoCompute(this)"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideEnd">
+                            <div class="col-sm-3 h25px bgColor-lv">End</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="End" name="End"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 hidden" id="hidePending">
+                            <div class="col-sm-3 h25px bgColor-lv">Pending</div>
+                            <div class="col-sm-9 h25px col-sm-push-1"><input type="text" class="w90per" id="Pending" name="Pending"></div>
+                        </div>
+                        @* SERIAL START HERE *@
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN1">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:1</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN1" name="SN1"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN2">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:2</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN2" name="SN2"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN3">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:3</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN3" name="SN3"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN4">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:4</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN4" name="SN4"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN5">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:5</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN5" name="SN5"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN6">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:6</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN6" name="SN6"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN7">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:7</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN7" name="SN7"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN8">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:8</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN8" name="SN8"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN9">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:9</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN9" name="SN9"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN10">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:10</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN10" name="SN10"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN11">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:11</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN11" name="SN11"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN12">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:12</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN12" name="SN12"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN13">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:13</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN13" name="SN13"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN14">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:14</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN14" name="SN14"></div>
+                        </div>
+                        <div class="container fontBld br1Grey pad0 ovrFlwHide" id="hideSN15">
+                            <div class="col-sm-4 h25px bgColor-lv">Serial Number:15</div>
+                            <div class="col-sm-8 h25px col-sm-push-1 pad0"><input type="text" class="w90per" maxlength="16" id="SN15" name="SN15"></div>
+                        </div>
+                        @* SERIAL END HERE *@
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                        <div class="col-sm-4" id="hideCancel"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Modal Remove-->
+    @using (Html.BeginForm("RemoveOPDetail", "BillingPayments"))
+    {
+        @Html.AntiForgeryToken()
+
+        if (Model.OrderOfPaymentList.Count > 0)
+        {
+            <input type="text" id="OrderOfPaymentDetailId" hidden="hidden" name="OrderOfPaymentDetailId" />
+            if (Model.OrderOfPaymentList.Count == 1)
+            {
+                if (Model.OrderOfPaymentList[0].OrderOfPaymentId != 0)
+                {
+                    <input type="text" class="w100per hidden" id="RemoveOPId" name="RemoveOPId" value="@Html.DisplayFor(m => m.OrderOfPaymentList[0].OrderOfPaymentId)" />
+                }
+            }
+        }
+        <div class="modal fade" id="modalRemove" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" data-target="#modalRemoveRental">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-trash icon clr"></span> Remove Order Of Payment</h4>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <h4> Are you sure you want to remove this record?</h4>
+                        <div class="pad20">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <button type="submit" class="btn btn-primary w100px">Yes</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-primary w100px" data-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <!-- End Modal Remove -->
+
+</div>

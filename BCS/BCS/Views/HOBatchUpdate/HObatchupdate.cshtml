@@ -1,0 +1,229 @@
+﻿
+@{
+    ViewBag.Title = "HObatchupdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var message1 = ViewData["successmessage"] ?? string.Empty;
+    var message = TempData["AlertMessage"] ?? string.Empty;
+
+}
+
+<style type="text/css">
+    .progress {
+        width: 100%;
+        height: 30px;
+    }
+
+    .progress-wrap {
+        /*background: #f80;*/
+        background: #5bc0de;
+        margin: 20px 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress-bar {
+        background: #ddd;
+        left: 0;
+        position: absolute;
+        top: 0;
+    }
+</style>
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-8">
+
+        @using (Html.BeginForm("HOSubsidiaryLedger", "HObatchupdate", "datefor", FormMethod.Post))
+        {
+            <div class="modal-content">
+                <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-list"></span>  HO BATCH UPDATE </div>
+                <div class="modal-body ">
+                    <div class="col-md-12 fontBld">
+
+                        <label for="datefor">Date</label>
+                        <input type="text" class="form-control" name="datefor" id="datefor" placeholder="Date" style="width:200px;" value="@DateTime.Now.ToShortDateString()" readonly>
+
+
+                    </div>
+                    <div class="col-md-5 fontBld">
+                        <div class="checkbox fontBld">
+                            <label class="">
+                                Select All
+                            </label>
+                            <input type="checkbox" class="" id="HObatchupdate" value="Check All" onchange="checkAll(this)" name="HObatchupdate[]">
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Subsidiary Ledgers
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="SubsidiaryLedger">
+                            </label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                General Billings
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="GeneralBilling">
+                            </label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Order of Payments
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="OrderOfPayment">
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Franchise Fee Informations
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="FranchiseFeeInformation">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Garbage Informations
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="GarbageInformations">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Pole Informations
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="PoleInformation">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Rental Informations
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="RentalInformation">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Passed On Billing
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="SecurityGuardFeeInformation">
+                            </label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-5">
+                        <div class="checkbox">
+                            <label>
+                                Water Meter Readings
+                                <input type="checkbox" name="HObatchupdate" id="HObatchupdate" value="WaterMeterReadingS">
+                            </label>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4 col-md-offset-8">
+                        <input type="submit" class="btn btn-primary" value="Submit" style="width:70%" onclick="makevisible()" />
+                    </div>
+
+
+
+
+
+                    <div id="addprog"></div>
+
+                </div><!-- end of panel-body -->
+                <div class="modal-footer">
+                    @message
+
+
+
+            </div>
+
+
+
+        </div><!-- end of panel-primary -->
+
+
+
+        }
+
+
+    </div> <!--end of containter-->
+
+    <div class="col-xs-12 col-sm-6 col-md-4">
+        <div class="modal-content">
+            <div class="modal-header bgColor-lb fs18 fontBld"><span class="glyphicon glyphicon-list"></span>  HO BATCH UPDATE LOGS </div>
+            <div class="modal-body">@message</div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div><!--end of full row-->
+
+<script type="text/javascript">
+
+
+    function checkAll(ele) {
+        var checkboxes = document.getElementsByTagName('input');
+        if (ele.checked) {
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].type == 'checkbox') {
+                    checkboxes[i].checked = true;
+                }
+            }
+        } else {
+            for (var i = 0; i < checkboxes.length; i++) {
+                console.log(i)
+                if (checkboxes[i].type == 'checkbox') {
+                    checkboxes[i].checked = false;
+                }
+            }
+        }
+    }
+
+
+    var message = '@message';
+    function makevisible() {
+
+        //On click Show Progress Bar!!
+        $("#addprog").append('<div class="progress-wrap progress" data-progress-percent="100"><div class="progress-bar progress">UPDATING</div></div>');
+
+        // on page load...
+        moveProgressBar();
+        // on browser resize...
+        $(window).resize(function () {
+            moveProgressBar();
+        });
+        var endTime = (new Date()).getTime();
+        var millisecondsLoading = endTime - startTime
+        // SIGNATURE PROGRESS
+        function moveProgressBar() {
+            console.log("moveProgressBar");
+            var getPercent = ($('.progress-wrap').data('progress-percent') / 100);
+            var getProgressWrapWidth = $('.progress-wrap').width();
+
+            var progressTotal = getPercent * getProgressWrapWidth;
+            var animationLength = 100;
+
+            // on page load, animate percentage bar to data percentage length
+            // .stop() used to prevent animation queueing
+            $('.progress-bar').stop().animate({
+                left: progressTotal
+            }, animationLength);
+        }
+    }
+
+</script>
+

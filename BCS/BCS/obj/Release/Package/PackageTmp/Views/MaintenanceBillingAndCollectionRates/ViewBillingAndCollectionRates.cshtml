@@ -1,0 +1,335 @@
+﻿@model BCS.Models.SearchBillingAndCollectionRates
+@using BCS.Models;
+<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified: 6/13/16
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@{
+    ViewBag.Title = "Maintenance Billing and Collection Rate";
+}
+
+<script>
+    function EditRate(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+        }
+    }
+
+    function PassValueOfId(TransactionType, Subcat, ngas) {
+        document.getElementById('SubCat').value = Subcat;
+        document.getElementById('TransactionType').value = TransactionType;
+
+        document.getElementById('NGAS').value = ngas;
+        document.getElementById('SubCategoryEdit').value = Subcat;
+    }
+
+    function PassCategory(category, group) {
+        //alert("Category = " + category + " : Group = " + group.toString());
+        var a = document.getElementById("EditCategoryTo");
+        a.value = category;
+
+        var b = document.getElementById("editCat");
+        b.value = category;
+
+        var c = document.getElementById("GroupsEdit");
+        c.value = group;
+        //document.getElementById('EditCategoryTo').value = category;
+    }
+    function addeditrate(rateTransaction) {
+        document.getElementById('AddEditRate').innerHTML = rateTransaction;
+    }
+</script>
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<div ID="contentDataEntryRate" class="pad0">
+    <!-- Enterprise Detail -->
+    <div class="container modal-content w700px bgColor-White pad0">
+        <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">BILLING AND COLLECTION RATES</span></div>
+        <div class="modal-body pad10 bgColor-White">
+            <div class="container br2 pad0">
+                <div class="container  br1-bot-Blk bgColor-blk fcWhite pad0 text-center fontBld">CATEGORY</div>
+                <table class="w100per">
+                    <tr class="">
+                        @if (ViewBag.Category != null)
+                        {
+                            <td class="col-sm-9 pad0">
+                                <input class="form-control w100per txtCenter h34px" readonly="readonly" value="@ViewBag.Category" placeholder="Select a Category">
+                            </td>
+                        }
+                        <td class="col-sm-3 pad0">
+                            <button type="button" class="roundedButton grad3 h34px fs15 w100per pad2" title="Click Button to Search for Category" data-toggle="modal" data-target="#modalSearchCategory"><span class="glyphicon glyphicon-search pad0 clr">&nbsp;</span>Search Category</button>
+                        </td>
+                    </tr>
+                </table>
+                <div class="pad10">
+                    <div class="semi-square br1db ">
+                        @if (Model.BillingRate.Count > 0)
+                        {
+                            <div class="container w100per pad0 semi-squaretop bgColor-lb fontBld pad10 br1-bot-Blk">
+                                <div id="subcategoryMain" class="col-sm-5 h35px">SUB CATEGORY</div>
+                                <div id="ngasMain" class="col-sm-4 h35px">NGAS DESCRIPTION</div>
+                                <div class="col-sm-3 pad2"></div>
+                            </div>
+                            <div class="container w100per pad0 ovrFlw-YAuto hmax100px">
+                                @foreach (var item in Model.SubCategory)
+                                {
+                                    var a = item.ToString();
+                                    string b = @ViewBag.ZoneGroup;
+
+                                    var cat = Model.BillingRate[0].Category;
+                                    BCS_Context db = new BCS_Context();
+                                    var ngasCode = db.BillingRates.Where(m => m.Category == cat).Where(m => m.SubCategory == a).Where(n => n.ZoneGroup == b).FirstOrDefault().NGASCode ?? "";
+                                    //var ngasAccount = db.NGAS.FirstOrDefault(m => m.NGASCode == ngasCode).NGASAccount;
+                                    <div id="" class="container pad0 br1-bot-Blk">
+                                        <div id="subcategoryMain" class="col-sm-5 pad5">@item.ToString()</div>
+                                        <div id="ngasMain" class="col-sm-4 pad0">@ngasCode</div>
+                                        <div class="col-sm-3 pad0">
+                                            <div class="col-sm-10 pad5 txtRight">@Html.ActionLink("View Rates", "ViewRates", new { SubCategory = @item.ToString(), NGASCode = ngasCode }, new { @class = "actLink br1Grey grad3 pad5)", @style = "width: 100%;" })</div>
+
+                                            @if (ViewBag.IsValidRole == true)
+                                            {
+                                                <div class="col-sm-1 pad0 text-center">
+                                                    <button type="button" class="button w20px h25px clr bgColor-None glyphicon glyphicon-pencil showElement hideElement" title="Edit sub category" value="MODIFY" onclick="PassValueOfId('Edit','@a','@ngasCode'),addeditrate('Edit Billing and Collection SubCategory')" showElement="editSubCat" hideElement="addSubCat" data-toggle="modal" data-target="#modalAddEditSubCategory"></button>
+                                                </div>
+                                            }
+                                        </div>
+                                        <input type="text" hidden="hidden" id="SubCategory" value="@item.ToString()" />
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <div class="container w100per fontBld text-center pad5 bgColor-lb semi-squarebot">
+                            <div class="col-sm-3"></div>
+                            @if (ViewBag.IsValidRole == true)
+                            {
+                                if (ViewBag.ShowAdd != false)
+                                {
+                                    <div class="col-sm-3 pad0"><input type="button" class="btn btn-primary w100per showElement hideElement" value="Add Sub-Category" onclick="PassValueOfId('Add',''),addeditrate('Add Billing and Collection SubCategory')" title="Add Sub Category" showElement="addSubCat" hideElement="editSubCat" data-toggle="modal" data-target="#modalAddEditSubCategory"></div>
+                                }
+                            }
+                            <div class="col-sm-6 pad0">
+                                @Html.ActionLink("View Summary Rates", "BillingRatesReport", "MaintenanceBillingAndCollectionRates", new { reportType = "BillingRatesAlphaList" }, new { @class = "btn btn-primary fs15 fontBld", Type = "button", target = "_blank" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Search Category-->
+<div class="modal fade" id="modalSearchCategory" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal Search Category Content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchCategory" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-search"></span> Search Category</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+
+                @if (Model.Category.Count > 0)
+                {
+                    foreach (var item in Model.Category)
+                    {
+                        using (Html.BeginForm("FillSubCategory", "MaintenanceBillingAndCollectionRates"))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="row maro pad10">
+                                <button class="w95per btn h34px button grad3 semi-square br1 bgColor-lb" name="Category" value="@item.ToString()">
+                                    <span id="@item.ToString()" value="@item.ToString()">@item.ToString()</span>
+                                </button>
+                                @if (ViewBag.IsValidRole == true)
+                                {
+                                    BCS_Context db = new BCS_Context();
+                                    string CategoryGroup = db.BillingRates.FirstOrDefault(m => m.Category == item.ToString()).ZoneGroup.ToString();
+                                    <button type="button" id="EditCategoryFrom" value="@item.ToString()" onclick="PassCategory(this.value,@CategoryGroup.ToString())" class="clr bgColor-None glyphicon glyphicon-pencil br0 pad0" data-toggle="modal" data-target="#modalEditCategory" title="Edit @item.ToString()"></button>
+                                }
+                            </div>
+
+
+                        }
+                    }
+                }
+                <!-- End CategoryList-->
+                @*</div>*@
+
+
+            </div>
+            <div class="modal-footer">
+                <div class="container">
+                    @if (ViewBag.IsValidRole == true)
+                    {
+                        <div class="col-sm-9"><button type="button" class="btn btn-primary w100px" data-toggle="modal" data-target="#modalAddCategory">Add</button></div>
+                    }
+                    <div class="col-sm-1"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Search Category-->
+<!-- Add/Edit  sub category-->
+<div class="modal fade" id="modalAddCategory" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal Add/Edit sub Category Content-->
+        @using (Html.BeginForm("AddCategory", "MaintenanceBillingAndCollectionRates"))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddEditCategory" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-list icon clr"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Billing and Collection Category</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container bgColor-White h100px br1Grey ovrFlw-Y">
+                        <!-- Start Category List-->
+                        <div class="row pad5">
+                            <div class="col-sm-8 bgColor-White pad0">
+                                <label for="Category">Category</label>
+                                <input type="text" class="h25px w99per" data-val="true" data-val-required="Category name is required" name="Category" placeholder="Category Name" />
+                            </div>
+                            <span class="field-validation-valid" data-valmsg-for="Category" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="col-sm-9"><button type="submit" class="btn btn-primary" data-target="#modalAddCategory">Save</button></div>
+                        <div class="col-sm-3"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- End Add/Edit  sub category-->
+<!-- Modal Edit Category-->
+<div class="modal fade" id="modalEditCategory" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal Add/Edit Category Content-->
+        @using (Html.BeginForm("EditCategory", "MaintenanceBillingAndCollectionRates"))
+        {
+            @Html.AntiForgeryToken()
+            <input type="text" hidden="hidden" id="EditCategoryTo" name="EditCategory" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddEditCategory" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-list icon clr"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Edit Billing and Collection Category</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="container">
+                        <div class="col-sm-4 pad0"><label for="Category">Category &nbsp;</label></div>
+                        <div class="col-sm-8 pad0">
+                            <div class="row mar0 pad0">
+                                <input type="text" data-val="true" data-val-required="Category name is required" class="h25px w100per" id="editCat" name="Category" placeholder="Category Name" />
+                            </div>
+                            <div class="row mar0 pad0">
+                                <span class="field-validation-valid" data-valmsg-for="Category" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="col-sm-9"><button type="submit" class="btn btn-primary" data-target="#modalAddCategory">Update</button></div>
+                        <div class="col-sm-3"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- End Modal Edit Category-->
+<!-- Modal Add/Edit Sub Category-->
+<div class="modal fade" id="modalAddEditSubCategory" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal Add/Edit Rate Content-->
+        @using (Html.BeginForm("AddSubCategory", "MaintenanceBillingAndCollectionRates"))
+        {
+            @Html.AntiForgeryToken()
+            <input type="text" hidden="hidden" id="SubCat" name="SubCat" />
+            <input type="text" hidden="hidden" id="TransactionType" name="TransactionType" />
+            <input type="text" hidden="hidden" id="CategoryGroup" name="CategoryGroup" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddEditSubCategory" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="AddEditRate"><span class="glyphicon glyphicon-list icon clr"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span><span class="editSubCat"></span> Billing and Collection SubCategory</h4>
+                </div>
+                <div class="modal-body bgColor-lv ovrFlw-YAuto hmax300px">
+                    <div class="pad5 bgColor-red fcWhite fontBld text-center">
+                        SUB CATEGORY LIST
+                    </div>
+                    <div class="container bgColor-White br1Grey pad0">
+                        <!-- Start Category List-->
+                        <div class="row mar0 pad0">
+                            @if (Model.BillingRate.Count > 0)
+                            {
+                                if (Model.BillingRate[0].Category == "Rental Fee")
+                                {
+                                    <select class="w100per panel h25px clr" id="Currency" name="Currency">
+                                        <option value="PHP" selected="selected">PHP</option>
+                                        <option value="USD">USD</option>
+                                    </select>
+                                }
+
+                                <div class="row mar0 pad10 br1-bot">
+                                    <div class="col-sm-4 pad0"><label for="Groups"> Select NGAS Code</label></div>
+                                    <div class="col-sm-8 pad0">
+                                        <select name="NGAS" id="NGAS" data-val="true" data-val-required="NGAS is required" class="form-control w100per">
+                                            <option value="" selected="selected">Select NGAS</option>
+                                            @foreach (var item in ViewBag.NGASCode)
+                                            {
+                                                <option value="@item.NGASAccount">@item.NGASAccount</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <span class="field-validation-valid" data-valmsg-for="NGAS" data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="row mar0 pad10">
+                                    <div class="col-sm-4 pad0"><label for="SubCategory">SubCategory Name</label></div>
+                                    <div class="col-sm-8 pad0">
+                                        <input type="text" data-val="true" data-val-required="SubCategory name is required" class="form-control w100per" name="SubCategory" id="SubCategoryEdit" placeholder="Enter Sub Category" />
+                                    </div>
+                                    <span class="field-validation-valid" data-valmsg-for="NGAS" data-valmsg-replace="true"></span>
+                                </div>
+                                @*<div class="col-sm-1 pad0"><button type="button" class="h25px clr bgColor-White glyphicon glyphicon-pencil br0 pad0">&nbsp;</button><button type="button" class="h25px clr bgColor-White glyphicon glyphicon-trash br0 pad0"></button></div>*@
+                                <input type="text" hidden="hidden" name="Category" value="@Model.BillingRate[0].Category" />
+                                <span class="field-validation-valid" data-valmsg-for="SubCategory" data-valmsg-replace="true"></span>
+                            }
+
+                        </div>
+                        <!-- End CategoryList-->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="col-sm-9"><button type="submit" class="btn btn-primary" data-target="#modalAddCategory">Save</button></div>
+                        <div class="col-sm-3"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

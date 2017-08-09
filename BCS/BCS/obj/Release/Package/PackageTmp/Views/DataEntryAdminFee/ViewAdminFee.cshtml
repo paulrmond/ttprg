@@ -1,0 +1,298 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consultant: DCI
+-->
+@model IEnumerable<BCS.Models.AdminFee>
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+@*<link href="~/Content/jquery-ui.min.css" rel="stylesheet" />*@
+@{
+    ViewBag.Title = "ViewAdminFee";
+}
+
+<script>
+    function Clear() {
+
+
+        //$('#viewreport').prop('disabled', false);
+        //document.getElementById("viewreport").disabled = false;
+        //location.reload();
+        document.getElementById('devname1').value = "";
+        $('#viewreport').prop('disabled', false);
+        
+    }
+
+    function uploadFile() {
+
+        var x = document.getElementById("BillingPeriod").value;
+        var ufile = $('#UploadFile')[0].files[0];
+        var a = document.getElementById("progressbar");
+        var newformdata = new FormData();
+
+        if (ufile.name == "" || x == "") {
+            alert('Please select billing period or file to upload.')
+            return false;
+        }
+        newformdata.append('uploadData', $('#UploadFile')[0].files[0]);
+        newformdata.append('billPeriod', x);
+        //for (var pair of newformdata.entries()) {
+        //    alert(pair[0] + ', ' + pair[1]);
+        //}
+        $.ajax({
+            //url: '/DataEntryAdminFee/uploaddata',
+            url: '/Handler/UploadHandler.ashx?billperiod=' + x + '',
+            type: 'POST',
+            data: newformdata,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                var con = confirm("Any existing data in this billing period will be overridden. Press OK to proceed.");
+                if (con) {
+                    document.body.style.cursor = 'wait';
+                    a.hidden = false;
+                } else {
+                    return false;
+                }
+
+            },
+            success: function () {
+                alert('Upload complete');
+                document.body.style.cursor = 'default';
+                a.hidden = true;
+                document.getElementById("UploadFile").value = "";
+                document.getElementById("BillingPeriod").value = "";
+                location.reload();
+            },
+            error: function (err) {
+                alert(err.statusText);
+                a.hidden = true;
+                document.body.style.cursor = 'default';
+                location.reload();
+            }
+        });
+    }
+
+    /*Developers List JSON*/
+    function getDev() {
+        var dev = $('#devname1').val();
+        var devlist = $('#devlist1');
+        var devCode = $('#devCode');
+        //var devlist2 = $('#devlist2');
+        devlist.empty();
+        devCode.empty();
+        $.ajax({
+            url: '/DataEntryAdminFee/GetDevelopers',
+            type: 'POST',
+            data: { 'dev': dev },
+            dataType: 'json',
+            success: function (a) {
+                $('#devlist1').empty()
+                for (i = 0; i < a.length; i++) {
+                    $('#devlist1').append('<option value="' + a[i].Dev_Comp_Code + ' | ' + a[i].Developer + '"> ' + a[i].Ecozone + ' </option>');
+                    //$('#devlist1').append($("<option></option>").val(a[i].Developer).html(a[i].Ecozone));
+                }
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+
+    //function getEcozone() {
+    //    var devlist = $('#devlist1');
+    //    var devCode = $('#devCode');
+    //    //var devlist2 = $('#devlist2');
+    //    devlist.empty();
+    //    devCode.empty();
+    //    var dev = $('#devname1').val();
+    //    var devCode = $('#devCode');
+    //    $.ajax({
+    //        url: '/DataEntryAdminFee/getEcozone',
+    //        type: 'POST',
+    //        data: { 'dev': dev },
+    //        dataType: 'json',
+    //        success: function (a) {
+    //            for (i = 0; i < a.length; i++) {
+    //                $('#devCode').append('<input type="text" id="devCode" name="devCode" class="hidden" value="' + a[i].Dev_Comp_Code + '">');
+    //                $('#devCode').append('<input type="text" id="zoneCode" name="zoneCode" class="hidden" value="' + a[i].Zone_Code + '">');
+    //                $('#devCode').append('<input type="text" id="compCode" name="compCode" class="hidden" value="' + a[i].Comp_Code + '">');
+    //            }
+    //        },
+    //        error: function (err) {
+    //            alert(err.responseText);
+    //        }
+    //    });
+    //}
+</script>
+
+
+@*Note: The accept attribute of the input tag is not supported in Internet Explorer 9 (and earlier versions), and Safari 5 (and earlier).*@
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+
+@if (ViewBag.NotRegisteredCompany != null)
+            {
+    <script>alert(ViewBag.NotRegisteredCompany.Count + ' record/s not exist in current database.')</script>
+}
+
+    @*<input type="button" id="btnSubmit" value="BUTTON" onclick="uploadFile()" />
+        <input type="file" id="ufile" name="ufile" allowmultiple="true" value="Upload file" />*@
+
+    <div class="container modal-content bgColor-White pad0">
+        <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">ADMINISTRATIVE FEE</span></div>
+
+        @*@using (Html.BeginForm("ViewAdminFee", "DataEntryAdminFee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {*@
+
+        <div class="modal-body bgColor-White" style="min-height:420px;max-height:100%;">
+
+            @using (Html.BeginForm("AdminFeeListReport", "DataEntryAdminFee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {  <div class="col-sm-6">
+                <div class="panel panel-default br1db">
+                    <div class="panel-heading fontBld">Upload List</div>
+                    <div class="panel-body bgColor-lgrey">
+                        <label for="BillingPeriod" class="pad10">Billing Period:</label>
+                        <select name="BillingPeriod" id="BillingPeriod" data-val="true" data-val-required="Billing period is required" class="form-control">
+                            <option selected="selected" value="">Select Billing Period</option>
+                            @foreach (var item in ViewBag.BillingPeriod)
+                            {
+                                <option value="@item.BillingPeriodId">@item.PeriodText: @item.DateFrom.ToShortDateString() - @item.DateTo.ToShortDateString()</option>
+                            }
+                        </select>
+
+                        <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingPeriod" data-valmsg-replace="true"></span></div>
+                        <label for="UploadFile" class="pad10">Upload File:</label>
+                        <input type="file" name="UploadFile" id="UploadFile" accept=".xls" data-val="true" data-val-required="File to upload is required" class="form-control" />
+
+                        <div id="progressbar" style="position:relative" hidden="hidden">
+                            <img src="~/Gif/loading_g.gif" width="500" height="20" />
+                            <span id="progressbar-label" style="position:absolute; left:40%">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <input type="button" onclick="uploadFile()" class="btn btn-primary" value="Upload" />
+                        <input id="resetModal" hidden="hidden" type="reset">
+                    </div>
+                </div>
+            </div>
+
+
+            }
+
+
+
+
+
+            @using (Html.BeginForm("AdminFeeListReport", "DataEntryAdminFee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="col-sm-6">
+                    <div class="panel panel-default br1db">
+                        <div class="panel-heading fontBld">Reports</div>
+                        <div class="panel-body bgColor-lgrey" style="margin-top:-10px;">
+                            <div class="row">
+                                <div class="col-sm-12 pad10">
+                                    <label for="BillingPeriod">Billing Period:</label>
+                                    <select name="BillingPeriod" id="BillingPeriod" data-val="true" data-val-required="Billing period is required" class="form-control w100per" required>
+                                        <option selected="selected" value="">Select Billing Period</option>
+                                        @foreach (var item in ViewBag.BillingPeriod)
+                                        {
+                                            <option value="@item.BillingPeriodId">@item.PeriodText: @item.DateFrom.ToShortDateString() - @item.DateTo.ToShortDateString()</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row pad5">
+                                <div class="col-sm-6 pad5">
+                                    <div class="container w100per  bgColor-White semi-square br1db pad0">
+                                        <div class="col-sm-9 pad5 txtCenter"><div class="form-control bgColor-lb pad2 fontBld txtCenter">AlphaList Report</div></div>
+                                        <div class="col-sm-3 pad5">
+                                            <input type="radio" name="generatedType" class="form-control" value="AdminFeeAlphaList" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 pad5">
+                                    <div class="container w100per  bgColor-White semi-square br1db pad0">
+                                        <div class="col-sm-9 pad5"><div class="form-control bgColor-lb pad2 fontBld txtCenter">Monthly Report</div></div>
+                                        <div class="col-sm-3 pad5">
+                                            <input type="radio" name="generatedType" class="form-control " value="AdminFeeMonthly" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12 pad10">
+                                    <label>Company Zone Type</label>
+                                    <select name="zoneType" id="zoneType" data-val="true" data-val-required="Zone Type is required" class="form-control w100per" required>
+                                        <option value="">-- Select Zone Type --</option>
+                                        <option selected="selected" value="All"> All Zone Type</option>
+                                        <option selected="selected" value="Eco"> Ecozone</option>
+                                        <option selected="selected" value="IT"> IT Park</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-12 pad10">
+                                    <label>Developer</label>
+                                    @*<select name="developer" class="form-control w100per" required>
+                                            @foreach (var item in ViewBag.AdminFee)
+                                            {
+                                                <option value="@item">@item</option>
+                                            }
+                                        </select>*@
+
+                                    @*<input type="text" id="devCode" name="devCode" class="">
+                                        <input type="text" id="zoneCode" name="zoneCode" class="">*@
+
+                                    <div id="devCode" name="devCode"></div>
+
+                                    <input type="text" onkeyup="getDev()" id="devname1" name="devname1" list="devlist1" class="w100per" data-val="true" data-val-required="*Company Required" />
+                                    <datalist id="devlist1">
+                                        <option></option>
+                                    </datalist>
+                                    @*<select id="devlist2" name="devlist2">
+                                        </select>*@
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="panel-footer fontBld">
+                            <div class="col-sm-20"></div>
+
+                            <button type="submit" id="viewreport" name="viewreport" onclick="enableMeBtn()" class="btn btn-primary w200px h50px" formtarget="_blank">Generate Report</button>
+
+
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="Clear()">Clear</button>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval");
+    }

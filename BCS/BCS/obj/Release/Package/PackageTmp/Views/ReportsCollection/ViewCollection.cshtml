@@ -1,0 +1,966 @@
+﻿@model BCS.Models.SearchReportsCollectionModels
+@using Microsoft.AspNet.Identity;
+@using BCS.Models;
+@{
+    ViewBag.Title = "ViewCollection";
+}
+@*IAN*@
+@* SHOW AND HIDE OF DROPDOWN SELECT *@
+@*<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>*@
+<script type="text/javascript" src="~/Scripts/reportscollection.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //hide select
+        $(".box").not(".red").hide();
+        $(".box").not(".green").hide();
+        $(".box").not(".blue").hide();
+        $(".black").show();
+
+        //hide divs
+        $("#ModalNCAR").hide();
+        $("#ModalAR").hide();   
+        $("#ModalNCAF").hide();
+        $("#ModalNC").hide();
+        $("#ModalBP").hide();
+        $("#ModalTD").hide();
+        $("#ModalDiv").hide();
+
+        $('input[type="radio"]').click(function () {
+            if ($(this).attr("value") == "Collection") {
+                $(".box").not(".red").hide();
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+                $(".red").show();
+
+
+            }
+            if ($(this).attr("value") == "OfficialReceipt") {
+                $(".box").not(".green").hide();
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+                $(".green").show();
+            }
+            if ($(this).attr("value") == "Others") {
+                $(".box").not(".blue").hide();
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+                $(".blue").show();
+            }
+        });
+
+        $('#col').on('change', function () {
+
+            var a = $(this).find('option:selected').attr('NatureCollectionWithARS');
+            var b = $(this).find('option:selected').attr('AccountRecievableBillings');
+            var c = $(this).find('option:selected').attr('NatureCollectionAccountableForms');
+            var d = $(this).find('option:selected').attr('NatureCollection');
+            var e = $(this).find('option:selected').attr('BillingPeriods');
+            var f = $(this).find('option:selected').attr('TransactionDate');
+            var g = $(this).find('option:selected').attr('TransactionDateDivision');
+
+            var zz = $(this).find('option:selected').val();
+         
+            if(a == "True"){
+               
+                $("#ModalNCAR").show();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+
+            }else if(b == "True"){
+               
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").show();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            }else if(c == "True"){
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").show();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            }else if(d == "True"){
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").show();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+
+            } else if(e == "True"){
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").show();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            } else if(f == "True"){
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").show();
+                $("#ModalDiv").hide();
+            } else if (g == "True"){
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").show();
+            }
+
+
+         
+
+        });
+
+
+
+        $('#OR').on('change', function () {
+          
+            var a = $(this).find('option:selected').attr('NatureCollectionWithARS');
+            var b = $(this).find('option:selected').attr('AccountRecievableBillings');
+            var c = $(this).find('option:selected').attr('NatureCollectionAccountableForms');
+            var d = $(this).find('option:selected').attr('NatureCollection');
+            var e = $(this).find('option:selected').attr('BillingPeriods');
+            var f = $(this).find('option:selected').attr('TransactionDate');
+            var g = $(this).find('option:selected').attr('TransactionDateDivision');
+
+            var zz = $(this).find('option:selected').val();
+           
+            if (a == "True") {
+
+                $("#ModalNCAR").show();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+
+            } else if (b == "True") {
+
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").show();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            } else if (c == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").show();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            } else if (d == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").show();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+
+            } else if (e == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").show();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            } else if (f == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").show();
+                $("#ModalDiv").hide();
+            } else if (g == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").show();
+            }
+
+
+
+        });
+
+
+
+
+
+        $('#Oth').on('change', function () {
+     
+
+            var a = $(this).find('option:selected').attr('NatureCollectionWithARS');
+            var b = $(this).find('option:selected').attr('AccountRecievableBillings');
+            var c = $(this).find('option:selected').attr('NatureCollectionAccountableForms');
+            var d = $(this).find('option:selected').attr('NatureCollection');
+            var e = $(this).find('option:selected').attr('BillingPeriods');
+            var f = $(this).find('option:selected').attr('TransactionDate');
+            var g = $(this).find('option:selected').attr('TransactionDateDivision');
+
+            var zz = $(this).find('option:selected').val();
+           
+            if (a == "True") {
+
+                $("#ModalNCAR").show();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+
+            } else if (b == "True") {
+
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").show();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            } else if (c == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").show();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            } else if (d == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").show();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+
+            } else if (e == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").show();
+                $("#ModalTD").hide();
+                $("#ModalDiv").hide();
+            } else if (f == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").show();
+                $("#ModalDiv").hide();
+            } else if (g == "True") {
+
+                $("#ModalNCAR").hide();
+                $("#ModalAR").hide();
+                $("#ModalNCAF").hide();
+                $("#ModalNC").hide();
+                $("#ModalBP").hide();
+                $("#ModalTD").hide();
+                $("#ModalDiv").show();
+            }
+
+    
+
+
+
+
+        });
+
+
+
+        // multiselect
+        //collection
+        //$('#groupedARType').multiselect({
+        //    enableFiltering: true,
+        //    includeSelectAllOption: true,
+        //    dropUp: true,
+        //    maxHeight: 180,
+        //    buttonWidth: '100%'
+        //    });
+
+
+
+        //$('#col').multiselect({
+        //    includeSelectAllOption: true,
+        //    enableFiltering: true
+        //});
+    });
+
+    function Clear() {
+
+        document.getElementById("form1").reset();
+    }
+
+    function ClearReset() {
+        //hide select
+        $(".box").not(".red").hide();
+        $(".box").not(".green").hide();
+        $(".box").not(".blue").hide();
+        $(".black").show();
+
+        //hide divs
+        $("#ModalNCAR").hide();
+        $("#ModalAR").hide();
+        $("#ModalAR3").hide();
+        $("#ModalNCAF").hide();
+        $("#ModalNC").hide();
+        $("#ModalBP").hide();
+        $("#ModalDiv").hide();
+
+    }
+
+    //-------------START Function for Billing Statement
+    function updateZone() {
+        var a = $('#zoneGroupCode').val();
+        $.ajax({
+            url: '/ReportsCollection/returnZone',
+            type: 'POST',
+            data: { 'a': a },
+            dataType: 'json',
+            success: function (a) {
+
+                //var i = billingStatementViewModel['zoneName'];
+                //var def = abc.split(/,/);
+                $('#zoneName1').empty();
+                $('#zoneName1').append("<option value=''>Select Zone</option>");
+                $('#zoneName1').append("<option value='All'>All</option>");
+
+                //$.each(a, function (key, value) {
+                //    //alert(value);
+                //    //$('#zoneName1').append("<option value=" + value + ">" + value + "</option>");
+                //    $('#zoneName1').append($("<option></option>").val(value).html(value));
+                //})
+
+                for (i = 0; i < a.length; i++) {
+                    $('#zoneName1').append('<option>' + a[i].ZoneCode + '| ' + a[i].ZoneName + '</option>');
+                    //$('#devlist1').append($("<option></option>").val(a[i].Developer).html(a[i].Ecozone));
+
+                }
+
+
+            },
+            error: function () {
+                //alert("ERROR");
+            }
+        });
+    }
+    //------------END Function for Billing Statement
+
+    //function checkValid() {
+    //    var cc = $('#groupedARType').val();
+
+    //    if (!!$('#groupedARType').val())
+    //    {
+    //        alert("Please select Transaction Date / Account Receivables!");
+    //    }
+    //    //if (cc == '') {
+    //    //    //document.getElementById("GenRepo").removeAttribute("formtarget");
+    //    //    //document.getElementById("GenRepo").removeAttribute("type");
+    //    //    alert("Please select Transaction Date / Account Receivables!");
+    //    //}
+    //    //else { }
+    //}
+
+</script>
+
+<br />
+
+@using (@Html.BeginForm("ViewCollection", "ReportsCollection", FormMethod.Post, new { @id = "form1", @enctype = "multipart/form-data" }))
+{
+    ApplicationDbContext context1 = new ApplicationDbContext();
+    BCS_Context db1 = new BCS_Context();
+    var currentUserId1 = User.Identity.GetUserId();
+    var username = context1.Users.Where(m => m.Id == currentUserId1).FirstOrDefault().UserName;
+    var hasAccess = db1.RoleAssignmentMatrix.Where(m => m.UserName == username).FirstOrDefault().Collection;
+
+    if (hasAccess != null && hasAccess == true)
+    {
+    <center>
+        <div class="modal-content w900px">
+            <div class="modal-header text-left">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-briefcase"></span> Collection Report</h4>
+            </div>
+
+            <div class="modal-body bgColor-lv pad10">
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    ApplicationDbContext context = new ApplicationDbContext();
+                    BCS_Context db = new BCS_Context();
+
+                    var currentUserId = User.Identity.GetUserId();
+                    //var userZone = context.Users.SingleOrDefault(i => i.Id == currentUserId).
+                    var currentUserZoneGroup = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+
+                    int sample = Convert.ToInt32(context.Users.SingleOrDefault(m => m.Id == currentUserId).Zone);
+                    /* var sample = db.Zone.SingleOrDefault(i => i.ZoneId == asd).ZoneId*/
+
+
+                    var ZoneName = db.ZoneGroup.Single(m => m.ZoneGroupCode == currentUserZoneGroup).ZoneGroupName;
+                    var zoneGroupCode = context.Users.SingleOrDefault(m => m.Id == currentUserId).ZoneGroup;
+                    var zonegroupid = db.ZoneGroup.Single(m => m.ZoneGroupCode == zoneGroupCode).ZoneGroupId;
+
+                    if (ZoneName == "Head Office")
+                    {
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Zone Group</div></div>
+                            <div class="col-sm-9 pad5">
+                                <select name="zoneGroupCode" id="zoneGroupCode" class="form-control  w100per" title="Select Zone" onchange="updateZone();" required>
+
+                                    <option value="">-- Select ZoneGroup --</option>
+                                    @foreach (var item in Model.ZoneGroupList)
+                                    {
+                                        <option value="@item.ZoneGroupCode">@item.ZoneGroupName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <input name="zoneGroupCode" value="@context.Users.FirstOrDefault(m => m.Id == currentUserId).ZoneGroup" hidden />
+                    }
+
+
+                <!--ZONE-->
+                    if (ZoneName != "Head Office")
+                    {
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Zone</div></div>
+                            <div class="col-sm-9 pad5">
+                                <select name="zoneName" id="zoneName" class="form-control  w100per" title="Select Zone" required>
+                                    <option value="">-- Select Zone --</option>
+                                    <option value='All'>All</option>
+                                    @foreach (var item in Model.ZoneList.Where(m => m.ZoneId == sample))
+                                    {
+                                        <option value="@item.ZoneCode">@item.ZoneCode</option>
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Zone</div></div>
+                            <div class="col-sm-9 pad5">
+                                <select name="zoneName" id="zoneName1" class="form-control  w100per" title="Select Zone" required></select>
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="container w100per pad0  bgColor-White semi-square br1db">
+                    <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Currency</div></div>
+                    <div class="col-sm-9 pad5">
+                        <select name="currency" id="currency" class="form-control  w100per" title="Select Currency" required>
+                            <option value='PHP'>PHP:PESO</option>
+                            <option value='USD'>USD:DOLLAR</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--RADIO BUTTOn-->
+
+                <div class="container w100per pad0">
+                    <div class="col-sm-4 pad0">
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Collection</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" name="ReportType" class="form-control" value="Collection" id="buttonType">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 padlr5">
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Official Receipt</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" name="ReportType" class="form-control " value="OfficialReceipt" id="buttonType">
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-4 pad0">
+                        <div class="container w100per pad0  bgColor-White semi-square br1db">
+                            <div class="col-sm-10 pad5"><div class="form-control bgColor-lb fontBld">Others</div></div>
+                            <div class="col-sm-2 pad5">
+
+                                <input type="radio" name="ReportType" class="form-control " value="Others" id="buttonType">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--SELECT REPORT-->
+                <div id="radselect" class="container w100per pad0  bgColor-White semi-square br1db">
+                    <div class="col-sm-3 pad5"><div class="form-control bgColor-lb fontBld">Reports</div></div>
+                    <!--Default-->
+                    <div class="col-sm-9 pad5 black box">
+                        <select id="default" name="selecttypesDef" class="form-control  w100per">
+                            <option value="">--Select Report--</option>
+                        </select>
+                    </div>
+                    <!--Collection-->
+                    <div class="col-sm-9 pad5 red box">
+                        <select id="col" name="ReportName" class="form-control  w100per"  onselect="clearmodalitems()">
+
+                            <option value="" disabled selected>-- Select Collection --</option>
+                            @foreach (var item in Model.RTlist.Where(m => m.ReportTableTypeId == 1).OrderBy(x => x.ReportTableName))
+                            {
+                                @*<option value="@item.ReportTableName" billingperiod="@item.BillingPeriodTB.ToString()" creditar="@item.CreditARTB.ToString()" transdate="@item.TransactionDateTB.ToString()">*@
+                                <option value="@item.ReportTableName" NatureCollectionWithARS ="@item.NatureCollectionWithARS.ToString()" AccountRecievableBillings ="@item.AccountRecievableBillings.ToString()"
+                                         NatureCollectionAccountableForms ="@item.NatureCollectionAccountableForms.ToString()" NatureCollection ="@item.NatureCollection.ToString()" BillingPeriods ="@item.BillingPeriods.ToString()"
+                                        TransactionDate ="@item.TransactionDate.ToString()" TransactionDateDivision ="@item.TransactionDateDivision.ToString()">
+                                    @item.ReportTableName
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!--Official Reciept-->
+                    <div name="selecttypesOR" class="col-sm-9 pad5 green box">
+                        <select id="OR" name="ReportName" class="form-control  w100per"  onselect="clearmodalitems()">
+                            <option value="" disabled selected>-- Select Official Receipt --</option>
+                            @foreach (var item in Model.RTlist.Where(m => m.ReportTableTypeId == 2).OrderBy(x => x.ReportTableName))
+                            {
+                                @*<option value="@item.ReportTableName" billingperiod="@item.BillingPeriodTB.ToString()" creditar="@item.CreditARTB.ToString()" transdate="@item.TransactionDateTB.ToString()">*@
+                                <option value="@item.ReportTableName" NatureCollectionWithARS ="@item.NatureCollectionWithARS.ToString()" AccountRecievableBillings ="@item.AccountRecievableBillings.ToString()"
+                                         NatureCollectionAccountableForms ="@item.NatureCollectionAccountableForms.ToString()" NatureCollection ="@item.NatureCollection.ToString()" BillingPeriods ="@item.BillingPeriods.ToString()"
+                                        TransactionDate ="@item.TransactionDate.ToString()" TransactionDateDivision ="@item.TransactionDateDivision.ToString()">
+                                    @item.ReportTableName
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <!--Others-->
+                    <div class="col-sm-9 pad5 blue box">
+                        <select id="Oth" name="ReportName" class="form-control  w100per" onselect="clearmodalitems()">
+                            <option value="" disabled selected>-- Select Others --</option>
+                                                        @foreach (var item in Model.RTlist.Where(m => m.ReportTableTypeId == 3).OrderBy(x => x.ReportTableName))
+                                                        {
+                                                            @*<option value="@item.ReportTableName" billingperiod="@item.BillingPeriodTB.ToString()" creditar="@item.CreditARTB.ToString()" transdate="@item.TransactionDateTB.ToString()">*@
+                                                            <option value="@item.ReportTableName" NatureCollectionWithARS ="@item.NatureCollectionWithARS.ToString()" AccountRecievableBillings ="@item.AccountRecievableBillings.ToString()"
+                                                                NatureCollectionAccountableForms ="@item.NatureCollectionAccountableForms.ToString()" NatureCollection ="@item.NatureCollection.ToString()" BillingPeriods ="@item.BillingPeriods.ToString()"
+                                                                    TransactionDate ="@item.TransactionDate.ToString()" TransactionDateDivision ="@item.TransactionDateDivision.ToString()">
+                                                                @item.ReportTableName
+                                                            </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <!-- Modal For AR --><!--CREDIT AR--> <!--d2-->
+                <div id="ModalNCAR" name="ModalAR" class="modal-content w700px pad5">
+                    <div class="container w100per pad0 " style="overflow:visible;">
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                TRANSACTION DATE
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot ">
+                                <div class="col-sm-6"><input type="text" id="StartDate1" placeholder="START" name="groupedStartDate" class="form-control br1Grey w100per date-picker" /> </div>
+                                <div class="col-sm-6"><input type="text" id="EndDate1" placeholder="END" name="groupedEndDate" class="form-control br1Grey w100per date-picker" /> </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                NATURE OF COLLECTION
+                            </div>
+                            <div class="br1db pad2 semi-squarebot">
+                                <select id="groupedARType" name="groupedARType" class="w100per form-control">
+                                    @*<option value="None" selected>-- Select AR --</option>*@
+                                    <option value="">--Select Item--</option>
+                                    <option value="All"> All </option>
+                                    <option value="RENTAL">AR - Rental</option>
+                                    <option value="POLE RENTAL">AR - Pole Rental</option>
+                                    <option value="GARBAGE">AR - Garbage</option>
+                                    <option value="WATER">AR - Water</option>
+                                    <option value="SEWERAGE">AR - Sewerage</option>
+                                    <option value="FRANCHISE">AR - Franchise</option>
+                                    <option value="ADMIN FEE">AR - Admin Fee</option>
+                                    <option value="PASSED ON BILLING">AR - Passed On Billing</option>
+
+                                    @foreach (var item in Model.Accounts)
+                                    {
+                                        <option value="@item.OPAccountCode" billingperiod="" creditar="" transdate="" AccountTag="">@item.OPAccountDescription</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="ModalAR" name="ModalAR2" class="modal-content w700px pad5">
+                    <div class="container w100per pad0 " style="overflow:visible">
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                TRANSACTION DATE
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot">
+                                <div class="col-sm-6"><input type="text" id="StartDate4" placeholder="START" name="groupedCollectionStartDate" class="form-control br1Grey w100per date-picker" /> </div>
+                                <div class="col-sm-6"><input type="text" id="EndDate4" placeholder="END" name="groupedCollectionEndDate" class="form-control br1Grey w100per date-picker" /> </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                ACCOUNT RECEIVABLES
+                            </div>
+                            <div class="br1db pad2 semi-squarebot">
+                                <select id="groupedCollectionType" name="groupedCollectionType" class="w100per form-control">
+                                    @*<option value="None" selected>-- Select AR --</option>*@
+                                    <option value="">-- Select Billing Type --</option>
+                                    <option value="All">All Accounts</option>
+                                    <option value="RENTAL">Rental</option>
+                                    <option value="POLE RENTAL">Pole Rental</option>
+                                    <option value="GARBAGE">Garbage</option>
+                                    <option value="WATER">Water</option>
+                                    <option value="SEWERAGE">Sewerage</option>
+                                    <option value="FRANCHISE">Franchise</option>
+                                    <option value="ADMIN FEE">Admin Fee</option>
+                                    <option value="PASSED ON BILLING">Passed On Billing</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+                <div id="ModalNCAF" name="ModalAR3" class="modal-content w700px pad5">
+                    <div class="container w100per pad0 " style="overflow:visible">
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                TRANSACTION DATE
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot">
+                                <div class="col-sm-6"><input type="text" id="StartDate2" placeholder="START" name="groupedStartDate" class="form-control br1Grey w100per date-picker" /> </div>
+                                <div class="col-sm-6"><input type="text" id="EndDate2" placeholder="END" name="groupedEndDate" class="form-control br1Grey w100per date-picker" /> </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                NATURE OF COLLECTION
+                            </div>
+                            <div class="br1db pad2 semi-squarebot">
+                                <select id="groupedNCARType" name="groupedARType" class="w100per form-control">
+                                    @*<option value="None" selected>-- Select AR --</option>*@
+                                    <option value="">--Select Item--</option>
+
+                                    @foreach (var item in Model.OPAccountList.Where(x => x.AccountTag == "AF"))
+                                    {
+                                        <option value="@item.OPAccountDescription" billingperiod="" creditar="" transdate="" AccountTag="@item.OPAccountDescription">@item.OPAccountDescription</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- End Modal For AR -->
+                <div id="ModalNC" name="ModalAR4" class="modal-content w700px pad5">
+                    <div class="container w100per pad0 " style="overflow:visible">
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                TRANSACTION DATE
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot">
+                                <div class="col-sm-6"><input type="text" id="sd1" placeholder="START" name="groupedStartDate" class="form-control br1Grey w100per date-picker" /> </div>
+                                <div class="col-sm-6"><input type="text" id="ed1" placeholder="END" name="groupedEndDate" class="form-control br1Grey w100per date-picker" /> </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                NATURE OF COLLECTION
+                            </div>
+                            <div class="br1db pad2 semi-squarebot">
+                                <select id="groupedNCType" name="groupedARType" class="w100per form-control">
+                                    @*<option value="None" selected>-- Select AR --</option>*@
+                                    <option value="">--Select Item--</option>
+
+                                    @foreach (var item in Model.OPAccountList)
+                                    {
+                                        <option value="@item.OPAccountCode" billingperiod="" creditar="" transdate="" AccountTag="@item.OPAccountDescription">@item.OPAccountDescription</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- Modal For Cash Receipt --> <!--DATE BILLING PERIOD-->
+                <div id="ModalBP" name="ModalCR" class="modal-content w700px pad5">
+                    <div class="container w100per pad2">
+                        <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                            Select Billing Period
+                        </div>
+                        <div class="container w100per br1db pad2 semi-squarebot ">
+                            <input type="text" id="StartDate" name="StartDateBR" class="btn clr br0 w100per h20px date-picker" />
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal For Cash Receipt-->
+                <!-- Modal For None AR --> <!--TRANSACTION DATE-->
+                @*<div id="ModalNoneAR" name="ModalNoneAR" class="modal-content w700px pad5">
+                        <div class="container w100per pad2">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                Select Transaction Date
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot ">
+                                <div class="col-sm-6"><input type="date" id="StartDate3" placeholder="START" name="tdStartDate" class="form-control br1Grey w100per" /> </div>
+                                <div class="col-sm-6"><input type="date" id="EndDate3" placeholder="END" name="tdEndDate" class="form-control br1Grey w100per" /> </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                <div id="ModalTD" name="ModalNoneAR" class="modal-content w700px pad5">
+                    <div class="container w100per pad0 " style="overflow:visible">
+                        <div class="col-sm-12 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                SELECT TRANSACTION DATE
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot">
+                                <div class="col-sm-6"><input type="date" id="StartDate3" placeholder="START" name="tdStartDate" class="form-control br1Grey w100per" /> </div>
+                                <div class="col-sm-6"><input type="date" id="EndDate3" placeholder="END" name="tdEndDate" class="form-control br1Grey w100per" /> </div>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-6 pad5 " id="DrpDivision">
+                                <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                    DIVISION
+                                </div>
+                                <div class="br1db pad2 semi-squarebot">
+                                    <select id="groupedARType" name="DivisionCode" class="w100per form-control">
+                                        @*<option value="None" selected>-- Select AR --</option>
+                                        <option value="">--Select Item--</option>
+                                        <option value="All">All</option>
+                                        @foreach (var item in Model.DivisionList)
+                                        {
+                                            <option value="@item.Code">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+                <!-- End Modal For None AR -->
+                <!-- Start Modal For Collection Per Unit -->
+                <div id="ModalDiv" name="ModalARC" class="modal-content w700px pad5">
+                    <div class="container w100per pad0 " style="overflow:visible;">
+
+                        <div class="col-sm-6 pad5">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                TRANSACTION DATE
+                            </div>
+                            <div class="container w100per br1db pad2 semi-squarebot ">
+                                <div class="col-sm-6"><input type="text" id="StartDateC" placeholder="START" name="tdStartDate" class="form-control br1Grey w100per date-picker" /> </div>
+                                <div class="col-sm-6"><input type="text" id="EndDateC" placeholder="END" name="tdEndDate" class="form-control br1Grey w100per date-picker" /> </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 pad5 " id="DrpDivision">
+                            <div class="container w100per bgColor-db fcWhite br1db fontBld pad0 semi-squaretop">
+                                DIVISION
+                            </div>
+                            <div class="br1db pad2 semi-squarebot">
+                                <select id="DivisionCode" name="DivisionCode" class="w100per form-control">
+
+                                    <option value="">--Select Item--</option>
+                                    @*<option value="All">All</option>*@
+                                    @foreach (var item in Model.DivisionList)
+                                    {
+                                        <option value="@item.Code">@item.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Start Modal For Collection Per Unit -->
+
+                <div class="modal-footer pad10">
+                    <div class="col-sm-7"></div>
+                    <div class="col-sm-2"><button type="submit" id="GenRepo" class="btn btn-primary" data-dismiss="modal" formtarget="_blank">Generate Report</button></div>
+                    <div class="col-sm-1"></div>
+                    @*<div class="col-sm-2"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="ClearReset(); Clear();">Cancel</button></div>*@
+                    <div class="col-sm-2"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="clearFields()">Clear</button></div>
+                </div>
+            </div>
+        </div>
+    </center>
+    }
+}
+
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalEnterprise" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="pad5 btn-primary fontBld">
+                    <div class="container">
+                        <div class="col-sm-3 pad0">Company Name</div>
+                        <div class="col-sm-7 br1Grey bgColor-White h25px"> </div>
+                        <div class="col-sm-2 pad0"> <button type="button" class="btn clr bgColor-lgrey br1Grey h25px w100per">Search</button></div>
+                    </div>
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">OK</button></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Initialize the plugin: -->
+
+<script>
+
+
+
+    function clearFields()
+    {
+        alert('Clearing Fields . . . ');
+               
+        var radioButtons = document.getElementById("buttonType");
+        var collection = document.getElementById("col");
+        var officialReceipt = document.getElementById("OR");
+        var others = document.getElementById("Oth");
+        var groupCollDateStart = document.getElementById("StartDate4");
+        var groupCollDateEnd = document.getElementById("EndDate4");
+        var groupCollType = document.getElementsByName("groupedCollectionType");
+       
+        var groupARType = document.getElementsByName("groupedARType");
+        var groupDateStart = document.getElementById("StartDate1");
+        var groupDateEnd = document.getElementById("EndDate1");
+        var tdDateStart = document.getElementById("StartDate3");
+        var tdDateEnd = document.getElementById("EndDate3");
+        var tdDateStart2 = document.getElementById("StartDate2");
+        var tdDateEnd2 = document.getElementById("EndDate2");
+        var tdDateStartC = document.getElementById("StartDateC");
+        var tdDateEndC = document.getElementById("EndDateC");
+        var divisionCode = document.getElementsByName("DivisionCode");
+         
+        var sd1 = document.getElementById("sd1");
+        var ed1 = document.getElementById("ed1");
+
+        var sel1 = document.getElementById("groupedARType");
+        var sel2 = document.getElementById("groupedCollectionType");
+        var sel3 = document.getElementById("groupedNCType");
+        var sel4 = document.getElementById("DivisionCode");
+        var sel5 = document.getElementById("groupedNCARType");
+
+        sd1.value = '';
+        ed1.value = '';
+
+        sel1.selectedIndex = '0'
+        sel2.selectedIndex = '0'
+        sel3.selectedIndex = '0'
+        sel4.selectedIndex = '0'
+        sel5.selectedIndex = '0'
+      
+        buttonType.value = '';
+        collection.value = '';
+        officialReceipt.value = '';
+        others.value = '';
+        groupCollDateStart.value = '';
+        groupCollDateEnd.value = '';
+        groupCollType.value = '';
+        groupARType.value = '';
+        groupDateStart.value = '';
+        groupDateEnd.value = '';
+        tdDateStart.value = '';
+        tdDateEnd.value = '';
+        tdDateStart2.value = '';
+        tdDateEnd2.value = '';
+        tdDateStartC.value = '';
+        tdDateEndC.value = '';
+        divisionCode.value = '';
+        groupStartDate.value = '';
+    }
+
+</script>

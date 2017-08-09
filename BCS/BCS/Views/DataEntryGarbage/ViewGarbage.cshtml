@@ -1,0 +1,425 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified: 6/14/16
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@model BCS.Models.SearchGarbageInformation
+@using BCS.Models;
+@{
+    ViewBag.Title = "Maintenance - Garbage";
+}
+
+<script>
+    function AddEditModal(itemID, itemCls, isEdit) {
+
+        resetModal();
+        $("#RateAdd").attr("style", "visibility : visible");
+        var p = document.getElementById(itemID).getElementsByClassName(itemCls);
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            //alert("Child id = " + childId + "; " + "Child val = " + childValue);
+            var childValue = p[i].innerHTML;
+            //alert("Child val = " + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert("Element = " + elementToPopulate);
+
+            if (childId == "Type") {
+                //ChangeVal(itemVal, itemCls, itemSelect)
+                //ChangeVal(childValue, 'option-containerEdit', 'RateEdit');
+
+                $("#option-containerAdd").children().appendTo("#RateAdd");
+                var toMove = $("#RateAdd").children("[subcat!='" + childValue + "']");
+                toMove.appendTo("#option-containerAdd");
+                $("#RateAdd").removeAttr("disabled");
+                //elementToPopulate.value = childValue;
+                var a = isChildExist(elementToPopulate, childValue);
+
+                if (a == true) {
+                    //alert("Exist");
+                    elementToPopulate.value = childValue
+                } else {
+                    //alert("Not Exist");
+                    var newElem = document.createElement('option');
+                    newElem.value = childValue;
+                    newElem.selected = "selected";
+                    if (typeof newElem.innerText == 'undefined') { // FF does not support innerText, have to handle that separately
+                        newElem.innerHTML = childValue;
+                    } else {
+                        newElem.innerText = childValue;
+                    }
+                    elementToPopulate.appendChild(newElem);
+                }
+
+            } else if (childId == "AmountAdd") {
+                childValue = childValue.toLocaleString("en-US");
+                elementToPopulate.value = childValue;
+
+                var weight = document.getElementById('WeightAdd');
+                //alert(weight.value);
+                //var a = weight.split(',');
+                document.getElementById('WeightDummy').value = weight.value;
+                elementToPopulate.value = childValue;
+
+            } else if (childId == "RateAdd") {
+                var a = isChildExist(elementToPopulate, childValue);
+                if (a == true) {
+                    //alert("Exist");
+                    elementToPopulate.value = childValue
+                } else {
+                    //alert("Not Exist");
+                    var newElem = document.createElement('option');
+                    newElem.value = childValue;
+                    newElem.selected = "selected";
+                    if (typeof newElem.innerText == 'undefined') { // FF does not support innerText, have to handle that separately
+                        newElem.innerHTML = childValue;
+                    } else {
+                        newElem.innerText = childValue;
+                    }
+                    elementToPopulate.appendChild(newElem);
+                }
+            } else {
+                elementToPopulate.value = childValue;
+            }
+
+            if (isEdit == 'Edit') {
+                document.getElementById('isEdit').value = isEdit;
+            }
+        }
+    }
+
+    
+
+    function ChangeVal(itemVal, itemCls, itemSelect) {
+        $("#Rate").show();
+        $("#" + itemCls).children().appendTo("#" + itemSelect);
+        var toMove = $("#" + itemSelect).children("[subcat!='" + itemVal + "']");
+        toMove.appendTo("#" + itemCls);
+        $("#" + itemSelect).removeAttr("disabled");
+
+        $("#RateAdd").attr("style", "visibility : visible");
+        //alert($("#RateAdd").eq(0).val());
+        //$("#RateAdd").append("<option value=''>SelectRate</option>");
+    }
+
+    function ComputeTotal(rate, weight, amount) {
+        //alert(rate + " - " + weight + " - " + " - " + amount);
+        var rate = document.getElementById(rate).value;
+        var weight = document.getElementById("WeightAdd").value;
+
+        var a = weight.split(',').join('');
+
+        var amt = rate * a;
+
+        var targetElement = document.getElementById(amount);
+        var newamt = amt.toLocaleString("en-US");
+        targetElement.value = newamt;
+
+        var updateWeight = document.getElementById("WeightDummy");
+        updateWeight.value = a;
+        //alert(weight);
+        //document.getElementById("WeightAdd").value = newamt;
+
+    }
+
+    function resetModal() {
+        $("select.resetItem").each(function () {
+            $(this).prop('selectedIndex', 0);
+        });
+        $("input.resetItem").each(function () {
+            $(this).val('');
+        });
+        $("input.billingMonths").attr('checked', false);
+
+        $("select.billingPeriod").prop("selectedIndex", 0);
+        $("select.type").prop("selectedIndex", 0);
+        $("select.Rate").attr("style","visibility : hidden")
+
+    }
+</script>
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<input type="text" hidden="hidden" id="periodDate" /> <!--This line is for pass value to edit JS to work properly (DUMMY)-->
+<!-- Page Title -->
+<div class="container modal-content bgColor-White pad0">
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-trash"></span> <span class="fs20">GARBAGE</span></div>
+    <div class="modal-body">
+        <div class="container br1 w100per br2 pad0">
+            <div class="container w100per br1-bot-Blk pad0">
+                <div class="col-sm-2 pad5 bgColor-lb fontBld h34px">COMPANY</div>
+                <div class="col-sm-9 pad5">
+                    @if (ViewBag.CompanySelected == "OK")
+                    {
+                        @Model.Companies[0].CompanyName
+                    }
+                </div>
+                <div class="col-sm-1 fontBld pad0">
+                    <!-- Trigger the modal Search Enterprise with a button -->
+                    <CENTER class="pad0"><button type="button" id="searchEnterpriseButton" class="btn-default bgColor-cgrey btn-sm w100per" data-toggle="modal" data-target="#modalSearchEnterprise"><span class="glyphicon glyphicon-search"></span> Search</button></CENTER>
+                </div>
+            </div>
+            <div class="container w100per br1-bot-Blk pad0">
+                <div class="col-sm-2 pad5 bgColor-lb fontBld h34px">ADDRESS</div>
+                @if (ViewBag.CompanySelected == "OK")
+                {
+                    <div class="col-sm-10 pad5 h34px">@Model.Companies[0].Address</div>
+                }
+            </div>
+            <div class="container w100per br1-bot-Blk pad0">
+                <div class="col-sm-2 pad5 bgColor-lb fontBld h34px">ZONE</div>
+                @if (ViewBag.CompanySelected == "OK")
+                {
+                    BCS_Context db = new BCS_Context();
+                    var zonecode = @Model.Companies[0].ZoneCode;
+                    var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                    <div class="col-sm-10 pad5">@zonename</div>
+                }
+            </div>
+        </div>
+        <br />
+        <!-- Rental Datails Table -->
+
+        @if (ViewBag.CompanySelected == "OK")
+            {
+            <div class="container w100per pad0" id="companyCnt" isValidPostback="@ViewBag.ValidatePostback" CompanySelected="@ViewBag.CompanySelected">
+                <div class="container br1 w100per br2 pad0">
+                    <div class="container w100per bgColor-blk fcWhite fontBld br1-bot-Blk pad0 text-center">
+                        <div class="col-sm-2 pad0">Type</div>
+                        <div class="col-sm-1 pad0">Collection Date</div>
+                        <div class="col-sm-3 pad0">Billing Period</div>
+                        <div class="col-sm-1 pad0">Weight (Kg)</div>
+                        <div class="col-sm-2 pad0">Rate</div>
+                        <div class="col-sm-2 pad0">Amount</div>
+                        <div class="col-sm-1 pad0"> </div>
+                    </div>
+                    <div class="containerw100per ovrFlw-YAuto">
+                        @foreach (var item in Model.GarbageInformations)
+                {
+                            <div class="w100per ">
+                                @{ decimal i = item.Weight;}
+                                @{ decimal j = item.Rate;}
+                                @{ decimal ans = Math.Round(i * j, 2);}
+                                @{ decimal weight = @item.Weight;
+                                    string strweight = String.Format("{0:n}", weight);
+                                    string strans = String.Format("{0:n}", ans); }
+                                @{  BCS_Context db = new BCS_Context();
+                                    var startDate = db.BillingPeriod.Single(m => m.BillingPeriodId == item.BillingPeriod).DateFrom.ToShortDateString();
+                                    var endDate = db.BillingPeriod.Single(m => m.BillingPeriodId == item.BillingPeriod).DateTo.ToShortDateString();
+                                    var periodDate = startDate + " - " + endDate;
+                                }
+                                <div class="container w100per text-center fontBld pad0" id="@item.GarbageInformationId">
+                                    <div title="Type" class="col-sm-2 br1Grey pad0 ovrFlwHide cell pezaph h34px">@item.Type</div>
+                                    <div title="CollectionDate" class="col-sm-1 br1Grey pad0 ovrFlwHide cell pezaph h34px">@item.CollectionDate.ToShortDateString()</div>
+                                    <div title="periodDate" class="col-sm-3 br1Grey pad0 ovrFlwHide cell pezaph h34px">@periodDate</div>
+                                    <div title="WeightAdd" class="col-sm-1 br1Grey pad0 ovrFlwHide cell pezaph h34px">@strweight</div>
+                                    <div title="RateAdd" class="col-sm-2 br1Grey pad0 ovrFlwHide cell pezaph h34px">@item.Rate</div>
+                                    <div title="AmountAdd" class="col-sm-2 br1Grey pad0 ovrFlwHide cell pezaph h34px">@strans</div>
+                                    <div title="GarbageInfoId" class="col-sm-1 br1Grey pad0 cell pezaph h34px" hidden="hidden">@item.GarbageInformationId</div>
+                                    <div title="BillingPeriod" hidden="hidden" class="col-sm-3 br1Grey pad0 cell pezaph h34px">@item.BillingPeriod</div>
+                                    @if (ViewBag.IsValidRole == true)
+                                    {
+                                        <div class="col-sm-1 h34px pad5"><input type="button" VALUE="EDIT" data-toggle="modal" data-target="#modalAdd" class="roundedButton grad3 w100per h25px" id="@item.GarbageInformationId" onclick="AddEditModal(this.id,'pezaph','Edit')"></div>
+                                        @*<div class="col-sm-1 pad2 pad0"><input type="button" VALUE="REMOVE" data-toggle="modal" data-target="#modalRemoveGarbage" class="btn btn-default clr br1Grey h20px w100per" id="inputWarning"></div>*@
+                                    }
+                                </div>
+                            </div>
+                                    }
+
+                    </div>
+                </div>
+            </div>
+                                    }
+
+    </div>
+    <div class="modal-footer pad0 mar0 bgColor-lb pad10">
+        <div class="container w100per text-center">
+            <div class="col-sm-9 pad0"></div>
+            <div class="col-sm-1 pad5">
+                @if (ViewBag.IsValidRole == true)
+                {
+                    <input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalAdd" class="w100per btn btn-primary h25px pad0 isDisabled" id="inputWarning" disabled="disabled" onclick="resetModal()">
+                }
+            </div>
+            <div class="col-sm-2 pad5">@Html.ActionLink("View Report", "GarbageCollectionReport", "DataEntryGarbage", new { reportType = "GarbageCollectionAlphaList" }, new { @class = "btn btn-primary w100per h25px", Type = "button", Target = "_blank" })</div>
+
+        </div>
+
+    </div>
+</div>
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterprise" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="container pad5 bgColor-red fontBld fcWhite w100per">
+                    <div class="col-sm-3 padlr5">Company Name</div>
+                    @using (Html.BeginForm("SearchEnterprise", "DataEntryGarbage"))
+                    {
+                        @Html.AntiForgeryToken();
+                        <div class="col-sm-7 pad0"><input type="text" name="CompanyName" class="form-control h25px w100per" placeholder="Enter atleast 3 characters" /></div>
+                        @*<div class="col-sm-7 pad0">@Html.EditorFor(model => model.SearchInput, new { htmlAttributes = new { id = "searchCompany", @class = "form-control h25px w100per", @onkeyup = "fourCharVal()", @placeholder = "Enter atleast 3 characters" } })</div>*@
+                        @*<div class="col-sm-2 padlr5"> <input id="searchBtn" type="submit" class="bgColor-lv br0 clr w100per h25px semi-square" value="Search" disabled="disabled" /></div>*@
+                        <div class="col-sm-2 padlr5"> <input type="submit" class="bgColor-lv br0 clr w100per h25px semi-square" value="Search" /></div>
+                    }
+                </div>
+
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+
+                    @if (Model.Companies.Count > 0)
+                    {
+                        using (Html.BeginForm("ViewGarbage", "DataEntryGarbage"))
+                        {
+                            foreach (var item in Model.Companies)
+                            {
+                                BCS.Models.BCS_Context db = new BCS.Models.BCS_Context();
+                                var zonecode = item.ZoneCode;
+                                var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                                @Html.AntiForgeryToken()
+                                <div>
+                                    <button class="w100per btn-default txtLeft bgColor-lb" id="@item.CompanyID" name="CompanyId" value="@item.CompanyID">
+                                        <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyCode</span> -
+                                        <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyName</span> |
+                                        <span id="@item.CompanyID + 'EntAdd'">@zonename</span>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                @*<div id="companyName" value=""></div>*@
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                @*<div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="selectEnterprise();">OK</button></div>*@
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Add Gabage-->
+@using (Html.BeginForm("AddGarbage", "DataEntryGarbage"))
+{
+    @Html.AntiForgeryToken()
+    <form>
+        <div class="modal fade" id="modalAdd" role="dialog">
+            <div class="modal-dialog">
+
+                @*@Html.ValidationSummary(true)*@
+                <!-- Modal Add Garbage Content-->
+                <input type="text" hidden="hidden" name="isEdit" id="isEdit" value="" />
+                <input type="text" name="GarbageInfoId" id="GarbageInfoId" hidden="hidden" />
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Garbage Collection</h4>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <table class="w100per txtSize12px bgColor-White">
+                            <tr>
+                                <td class="br1Grey bgColor-red fcWhite fontBld">Company</td>
+                                @if (Model.Companies.Count == 1)
+                                {
+                                    <td class="br1Grey bgColor-red fcWhite">@Model.Companies[0].CompanyName</td>
+                                    <td hidden="hidden"><input type="text" hidden="hidden" name="CompanyId" value="@Model.Companies[0].CompanyID" /></td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="br1Grey"><b>Collection Date</b></td>
+                                <td class="br1Grey"><input type="text" data-val="true" data-val-required="Collection date is required" id="CollectionDate" name="CollectionDate" class="date-picker"> <span class="glyphicon glyphicon-calendar"></span></td>
+                                @*<td>@Html.ValidationMessage("CollectionDate")</td>*@
+                                <td><span class="field-validation-valid" data-valmsg-for="CollectionDate" data-valmsg-replace="true"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="br1Grey"><b>Billing Period</b></td>
+                                <td class="br1Grey">
+                                    <select class="w100per h25px billingPeriod" data-val="true" data-val-required="Billing period is required" id="BillingPeriod" name="BillingPeriod">
+                                        @if (Model.BillingPeriods.Count > 0)
+                                        {
+                                            <option selected="selected" value="">Select Period</option>
+                                            foreach (var item in Model.BillingPeriods)
+                                            {
+                                                <option value="@item.BillingPeriodId">@item.PeriodText</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                @*<td>@Html.ValidationMessage("BillingPeriod")</td>*@
+                                <td><span class="field-validation-valid" data-valmsg-for="BillingPeriod" data-valmsg-replace="true"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="br1Grey w40per"><b>Type</b></td>
+                                <td class="br1Grey">
+                                    <select class="w100per h25px type" name="Type" id="Type" data-val="true" data-val-required="Type period is required" onchange="ChangeVal(this.value, 'option-containerAdd', 'RateAdd'), ComputeTotal('RateAdd', 'WeightAdd', 'AmountAdd')">
+                                        @if (Model.SubCategory.Count > 0)
+                                        {
+                                            <option selected="selected" value="">Select Type</option>
+                                            foreach (var item in Model.SubCategory)
+                                            {
+                                                <option value="@item.ToString()">@item.ToString()</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                @*<td>@Html.ValidationMessage("Type")</td>*@
+                                <td><span class="field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="br1Grey"><b>Rate</b></td>
+                                <td class="br1Grey">
+                                    <span id="option-containerAdd" style="visibility:hidden;position:absolute"></span>
+                                    <select class="w100per h25px Rate" style="visibility:hidden" data-val="true" data-val-required="Rate is required" name="Rate" id="RateAdd" onchange="ComputeTotal()">
+                                        @if (Model.BillingRates.Count > 0)
+                                        {
+                                            <option selected="selected" value="">Select Rate</option>
+                                            foreach (var item in Model.BillingRates)
+                                            {
+                                                <option subcat="@item.SubCategory" value="@item.Rate">@item.Rate</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                @*<td>@Html.ValidationMessage("Rate")</td>*@
+                                <td><span class="field-validation-valid" data-valmsg-for="Rate" data-valmsg-replace="true"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="br1Grey"><b>Weight (Kg)</b></td>
+                                <td class="br1Grey"><input type="text" data-val="true" data-val-required="Weight is required" data-val-number="Invalid amount format" class="w100per h25px" name="WeightAdd" id="WeightAdd" onkeyup="ComputeTotal('RateAdd', 'WeightDummy', 'AmountAdd')"></td>
+                                @*<td>@Html.ValidationMessage("Weight")</td>*@
+                                <td><span class="field-validation-valid" data-valmsg-for="Weight" data-valmsg-replace="true"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="br1Grey"><b>Amount</b></td>
+                                <td class="br1Grey "><input type="text" disabled="disabled" class="w100per h25px" id="AmountAdd"><input type="text" id="WeightDummy" name="Weight" hidden="hidden" /></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <table CLASS="w100per">
+                            <tr>
+                                <td CLASS="pad20"></td>
+                                <td CLASS="pad20"></td>
+                                <td CLASS="w20per pad20"><button type="submit" class="btn btn-primary">SAVE</button></td>
+                                <TD CLASS="w20per pad20"><button type="reset" class="btn btn-primary" data-dismiss="modal" onclick="resetmodal()">CANCEL</button></TD>
+                                <td hidden="hidden"><input id="resetModal" hidden="hidden" type="reset"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+}
+<!-- End Modal Add Garbage-->
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

@@ -1,0 +1,26 @@
+﻿
+@{
+    Layout = null;
+}
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+@Ajax.ActionLink("Search", "GetCompanies", new { CompanyName = "c" }, new AjaxOptions()
+{
+    HttpMethod = "Post",
+    UpdateTargetId = "divCompanies",
+    InsertionMode = InsertionMode.Replace,
+    OnSuccess= "alert('OK')"
+
+})
+
+@ViewBag.Test
+
+<div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y" id="divCompanies">
+
+</div>
+@using (Html.BeginForm())
+{
+    <input type="text" name="num" id="num" />
+    <input type="submit" />
+}

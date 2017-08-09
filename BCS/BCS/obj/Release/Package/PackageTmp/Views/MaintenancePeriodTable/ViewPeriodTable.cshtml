@@ -1,0 +1,268 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 6/2/16
+// Modified By:
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@{
+    ViewBag.Title = "Maintenance - Period Table";
+}
+@model BCS.Models.SearchBillingPeriodViewModel
+<script>
+    function EditPeriod(item) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+            //alert("Child " + childId + "=" + childValue);
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+        }
+    }
+</script>
+
+
+<div class="container modal-content bgColor-White pad0">
+    <!-- Page Title -->
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">PERIOD TABLE MAINTENANCE</span></div>
+    <input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+    <!-- Enterprise Detail -->
+    <div class="modal-body bgColor-White pad10 w500px">
+        <!-- Rental Datails Table -->
+        <div class="container br2 pad0">
+            <table class="w100per">
+                <thead class="w100per pad5 bgColor-blk fcWhite ">
+                    <tr class="container w100per text-center fontBld fs11">
+                        <td class="col-sm-5 pad0">Period</td>
+                        <td class="col-sm-2 pad0">From</td>
+                        <td class="col-sm-3 pad0">To</td>
+                        <td class="col-sm-4 pad0"></td>
+                    </tr>
+                </thead>
+
+            </table>
+            <div class="container hmax300px ovrFlw-YAuto pad0">
+                <table class="container w100per pad0">
+                    <tbody class="w100per ovrFlw-YAuto">
+                        @using (Html.BeginForm("ViewPeriodTable", "MaintenancePeriodTable"))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            if (Model.BillPeriodList.Count > 0)
+                            {
+                                foreach (var item in Model.BillPeriodList)
+                                {
+                                    <tr class="container w100per text-center fontBld pad0" id="@Html.DisplayFor(modelItem => item.BillingPeriodId)">
+                                        <td class=" br1Grey pad0 cell h25px hidden" title="ID">@item.BillingPeriodId</td>
+                                        <td class=" br1Grey pad0 cell h25px hidden" title="BillingPeriodId">@item.BillingPeriodId</td>
+                                        <td class=" br1Grey pad0 cell h25px" title="PeriodText">@item.PeriodText</td>
+                                        <td class=" br1Grey pad0 cell h25px hidden" title="DeletePeriodText">@item.PeriodText</td>
+                                        <td class=" br1Grey pad0 cell h25px ovrFlwHide" title="DateFrom">@item.DateFrom.ToShortDateString()</td>
+                                        <td class="br1Grey pad0 cell h25px ovrFlwHide" title="DateTo">@item.DateTo.ToShortDateString()</td>
+
+                                        @if (ViewBag.IsValidRole == true)
+                                        {
+                                            if (item.Finalized.ToUpper() != "YES")
+                                            {
+                                                <td class="col-sm-2 pad5"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalEditPeriod" class="roundedButton grad3 w100per" title="@Html.DisplayFor(modelItem => item.BillingPeriodId)" onclick="EditPeriod(this.title)" id="@Html.DisplayFor(modelItem => item.BillingPeriodId)"></td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="container modal-footer bgColor-lb pad0 w100per text-center">
+        <div class="col-sm-10 pad0"></div>
+        @if (ViewBag.IsValidRole == true)
+        {
+            <div class="col-sm-2 pad5"><input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalAddPeriod" class="w100per h25px clr btn btn-primary" id="inputWarning"></div>
+        }
+    </div>
+
+</div>
+
+<!-- Modal Edit Period-->
+@using (Html.BeginForm("UpdatePeriod", "MaintenancePeriodTable"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.BillPeriodList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="BillingPeriodId" name="BillingPeriodId" />
+    }
+    <div class="modal fade" id="modalEditPeriod" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Edit Period Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalEditPeriod" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span>Edit Period</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <div class="pad5 bgColor-red fontBld fcWhite">
+                        <div class="container">Select Period</div>
+                    </div>
+                    <div class="pad5 bgColor-White fontBld">
+                        <div class="container">
+                            <div class="col-sm-6 pad0">Remarks</div>
+                            <div class="col-sm-3 pad0">From</div>
+                            <div class="col-sm-3 pad0">To</div>
+                        </div>
+                        <div class="container">
+                            <div class="col-sm-6">
+                                <textarea class="bgColor-lb btn h50px w100per br1Grey" id="PeriodText" name="PeriodText" data-val="true" data-val-required="The Period text is required"></textarea>
+                                <span class="field-validation-valid" data-valmsg-for="PeriodText" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-sm-3 padlr5">
+                                <input type="text" class="w100per breadcrumb clr br1Grey h25px date-picker" id="DateFrom" name="DateFrom" data-val="true" data-val-required="The Date from is required" />
+                                <span class="field-validation-valid" data-valmsg-for="DateFrom" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-sm-3 padlr5">
+                                <input type="text" class="w100per breadcrumb clr br1Grey h25px date-picker" id="DateTo" name="DateTo" data-val="true" data-val-required="The Date To is required" />
+                                <span class="field-validation-valid" data-valmsg-for="DateTo" data-valmsg-replace="true"></span>
+                            </div>
+                            @*<div class="col-sm-4">
+                                    <select id="Groups" name="Groups" data-val="true" data-val-required="The Group text is required">
+                                        <option selected="selected" value="">Select Groups</option>
+                                        @foreach (var item in ViewBag.Groups)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                    <span class="field-validation-valid" data-valmsg-for="Groups" data-valmsg-replace="true"></span>
+
+                                </div>*@
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-3 padlr5"><input type="submit" class="clr h25px btn btn-primary w100px" value="Save" /></div>
+                        <div class="col-sm-3 padlr5"><button type="button" class="clr h25px btn btn-primary w100px" data-dismiss="modal">CANCEL</button></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!-- End Modal Edit Period -->
+<!-- Modal Add Period-->
+@using (Html.BeginForm("AddPeriod", "MaintenancePeriodTable"))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="modalAddPeriod" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Add Period Content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalAddPeriod" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-plus left10px fcBl"></span> Add Period</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+
+                    <div class="pad5 bgColor-red fontBld fcWhite">
+                        <div class="container">Select Period</div>
+                    </div>
+                    <div class="pad5 bgColor-White fontBld">
+                        <div class="container">
+                            <div class="col-sm-6 pad0">Remarks</div>
+                            <div class="col-sm-3 pad0">From</div>
+                            <div class="col-sm-3 pad0">To</div>
+                        </div>
+                        <div class="container">
+                            <div class="col-sm-6">
+                                <textarea class="bgColor-lb btn h50px w100per br1Grey" id="PeriodText" name="PeriodText" data-val="true" data-val-required="The Period text is required"></textarea>
+                                <span class="field-validation-valid" data-valmsg-for="PeriodText" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-sm-3 padlr5">
+                                <input type="text" class="w100per breadcrumb clr br1Grey h25px date-picker" id="DateFromEdit" name="DateFrom" data-val="true" data-val-required="The Date from is required" />
+                                <span class="field-validation-valid" data-valmsg-for="DateFrom" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-sm-3 padlr5">
+                                <input type="text" class="w100per breadcrumb clr br1Grey h25px date-picker" id="DateToEdit" name="DateTo" data-val="true" data-val-required="The Date To is required" />
+                                <span class="field-validation-valid" data-valmsg-for="DateTo" data-valmsg-replace="true"></span>
+                            </div>
+                            @*<select id="Groups" name="Groups" data-val="true" data-val-required="The Group text is required">
+                                    <option selected="selected" value="">Select Groups</option>
+                                    @foreach (var item in ViewBag.Groups)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>*@
+                            @*<span class="field-validation-valid" data-valmsg-for="Groups" data-valmsg-replace="true"></span>*@
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-3 padlr5"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                    <div class="col-sm-3 padlr5"><button type="button" class="clr h25px btn btn-primary w100px" data-dismiss="modal">CANCEL</button></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+}
+<!-- End Modal Add Period -->
+<!-- Modal Remove-->
+@using (Html.BeginForm("ViewPeriodTable", "MaintenancePeriodTable"))
+{
+    @Html.AntiForgeryToken()
+
+    if (Model.BillPeriodList.Count > 0)
+    {
+        <input type="text" hidden="hidden" id="ID" name="ID" />
+    }
+    <div class="modal fade" id="modalRemove" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" data-target="#modalRemoveRental">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-trash icon clr"></span> Remove Period</h4>
+                </div>
+                <div class="modal-body bgColor-lv">
+                    <h4> Are you sure you want to remove this record?</h4>
+                    <div class="pad20">
+                        <div class="row">
+                            <div class="col-sm-5 br1 bgColor-db fontBld fcWhite">Description</div>
+                            <div class="col-sm-7"><input type="text" id="DeletePeriodText" name="DeletePeriodText" class="w150per text-center bgColor-lgrey" readonly="readonly" /></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <button type="submit" class="btn btn-primary w100px">Yes</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary w100px" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal Remove -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

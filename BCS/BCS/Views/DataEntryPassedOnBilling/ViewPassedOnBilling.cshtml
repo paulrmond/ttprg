@@ -1,0 +1,530 @@
+﻿<!--
+// Author: E.A.Cabatan
+// Date Created: 5/18/16
+// Date Modified:
+// Consulting Firm: DCI
+-->
+<!-- Page Initialization -->
+@{
+    ViewBag.Title = "ViewSecurityGuardFee";
+}
+@model BCS.Models.PassedOnBillingViewModel
+@using BCS.Models;
+<script>
+    function EditSecurityFee(item, isEdit) {
+        var p = document.getElementById(item).getElementsByClassName('cell');
+        for (var i = 0; i < p.length; i++) {
+            var childId = p[i].title;
+            var childValue = p[i].innerHTML;
+
+            if (childId == "Amount") {
+                document.getElementById('FakeAmount').value = childValue.toLocaleString("en-US");
+                //formatNumber(48, 'FakeAmount', 'Amount');
+               
+                //$('#FakeAmount').keyup();
+                //$('#FakeAmount').keyup();
+            }
+
+            var elementToPopulate = document.getElementById(childId);
+            //alert(elementToPopulate.value);
+            elementToPopulate.value = childValue;
+
+            if (isEdit == 'Edit') {
+                document.getElementById('isEdit').value = isEdit;
+            }
+        }
+        setElementValue('FakeAmount', 'Amount')       
+    }
+    function resetModal() {
+        $("select.resetItem").each(function () {
+            $(this).prop('selectedIndex', 0);
+        });
+        $("input.resetItem").each(function () {
+            $(this).val('');
+        });
+    }
+
+    function DeleteItem(id) {
+        var res = confirm("Are you sure you want to delete?");
+        if (res) {
+            $('#idToDelete').val(id);
+            $('#idToDeleteSubmit').click();
+        }
+
+    }
+
+    function uploadFile() {
+        $('#progressbar').prop('hidden', false);
+        document.body.style.cursor = 'wait';
+        var billingPeriodToCopy = $('#BillingPeriodToCopy').val();
+        var originDate = $('#OriginDateCopy').val();
+        var billingDate = $('#BillingDateCopy').val();
+        var typeToCopy = $('#TypeToCopy').val();
+        //var billingPeriodDestination = $('#BillingPeriodDestination').val();
+        var newFormData = new FormData();
+        //alert(billingPeriodToCopy + " " + typeToCopy);
+        var a = $('#Upload')[0].files[0];
+
+        if (billingPeriodToCopy == "" || typeToCopy == "") {
+            return false;
+        }
+
+        if ((a == null || a == "")) {
+            return false;
+        }
+
+        newFormData.append('uploadData', $('#Upload')[0].files[0]);
+
+        $.ajax({
+            url: '/Handler/CopyPassedOnBillingHandler.ashx?Copy=' + billingPeriodToCopy + '&Type=' + typeToCopy + '&Origin=' + originDate + '&Billing=' + billingDate + '',
+            type: 'POST',
+            data: newFormData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function () {
+                alert("Transaction Complete.");
+                $('#progressbar').prop('hidden', true);
+                $('#modalCopy').modal('hide');
+                $('#BillingPeriodToCopy').val('');
+                $('#BillingPeriodDestination').val('');
+                document.body.style.cursor = 'default';
+            },
+            error: function (err) {
+                alert(err.statusText);
+                $('#modalCopy').modal('hide');
+            }
+        });
+
+    }
+</script>
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+
+<!-- Page Title -->
+<div class="container modal-content bgColor-White pad0">
+    <div class="modal-header fs18 fontBld bgColor-lb"><span class="glyphicon glyphicon-book"></span> <span class="fs20">PASSED ON BILLING</span></div>
+    <div class="modal-body">
+        <!-- Enterprise Detail -->
+        <div class="w100per br2 pad0">
+
+            <table CLASS="zeroSpace w100per txtSize12px">
+
+                <tr class="br1-bot-Blk">
+                    <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">COMPANY</td>
+                    <td class="col-sm-9 pad5 h25px">
+                        @if (ViewBag.CompanySelected == "OK")
+                        {
+                            @Html.DisplayFor(m => m.CompanyList[0].CompanyName)
+                        }
+                    </td>
+                    <td class="col-sm-1 fontBld pad2">
+                        <!-- Trigger the modal Search Enterprise with a button -->
+                        <CENTER class="pad0"><button type="button" id="searchEnterpriseButton" class="btn-default bgColor-cgrey btn-sm w100per" data-toggle="modal" data-target="#modalSearchEnterprise"><span class="glyphicon glyphicon-search"></span> Search</button></CENTER>
+                    </td>
+                </tr>
+
+                <tr class=" br1-bot-Blk">
+                    <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">ADDRESS</td>
+                    <td id="CompanyAddress" class="col-sm-10 h25px pad5" colspan="2">
+                        @if (ViewBag.CompanySelected == "OK")
+                        {
+                            if (Model.CompanyList[0].CompanyName != null)
+                            {
+                                @Html.DisplayFor(m => m.CompanyList[0].Address)
+                            }
+                        }
+
+                    </td>
+                </tr>
+
+                <tr class=" br1-bot-Blk">
+                    <td class="col-sm-2 pad5 bgColor-lb fontBld h25px">ZONE</td>
+                    <td id="CompanyAddress" class="col-sm-10 h25px pad5" colspan="2">
+                        @if (ViewBag.CompanySelected == "OK")
+                        {
+                            if (Model.CompanyList[0].CompanyName != null)
+                            {
+                                BCS_Context db = new BCS_Context();
+                                var zonecode = @Model.CompanyList[0].ZoneCode;
+                                var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                                <span>@zonename</span>
+                            }
+                        }
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+
+        @using (Html.BeginForm("DisplayPassedOnBilling", "DataEntryPassedOnBilling"))
+            {
+            @Html.AntiForgeryToken()
+            if (Model.PassedOnBillingList.Count > 0)
+            {
+                <input type="text" hidden="hidden" id="PassedOnBillingInformationId" name="PassedOnBillingInformationId" />
+                <input type="text" hidden="hidden" id="CompId" name="CompId" />
+            }
+            if (Model.CompanyList.Count == 1)
+            {
+                <br />
+                <div class="container pad0" id="companyCnt" isValidPostback="@ViewBag.ValidatePostback" CompanySelected="@ViewBag.CompanySelected">
+
+                    <table CLASS="zeroSpace w100per txtSize12px">
+                        <thead class=" bgColor-blk fontBld text-center w100per">
+                            <tr class="fcWhite br2 w100per">
+                                <TH CLASS="col-sm-2 "><CENTER>Period</CENTER></TH>
+                                <TH CLASS="col-sm-2 "><CENTER>Type</CENTER></TH>
+                                <TH CLASS="col-sm-2 "><CENTER>Amount</CENTER></TH>
+                                <TH CLASS="col-sm-2 "><CENTER>Origin Date</CENTER></TH>
+                                <TH CLASS="col-sm-2 "><CENTER>Billing Date</CENTER></TH>
+                                <TH CLASS="col-sm-2 "><CENTER></CENTER></TH>
+                                <TH CLASS="col-sm-2 "><CENTER></CENTER></TH>
+                            </tr>
+                        </thead>
+                        <tbody class="br2 ">
+                            @if (Model != null)
+                            {
+                                foreach (var passedOnBillingList in Model.PassedOnBillingList)
+                                {
+                                    BCS_Context db = new BCS_Context();
+                                    var startDate = db.BillingPeriod.Single(m => m.BillingPeriodId == passedOnBillingList.BillingPeriod).DateFrom.ToShortDateString();
+                                    var endDate = db.BillingPeriod.Single(m => m.BillingPeriodId == passedOnBillingList.BillingPeriod).DateTo.ToShortDateString();
+                                    var periodDate = startDate + " - " + endDate;
+                                    var amt = string.Format("{0:n}", @passedOnBillingList.Amount);
+                                    <tr id="@passedOnBillingList.PassedOnBillingInformationId">
+                                        <td class="br1Grey cell col-sm-1 ovrFlwHide" align="center" title="BillingPeriod1">@periodDate</td>
+                                        <td class="br1Grey cell col-sm-1 ovrFlwHide hidden" align="center" title="PassedOnBillingInfoId">@passedOnBillingList.PassedOnBillingInformationId</td>
+                                        @*<td class="br1Grey cell col-sm-3 ovrFlwHide hidden" align="center" title="SecurityGuardFeeInformationId">@passedOnBillingList.PassedOnBillingInformationId</td>*@
+                                        @*<td class="br1Grey cell col-sm-3 ovrFlwHide hidden" align="center" title="CompanyId">@passedOnBillingList.CompanyId</td>
+                                            <td class="br1Grey cell col-sm-3 ovrFlwHide hidden" align="center" title="CompId">@passedOnBillingList.CompanyId</td>*@
+                                        <td class="br1Grey cell col-sm-1 w100px ovrFlwHide hidden" align="center" title="BillingPeriod">@passedOnBillingList.BillingPeriod</td>
+                                        <td class="br1Grey cell col-sm-1 w25px ovrFlwHide" align="center" title="Type">@passedOnBillingList.Type</td>
+                                        <td class="br1Grey cell col-sm-1 w100px ovrFlwHide" align="center" title="Amount">@amt</td>
+                                        <td class="br1Grey cell col-sm-1 w100px ovrFlwHide" align="center" title="OriginDate">@passedOnBillingList.OriginDate.ToShortDateString()</td>
+                                        <td class="br1Grey cell col-sm-1 w100px ovrFlwHide" align="center" title="BillingDate">@passedOnBillingList.BillingDate.ToShortDateString()</td>
+                                        
+                                        @if (ViewBag.IsValidRole == true)
+                                        {
+                                            <td class="pad5"><input type="submit" VALUE="DELETE" data-toggle="modal" data-target="" class="roundedButton grad3 w100per" title="@Html.DisplayFor(modelItem => passedOnBillingList.PassedOnBillingInformationId)" onclick="DeleteItem(this.title)" id="@Html.DisplayFor(modelItem => passedOnBillingList.PassedOnBillingInformationId)"></td>
+                                            <td class="pad5"><input type="submit" VALUE="EDIT" data-toggle="modal" data-target="#modalAdd" class="roundedButton grad3 w100per" title="@Html.DisplayFor(modelItem => passedOnBillingList.PassedOnBillingInformationId)" onclick="EditSecurityFee(this.title,'Edit')" id="@Html.DisplayFor(modelItem => passedOnBillingList.PassedOnBillingInformationId)"></td>
+                                            @*<td><input type="submit" VALUE="REMOVE" class="w100per" title="@Html.DisplayFor(modelItem => SecurityGuardFeeInformation.SecurityGuardFeeInformationId)" onclick="EditSecurityFee(this.title)" name="@Html.DisplayFor(modelItem => SecurityGuardFeeInformation.SecurityGuardFeeInformationId)" id="@Html.DisplayFor(modelItem => SecurityGuardFeeInformation.SecurityGuardFeeInformationId)"></td>*@
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                @{
+                                    var total = string.Format("{0:n}", @Model.TotalAmount);
+                                }
+                                <td class=""></td>
+                                <td class="fontBld txtRight">Total</td>
+                                <td class="br1Grey h25px bgColor-lgrey cell" align="center">@total</td>
+                                <td class=""></td>
+                                <td class=""></td>
+
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                                        }
+                                    }
+
+        @using (Html.BeginForm("DeletePassedOnBilling", "DataEntryPassedOnBilling"))
+        {
+            if (ViewBag.CompanySelected == "OK")
+            {
+                @Html.HiddenFor(m => m.CompanyList[0].CompanyID)
+            }
+            <input type="text" hidden="hidden" id="idToDelete" name="idToDelete" />
+            <input type="submit" hidden="hidden" id="idToDeleteSubmit" />
+        }
+
+    </div>
+    <div class="modal-footer pad0 bgColor-lb mar0 pad10">
+        <div class="container w100per text-center">
+            @using (Html.BeginForm("PassedOnBillingReport", "DataEntryPassedOnBilling"))
+            {
+                <div class="col-sm-2 pad5"><b>Billing Period:</b></div>
+                <div class="col-sm-4 pad5">
+
+                    <select name="BillingPeriod" id="BillingPeriod" data-val="true" data-val-required="Billing period is required" class="form-control">
+                        <option value="" selected>Select Billing Period</option>
+                        @*@foreach (var item in Model.BillingPeriodList.Where(m => m.groupCode == ViewBag.ZoneCode))*@
+                        @foreach (var item in Model.BillingPeriodList)
+                        {
+                            <option value="@item.BillingPeriodId">@item.DateFrom.ToString("dd MMM yyyy") - @item.DateTo.ToString("dd MMM yyyy")</option>
+                        }
+                    </select>
+                </div>
+
+
+                <div class="col-sm-2 pad5"><button type="submit" class="btn btn-primary w150px h25px">View Report</button></div>
+
+            }
+            <div class="col-sm-1 pad5">
+
+            </div>
+            <div class="col-sm-1 pad5"><input type="button" VALUE="COPY" data-toggle="modal" data-target="#modalCopy" class="btn btn-primary w100per" id="inputWarning" onclick=""></div>
+            <div class="col-sm-1 pad5">
+                @if (ViewBag.IsValidRole == true)
+                {
+                    if (ViewBag.CompanySelected == "OK")
+                    {
+                        <input type="button" VALUE="ADD" data-toggle="modal" data-target="#modalAdd" class="btn btn-primary w100per" id="inputWarning" onclick="resetModal()">
+                    }
+                }
+            </div>
+            @*<div class="col-sm-2 pad5">@Html.ActionLink("View Report", "PassedOnBillingReport", "DataEntryPassedOnBilling", new { @class = "btn btn-primary w150px h25px", Type = "button", target = "_blank" })</div>*@
+        </div>
+    </div>
+
+</div>
+<!-- Modal Search Enterprise-->
+<div class="modal fade" id="modalSearchEnterprise" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal Search Enterprise Content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Enterprise Information</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+                <div class="pad5 bgColor-red fontBld fcWhite">
+                    <div class="container pad5 bgColor-red fontBld fcWhite w100per">
+                        <div class="col-sm-3 padlr5">Company Name</div>
+                        @using (Html.BeginForm("ViewPassedOnBilling", "DataEntryPassedOnBilling"))
+                        {
+                            @Html.AntiForgeryToken();
+                            <div class="col-sm-7 pad0">@Html.EditorFor(model => model.SearchInput, new { htmlAttributes = new { id = "searchCompany", @class = "form-control h25px w100per", @onkeyup = "fourCharVal()", @placeholder = "Enter atleast 3 characters" } })</div>
+                            <div class="col-sm-2 padlr5"> <input id="searchBtn" type="submit" class="bgColor-lv br0 clr w100per h25px semi-square" value="Search" disabled="disabled" /></div>
+                        }
+                    </div>
+                </div>
+                <div class="pad10 bgColor-White h100px br1Grey ovrFlw-Y">
+
+
+                    @foreach (var item in Model.CompanyList)
+                    {
+                        BCS.Models.BCS_Context db = new BCS.Models.BCS_Context();
+                        var zonecode = item.ZoneCode;
+                        var zonename = db.Zone.FirstOrDefault(m => m.ZoneCode == zonecode).ZoneName;
+                        using (Html.BeginForm("ViewPassedOnBilling", "DataEntryPassedOnBilling"))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div>
+                                <button class="w100per btn-default txtLeft bgColor-lb" id="@item.CompanyID" name="@item.CompanyID" value="@item.CompanyID">
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyCode</span> -
+                                    <span id="@item.CompanyID" value="@item.CompanyID">@item.CompanyName</span> |
+                                    <span id="@item.CompanyID + 'EntAdd'">@zonename</span>
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">OK</button></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal">Cancel</button></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Modal Search Enterprise-->
+<!-- Modal Add Passed on billing Fee-->
+@using (Html.BeginForm("AddPassedOnBilling", "DataEntryPassedOnBilling"))
+{
+    @Html.AntiForgeryToken()
+    <form>
+        <div class="modal fade" id="modalAdd" role="dialog">
+            <div class="modal-dialog">
+                <input type="text" hidden="hidden" name="PassedOnBillingInfoId" id="PassedOnBillingInfoId" value="" />
+                <input type="text" hidden="hidden" name="BillingPeriod1" id="BillingPeriod1" value="" />
+                <input type="text" hidden="hidden" name="isEdit" id="isEdit" value="" />
+                <!-- Modal  Add Security Guard Fee Content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="bgColor-lb">
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="OriginDateAdd" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingDateAdd" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="Amount" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingPeriod" data-valmsg-replace="true"></span></div>
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span></div>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Passed on Billing</h4>
+                    </div>
+                    <div class="modal-body bgColor-lv">
+                        <div class="fontBld bgColor-White">
+                            <div class="container bgColor-red pad5">
+                                <div class="col-sm-2 fcWhite">Company:</div>
+                                @if (Model.CompanyList.Count > 0)
+                                {
+                                    @*<div class="col-sm-10 br1Grey bgColor-White h25px">*@<input type="text" disabled="disabled" VALUE="@Model.CompanyList[0].CompanyName" name="@Model.CompanyList[0].CompanyName" class="w100per" id="inputWarning">@*</div>*@
+                                    <input type="text" hidden="hidden" name="CompanyID" value="@Model.CompanyList[0].CompanyID" />
+                                }
+                                else
+                                {
+                                    <div class="col-sm-7 clr"><input type="text" disabled="disabled" VALUE="Company Name" class="w100per" id="inputWarning"></div>
+                                }
+                            </div>
+
+                            <div class="container pad0 br1-bot">
+                                <div class="col-sm-2">Type:</div>
+                                <div class="col-sm-10 pad0 h25px">
+                                    <select name="Type" id="Type" data-val="true" data-val-required="Type is required" class="w100per h20px br0 resetItem">
+                                        <option value="">Select Type</option>
+                                        <option value="Power">Power</option>
+                                        <option value="Water">Water</option>
+                                        <option value="Janitorial">Janitorial</option>
+                                        <option value="Security Guard">Security Guard</option>
+                                        <option value="System Loss">System Loss</option>
+                                        <option value="Concession Fee">Concession Fee</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="container pad0 br1-bot">
+                                <div class="col-sm-3">Origin Date:</div>
+                                <div class="col-sm-3 pad0"><input type="text" data-val="true" data-val-required="Origin date is required" class="ovrFlwHide w100per date-picker resetItem" id="OriginDate" name="OriginDateAdd" /></div>
+                                <div class="col-sm-3 pad0 txtRight">Billing Date:</div>
+                                <div class="col-sm-3 pad0"><input type="text" data-val="true" data-val-required="Billing date is required" class="ovrFlwHide w100per date-picker resetItem" id="BillingDate" name="BillingDateAdd" /></div>
+                            </div>
+                            <div class="container br1-bot pad0">
+                                <div class="col-sm-2">Amount:</div>
+                                <div class="col-sm-10 h25px pad0">
+                                    <input type="text" data-val="true" data-val-required="Amount is required"
+                                           data-val-number="Invalid amount format" placeholder="Enter Amount" class="w100per h25px br0 resetItem"
+                                           id="FakeAmount" name="FakeAmount" onkeyup="formatNumber(event.keyCode, this.id, 'Amount')" />
+
+                                    <input type="text" data-val="true" data-val-required="Amount is required" hidden="hidden"
+                                           data-val-number="Invalid amount format" VALUE="Enter Amount" class="w100per txtLeft"
+                                           id="Amount" name="Amount" onkeyup="formatNumber(event.keyCode, this.id)" />
+                                </div>
+                            </div>
+                            <div class="container pad0">
+                                <div class="col-sm-4 txtLeft ">Billing Period:</div>
+                                <div class="col-sm-8 h25px pad0">
+                                    <select id="BillingPeriod" data-val="true" data-val-required="Billing period is required" name="BillingPeriod" class="w100per h20px br0 resetItem">
+                                        <option value="">Select Period</option>
+                                        @foreach (var items in Model.BillingPeriodList)
+                                        {
+                                            <option value="@items.BillingPeriodId">@items.DateFrom.ToShortDateString() - @items.DateTo.ToShortDateString()</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Save" /></div>
+                        <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="resetmodal()">Cancel</button></div>
+                        <input id="resetModal" hidden="hidden" type="reset">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+}
+<!-- Modal End Passed on billing Fee-->
+<!-- Modal Copy Passed on billing Fee-->
+<div class="modal fade" id="modalCopy" role="dialog">
+    <div class="modal-dialog">
+        <input type="text" hidden="hidden" name="PassedOnBillingInfoId" id="PassedOnBillingInfoId" value="" />
+        <input type="text" hidden="hidden" name="BillingPeriod1" id="BillingPeriod1" value="" />
+        <input type="text" hidden="hidden" name="isEdit" id="isEdit" value="" />
+        <!-- Modal  Add Security Guard Fee Content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="bgColor-lb">
+                    <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingPeriodToCopy" data-valmsg-replace="true"></span></div>
+                    <div class="container"><span class="field-validation-valid" data-valmsg-for="TypeToCopy" data-valmsg-replace="true"></span></div>
+                    <div class="container"><span class="field-validation-valid" data-valmsg-for="OriginDateCopy" data-valmsg-replace="true"></span></div>
+                    <div class="container"><span class="field-validation-valid" data-valmsg-for="BillingDateCopy" data-valmsg-replace="true"></span></div>
+                    <div class="container"><span class="field-validation-valid" data-valmsg-for="Upload" data-valmsg-replace="true"></span></div>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" data-target="#modalSearchEnterprise" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-disk"></span> Passed on Billing</h4>
+            </div>
+            <div class="modal-body bgColor-lv">
+
+                <div class="fontBld bgColor-White">
+
+                    <div class="container br1 pad10">
+                        <div class="col-sm-5 txtLeft ">Destination Billing Period</div>
+                        <div class="col-sm-7 h25px pad0">
+                            <select id="BillingPeriodToCopy" data-val="true" data-val-required="Destination Billing Period is required" name="BillingPeriodToCopy" class="w100per h20px resetItem resetItem br1">
+                                <option value="">Select Period</option>
+                                @foreach (var items in Model.BillingPeriodList)
+                                {
+                                    <option value="@items.BillingPeriodId">@items.DateFrom.ToShortDateString() - @items.DateTo.ToShortDateString()</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                    @*<div class="container"><br /></div>*@
+                    <div class="container br1 pad10">
+
+                        <div class="col-sm-2">Origin Date:</div>
+                        <div class="col-sm-4"><input type="text" data-val="true" data-val-required="Origin date is required" class="ovrFlwHide w100per date-picker resetItem" id="OriginDateCopy" name="OriginDateCopy" /></div>
+                        <div class="col-sm-2  txtRight">Billing Date:</div>
+                        <div class="col-sm-4"><input type="text" data-val="true" data-val-required="Billing date is required" class="ovrFlwHide w100per date-picker resetItem" id="BillingDateCopy" name="BillingDateCopy" /></div>
+
+                    </div>
+                    @*<div class="container"><br /></div>*@
+                    <div class="container br1 pad10">
+                        <div class="col-sm-2">Type:</div>
+                        <div class="col-sm-10">
+                            <select name="TypeToCopy" id="TypeToCopy" data-val="true" data-val-required="Type is required" class="w100per h20px br1 resetItem">
+                                <option value="">Select Type</option>
+                                <option value="Power">Power</option>
+                                <option value="Water">Water</option>
+                                <option value="Janitorial">Janitorial</option>
+                                <option value="Security Guard">Security Guard</option>
+                                <option value="System Loss">System Loss</option>
+                                <option value="Concession Fee">Concession Fee</option>
+                            </select>
+                        </div>
+                    </div>
+                    @*<div class="container"><br /></div>*@
+                    <div class="container h50px br1">
+
+                        <div class="col-sm-3">Upload File</div>
+                        <div class="col-sm-9 ">
+                            <div class="container"><span class="field-validation-valid" data-valmsg-for="UploadFile" data-valmsg-replace="true"></span></div>
+                            <input type="file" name="Upload" id="Upload" accept=".xlsx" data-val="true" data-val-required="File to upload is required" class="form-control" />
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                <div id="progressbar" style="position:relative" hidden="hidden">
+                    <img src="~/Gif/loading_g.gif" width="535" height="20" />
+                    <span id="progressbar-label" style="position:absolute; left:40%">Processing...</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4"><input type="submit" class="btn btn-primary w100px" value="Copy" onclick="uploadFile()" /></div>
+                <div class="col-sm-4"><button type="button" class="btn btn-primary w100px" data-dismiss="modal" onclick="resetmodal()">Cancel</button></div>
+                <input id="resetModal" hidden="hidden" type="reset">
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Modal End Copy Passed on billing Fee-->
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval");
+}

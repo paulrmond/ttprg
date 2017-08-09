@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "ViewUserAccessMatrix";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<!-- Page Title -->
+<input type="text" hidden="hidden" value="@ViewBag.TransactionSuccess" TransactionSuccess="@ViewBag.TransactionSuccess" id="TransactionSuccess" />
+<div class="modal-content mar10">
+    <div class="modal-header">
+        <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Access Matrix</h4>
+    </div>
+    <div class="modal-body bgColor-lv">
+
+        <div class="container w100per">
+            <table class="table">
+                <thead>
+                    <tr>
+                        @using (Ajax.BeginForm("GetUsers", "RoleAssignmentMatrix", new AjaxOptions { UpdateTargetId = "roleMatrixPartial", InsertionMode = InsertionMode.Replace, OnFailure = "error" }))
+                        {
+                            <th><input type="text" name="Username" id="Username" /><input type="submit" value="Search" /></th>
+                        }
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="container w100per ovrFlw-Y hmax100px">
+
+            <table class="table-condensed">
+                <tr>
+                    <th class="col-sm-6">Username</th>
+                    <th class="col-sm-6"></th>
+                </tr>
+
+                <tbody id="roleMatrixPartial"></tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="modal-footer pad0 mar0 bgColor-None "></div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}

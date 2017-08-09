@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "Cryptography";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+
+</script>
+
+
+@*<h2 class="fcWhite">Cryptography</h2>
+
+    <div class="bgColor-lb">
+        <div class="container">
+            <div class="col-sm-3">Value:</div>
+            <div class="col-sm-9 pad0"><input type="text" id="userValue" name="userValue" /></div>
+        </div>
+        <div class="container">
+            <div class="col-sm-3">Encryption Key:</div>
+            <div class="col-sm-9 pad0"><input type="text" id="Ekey" name="Ekey" /></div>
+        </div>
+        <div class="container">
+            <div class="col-sm-3">Encrypt/Decrypted Value:</div>
+            <div class="col-sm-9 pad0"><input type="text" id="HashedValue" name="HashedValue" /></div>
+        </div>
+        <div class="container">
+            <div class="col-sm-9"><input type="button" value="Encrypt" onclick="hashPassword('Encrypt')" /></div>
+            <div class="col-sm-10"><input type="button" value="Decrypt" onclick="hashPassword('Decrypt')" /></div>
+        </div>
+    </div>*@
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title"><span class="glyphicon glyphicon-folder-open"></span> Cryptography</h4>
+
+    </div><!--end of modal header-->
+    <div class="modal-body bgColor-lv">
+        <div class="container">
+            <div class="col-sm-3"><label for="userValue">Value:</label> </div>
+            <div class="col-sm-9 pad0"><input type="text" class="form-control" id="userValue" name="userValue" /></div>
+        </div>
+        <div class="container">
+            <div class="col-sm-3"> <label for="Ekey">Encryption Key:</label></div>
+            <div class="col-sm-9 pad0"><input type="text" class="form-control" id="Ekey" name="Ekey" /></div>
+        </div>
+        <div class="container">
+            <div class="col-sm-3"><label for="HashedValue">Encrypt/Decrypted Value:</label></div>
+            @*<div class="col-sm-9 pad0"><input type="text" id="HashedValue" name="HashedValue" /></div>*@
+            <div class="col-sm-9 pad0"><textarea class="form-control" id="HashedValue" name="HashedValue" rows="5"></textarea></div>
+
+        </div>
+        <div class="container">
+            <br />
+            <div class="col-sm-5"></div>
+            <div class="col-sm-3"><input type="button" value="Encrypt" class="btn btn-primary w100per" onclick="hashPassword('Encrypt')" /></div>
+            <div class="col-sm-3"><input type="button" value="Decrypt" class="btn btn-primary w100per" onclick="hashPassword('Decrypt')" /></div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+
+    </div>
+
+</div><!--END of modal-content-->
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval");
+}
