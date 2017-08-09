@@ -2,3 +2,16 @@
 
 OP Reports ( All Accounts option)
 Admin Fee (Zone Type Parameter)
+
+08/09/2017
+Add:
+  Logs folder
+  IOHelper.cs
+Change:
+  BillingGenerateController.cs
+  Handler Folder
+  ViewGenerate
+  ViewAdminFee
+  BillingBusinessLayerNewAlgo.cs
+  SearchCompanyPerGroup.cs
+  AdminFee.cs
